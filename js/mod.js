@@ -1,18 +1,18 @@
 let modInfo = {
-	name: "The ??? Tree",
-	id: "mymod",
-	pointsName: "points",
-	discordName: "",
-	discordLink: "",
+	name: "The Game Dev Tree",
+	id: "gamedevtree",
+	pointsName: "hours",
+	discordName: "The Paper Pilot Community Server",
+	discordLink: "https://discord.gg/WzejVAx",
 	changelogLink: "https://github.com/Acamaeda/The-Modding-Tree/blob/master/changelog.md",
-    offlineLimit: 1,  // In hours
+    offlineLimit: 5,  // In hours
     initialStartPoints: new Decimal (10) // Used for hard resets and new players
 }
 
 // Set your version in num and name
 let VERSION = {
 	num: "0.0",
-	name: "Literally nothing",
+	name: "Initial Commit",
 }
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
