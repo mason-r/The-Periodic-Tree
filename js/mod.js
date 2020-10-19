@@ -33,11 +33,11 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(1)
+	let gain = player.e.points.add(1)
 	if (hasUpgrade("u", 11)) gain = gain.mul(2)
 	if (hasUpgrade("u", 12)) gain = gain.mul(1.5)
 	if (hasUpgrade("u", 22)) gain = gain.mul(upgradeEffect("u", 22))
-	return gain.divide(player.points.clampMin(1).sqrt())
+	return gain.divide(player.points.sub(player.e.points * 2).clampMin(1).sqrt())
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
