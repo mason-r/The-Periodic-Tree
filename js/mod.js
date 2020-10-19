@@ -37,7 +37,11 @@ function getPointGen() {
 	if (hasUpgrade("u", 11)) gain = gain.mul(2)
 	if (hasUpgrade("u", 12)) gain = gain.mul(1.5)
 	if (hasUpgrade("u", 22)) gain = gain.mul(upgradeEffect("u", 22))
-	return gain.divide(player.points.sub(player.e.points * 2).clampMin(1).sqrt())
+	if (hasUpgrade("c", 11)) gain = gain.mul(2)
+	if (hasUpgrade("c", 12)) gain = gain.mul(2)
+
+	gain = gain.pow(buyableEffect("c", 11))
+	return gain.divide(player.points.sub(player.e.total).clampMin(1).sqrt())
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
@@ -48,7 +52,9 @@ function addedPlayerData() { return {
 var displayThings = [
 	"<br/>",
 	"You've started working on this great little game idea you've had kicking around for awhile!",
-	"Unfortunately, the longer you work on it the harder it becomes to keep working on :/"
+	"Unfortunately, the longer you work on it the harder it becomes to keep working on :/",
+	"<br/>",
+	"Also, if you're familiar with other TPT mods, you should know this one works differently: layers are only reset along branches!"
 ]
 
 // Determines when the game "ends"
