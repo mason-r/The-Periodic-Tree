@@ -33,12 +33,15 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = player.e.points.add(1)
+	let gain = layers.e.effect()
 	if (hasUpgrade("u", 11)) gain = gain.mul(2)
 	if (hasUpgrade("u", 12)) gain = gain.mul(1.5)
 	if (hasUpgrade("u", 22)) gain = gain.mul(upgradeEffect("u", 22))
 	if (hasUpgrade("c", 11)) gain = gain.mul(2)
 	if (hasUpgrade("c", 12)) gain = gain.mul(2)
+	if (hasUpgrade("e", 21)) gain = gain.mul(2)
+	if (hasUpgrade("e", 22)) gain = gain.mul(2)
+	if (hasUpgrade("e", 23)) gain = gain.mul(2)
 
 	gain = gain.pow(buyableEffect("c", 11))
 	return gain.divide(player.points.sub(player.e.total).clampMin(1).sqrt())
@@ -46,15 +49,17 @@ function getPointGen() {
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
+	hideIntro: false
 }}
 
 // Display extra things at the top of the page
 var displayThings = [
-	"<br/>",
-	"You've started working on this great little game idea you've had kicking around for awhile!",
-	"Unfortunately, the longer you work on it the harder it becomes to keep working on :/",
-	"<br/>",
-	"Also, if you're familiar with other TPT mods, you should know this one works differently: layers are only reset along branches!"
+	() => player.hideIntro ? "" : "<br/>",
+	() => player.hideIntro ? "" : "You've started working on this great little game idea you've had kicking around for awhile!",
+	() => player.hideIntro ? "" : "Unfortunately, the longer you work on it the harder it becomes to keep working on :/",
+	() => player.hideIntro ? "" : "<br/>",
+	() => player.hideIntro ? "" : "Also, if you're familiar with other TPT mods, you should know this one works differently: layers are only reset along branches!",
+	() => player.hideIntro ? "" : "(Now that you've read me, you can hide this text in settings)"
 ]
 
 // Determines when the game "ends"
