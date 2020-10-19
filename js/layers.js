@@ -110,7 +110,7 @@ addLayer("e", {
             title: "Learn a new programming language",
             description: "Wow! This programming language is so much easier to write in! Total experience now effects update gain",
             cost: new Decimal(2),
-            effect() { return player.e.total.log10().add(1) }
+            effect() { return player.e.total.clampMin(1).log10().add(1) }
         },
         12: {
             title: "Contact publisher",
@@ -189,7 +189,7 @@ addLayer("c", {
         11: {
             title: "Upgrade hardware",
             cost() { return new Decimal(100).mul(new Decimal(2).pow(getBuyableAmount("c", 11))).round() },
-            display() { return `Each upgrade raises your productivity by 1.05.<br/>Next upgrade cost: ${this.cost()} cash` },
+            display() { return `Each upgrade raises your productivity to the ^1.05 power.<br/>Next upgrade cost: ${this.cost()} cash` },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             effect() { return new Decimal(1.05).pow(getBuyableAmount("c", 11)) },
             buy() {
