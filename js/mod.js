@@ -44,7 +44,9 @@ function getPointGen() {
 	if (hasUpgrade("e", 23)) gain = gain.mul(2)
 
 	gain = gain.pow(buyableEffect("c", 11))
-	return gain.divide(player.points.sub(player.e.total).clampMin(1).sqrt())
+	gain = gain.divide(player.points.sub(player.e.total).clampMin(1).sqrt())
+	gain = gain.divide(player.points.sub(player.e.total).clampMin(0).sqrt().clampMin(10).log10())
+	return gain
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values

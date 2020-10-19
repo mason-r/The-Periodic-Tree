@@ -20,6 +20,7 @@ addLayer("u", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (hasUpgrade("u", 21)) mult = mult.div(2)
+        if (hasUpgrade("e", 11)) mult = mult.div(upgradeEffect("e", 11))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -93,7 +94,7 @@ addLayer("e", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    effect() { return (hasUpgrade("e", 13) ? player.e.points.pow(0.55) : player.e.points.sqrt()).add(1) },
+    effect() { return player.e.points.sqrt().add(1) },
     resetDescription: "Start Over for ",
     effectDescription() { return `multiplying productivity by ${this.effect().toFixed(2)}. Your total experience is also delaying the productivity slow down by ${player[this.layer].total} hours.` },
     roundUpCost: true,
@@ -106,38 +107,38 @@ addLayer("e", {
         rows: 2,
         cols: 3,
         11: {
+            title: "Learn a new programming language",
+            description: "Wow! This programming language is so much easier to write in! Total experience now effects update gain",
+            cost: new Decimal(2),
+            effect() { return player.e.total.log10().add(1) }
+        },
+        12: {
             title: "Contact publisher",
             description: "Use your experience to contact a publisher, unlocking an adjacent prestige layer",
             cost: new Decimal(10)
         },
-        12: {
+        13: {
             title: "Contact ad company",
             description: "Use your experience to contact an ad provider, unlocking passive cash generation",
             cost: new Decimal(25),
             unlocked() { return hasMilestone("c", 0) }
         },
-        13: {
-            title: "Learn a new programming language",
-            description: "Wow! This programming language is so much easier to write in! Increases experience multiplier on productivity from ^.5 -> ^.55",
-            cost: new Decimal(125),
-            unlocked() { return hasMilestone("c", 0) }
-        },
         21: {
             title: "Read Game Programming Patterns",
             description: "This treasure trove of a book makes me twice as productive",
-            cost: new Decimal(300),
+            cost: new Decimal(100),
             unlocked() { return hasMilestone("c", 0) }
         },
         22: {
             title: "Subscribe to Sebastian Lague",
             description: "Just being subscribed infuses you with enough knowledge to make you twice as productive",
-            cost: new Decimal(500),
+            cost: new Decimal(200),
             unlocked() { return hasMilestone("c", 0) }
         },
         23: {
             title: "Play Davey Wreden's games",
             description: "Davey Wreden's insights on the relationships between games and their creators and players make you once again twice as productive",
-            cost: new Decimal(1000),
+            cost: new Decimal(250),
             unlocked() { return hasMilestone("c", 0) }
         }
     }
@@ -173,7 +174,7 @@ addLayer("c", {
     hotkeys: [
         {key: "c", description: "Sell your game", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return hasUpgrade("e", 11) || player[this.layer].total.gte(1) },
+    layerShown(){ return hasUpgrade("e", 12) || player[this.layer].total.gte(1) },
     milestones: {
         0: {
             requirementDescription: "1 total cash",
@@ -221,7 +222,7 @@ addLayer("c", {
             currencyInternalName: "points",
             currencyLocation() { return player.u },
             cost: new Decimal(10),
-            unlocked() { return hasUpgrade("e", 12) }
+            unlocked() { return hasUpgrade("e", 13) }
         },
         112: {
             title: "Add an interactive banner ad",
@@ -266,13 +267,13 @@ addLayer("c", {
                 content: [
                     ["row", [["upgrade", 111], ["upgrade", 112], ["upgrade", 113], ["upgrade", 114]]]
                 ],
-                unlocked() { return hasUpgrade("e", 12) }
+                unlocked() { return hasUpgrade("e", 13) }
             }
         }
     },
     tabFormat: [
         "main-display",
-        ["display-text", function() { return hasUpgrade("e", 12) && tmp.c.resetGain.times ? `(${tmp.c.resetGain.times(layers.c.revenue(1)).toFixed(2)}/sec)` : "" }],
+        ["display-text", function() { return hasUpgrade("e", 13) && tmp.c.resetGain.times ? `(${tmp.c.resetGain.times(layers.c.revenue(1)).toFixed(2)}/sec)` : "" }],
         "blank",
         "prestige-button",
         "blank",
@@ -292,4 +293,39 @@ addLayer("c", {
     shouldNotify() {
         return canAffordPurchase("c", layers[this.layer].buyables[11], layers[this.layer].buyables[11].cost())
     }
+})
+
+addLayer("r", {
+    name: "refactors", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "R", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+        total: new Decimal(0),
+        points: new Decimal(0)
+    }},
+    branches: [ 'e' ],
+    color: "#4CABF5",
+    requires: new Decimal(500), // Can be a function that takes requirement increases into account
+    base: new Decimal(500),
+    resource: "refactors", // Name of prestige currency
+    baseResource: "experience", // Name of resource prestige is based on
+    baseAmount() {return player.e.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: .25, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    canBuyMax() { return true },
+    resetDescription: "Use all your experience to re-design your game framework for ",
+    roundUpCost: true,
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "r", description: "Re-design your game framework", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){ return false /*player.u.best.gte(50) || player[this.layer].total.gte(1)*/ }
 })
