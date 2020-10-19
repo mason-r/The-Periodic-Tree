@@ -220,7 +220,8 @@ addLayer("c", {
             currencyDisplayName: "updates",
             currencyInternalName: "points",
             currencyLocation() { return player.u },
-            cost: new Decimal(10)
+            cost: new Decimal(10),
+            unlocked() { return hasUpgrade("e", 12) }
         },
         112: {
             title: "Add an interactive banner ad",
