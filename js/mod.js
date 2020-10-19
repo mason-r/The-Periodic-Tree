@@ -11,8 +11,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Initial Commit",
+	num: "0.1",
+	name: "Cash Influx",
 }
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
