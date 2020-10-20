@@ -27,6 +27,8 @@ addLayer("u", {
         return new Decimal(1)
     },
     canBuyMax() { return true },
+    doReset(resettingLayer) { if (resettingLayer != 'u') layerDataReset(this.layer, [ 'best' ]) },
+    resetDescription: "Release new build for ",
     roundUpCost: true,
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -95,8 +97,30 @@ addLayer("e", {
         return new Decimal(1)
     },
     effect() { return player.e.points.sqrt().add(1) },
+    doReset(resettingLayer) {
+        if (['r'].includes(resettingLayer)) {
+            const shouldKeepUpgrades = {
+                11: hasMilestone("r", 2),
+                12: hasMilestone("r", 0),
+                13: hasMilestone("r", 0),
+                21: hasMilestone("r", 4),
+                22: hasMilestone("r", 5),
+                23: hasMilestone("r", 6)
+            }
+            const upgradesToKeep = []
+            for (let upgrade of player[this.layer].upgrades) {
+                if (shouldKeepUpgrades[upgrade]) {
+                    upgradesToKeep.push(upgrade)
+                }
+            }
+            const unlocked = player[this.layer].unlocked
+            layerDataReset(this.layer)
+            player[this.layer].upgrades = upgradesToKeep
+            player[this.layer].unlocked = unlocked
+        }
+    },
     resetDescription: "Start Over for ",
-    effectDescription() { return `multiplying productivity by ${this.effect().toFixed(2)}. Your total experience is also delaying the productivity slow down by ${player[this.layer].total} hours.` },
+    effectDescription() { return `multiplying productivity by ${this.effect().toFixed(2)}. Your total experience is also delaying the productivity slow down by ${player[this.layer].total.times(player.r.points.add(1))} hours.` },
     roundUpCost: true,
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -110,7 +134,7 @@ addLayer("e", {
             title: "Learn a new programming language",
             description: "Wow! This programming language is so much easier to write in! Total experience now effects update gain",
             cost: new Decimal(2),
-            effect() { return player.e.total.clampMin(1).log10().add(1) }
+            effect() { return player.e.total.times(player.r.points.add(1)).clampMin(1).log10().add(1) }
         },
         12: {
             title: "Contact publisher",
@@ -168,6 +192,7 @@ addLayer("c", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
+    doReset(resettingLayer) { if (['f'].includes(resettingLayer)) layerDataReset(this.layer) },
     resetDescription: "Sell game to publisher for ",
     roundUpCost: true,
     row: 1, // Row the layer is in on the tree (0 is the first row)
@@ -183,7 +208,6 @@ addLayer("c", {
         }
     },
     buyables: {
-        // TODO buyable to upgrade hardware, starting at 100 and doubling each time
         rows: 1,
         cols: 1,
         11: {
@@ -302,17 +326,21 @@ addLayer("r", {
     startData() { return {
         unlocked: false,
         total: new Decimal(0),
-        points: new Decimal(0)
+        points: new Decimal(0),
+        renameVariablesHoursWorked: new Decimal(0),
+        encapsulateFieldHoursWorked: new Decimal(0),
+        optimizeFormulasHoursWorked: new Decimal(0),
+        rollLibraryHoursWorked: new Decimal(0)
     }},
     branches: [ 'e' ],
     color: "#4CABF5",
     requires: new Decimal(500), // Can be a function that takes requirement increases into account
-    base: new Decimal(500),
+    base: new Decimal(2.5),
     resource: "refactors", // Name of prestige currency
     baseResource: "experience", // Name of resource prestige is based on
     baseAmount() {return player.e.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: .25, // Prestige currency exponent
+    exponent: 1.25, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         return mult
@@ -322,10 +350,186 @@ addLayer("r", {
     },
     canBuyMax() { return true },
     resetDescription: "Use all your experience to re-design your game framework for ",
+    effectDescription() { return `multiplying all bonuses based on total experience by ${player[this.layer].points.add(1).toFixed(2)}.` },
     roundUpCost: true,
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "r", description: "Re-design your game framework", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return false /*player.u.best.gte(50) || player[this.layer].total.gte(1)*/ }
+    layerShown(){ return player.u.best.gte(50) || player[this.layer].total.gte(1) },
+    milestones: {
+        0: {
+            requirementDescription: "1 refactor",
+            effectDescription: "Unlock first refactoring, and retain the second and third Experience upgrades",
+            done() { return player[this.layer].total.gte(1) }
+        },
+        1: {
+            requirementDescription: "2 refactors",
+            effectDescription: "Unlock second refactoring",
+            done() { return player[this.layer].total.gte(2) }
+        },
+        2: {
+            requirementDescription: "3 refactors",
+            effectDescription: "Retain the first Experience upgrade",
+            done() { return player[this.layer].total.gte(3) },
+            unlocked() { return player[this.layer].total.gte(1) }
+        },
+        3: {
+            requirementDescription: "4 refactors",
+            effectDescription: "Unlock third refactoring",
+            done() { return player[this.layer].total.gte(4) },
+            unlocked() { return player[this.layer].total.gte(2) }
+        },
+        4: {
+            requirementDescription: "5 refactors",
+            effectDescription: "Retain the fourth Experience upgrade",
+            done() { return player[this.layer].total.gte(5) },
+            unlocked() { return player[this.layer].total.gte(3) }
+        },
+        5: {
+            requirementDescription: "6 refactors",
+            effectDescription: "Retain the fifth Experience upgrade",
+            done() { return player[this.layer].total.gte(6) },
+            unlocked() { return player[this.layer].total.gte(4) }
+        },
+        6: {
+            requirementDescription: "7 refactors",
+            effectDescription: "Retain the sixth Experience upgrade",
+            done() { return player[this.layer].total.gte(7) },
+            unlocked() { return player[this.layer].total.gte(5) }
+        },
+        7: {
+            requirementDescription: "8 refactors",
+            effectDescription: "Unlock fourth refactoring",
+            done() { return player[this.layer].total.gte(8) },
+            unlocked() { return player[this.layer].total.gte(6) }
+        }
+    },
+    clickables: {
+        rows: 1,
+        cols: 4,
+        11: {
+            title: "Rename variables",
+            display: function() {
+                return `Take time to rename your variables more sensibly, making your productivity slow down even stronger but you gain a boost to productivity based on hours of work produced with this active.\n\nCurrently: ${clickableEffect("r", 11).toFixed(2)}x`
+            },
+            effect: function() {
+                if (player.r.renameVariablesHoursWorked.lessThan(1)) return new Decimal(1)
+                return player.r.renameVariablesHoursWorked.log(2).add(1)
+            },
+            unlocked() { return hasMilestone("r", 0) },
+            canClick: function() { return !getClickableState("r", 12) && !getClickableState("r", 13) && !getClickableState("r", 14) },
+            onClick: function() {
+                setClickableState("r", 11, !getClickableState("r", 11))
+            },
+            style: {
+                "height": "160px",
+                "width": "200px"
+            }
+        },
+        12: {
+            title: "Encapsulate fields",
+            display: function() {
+                return `Take time to comply with arbitrary programming practices, making your productivity slow down even more strongly but you gain another boost to productivity based on hours of work produced with this active.\n\nCurrently: ${clickableEffect("r", 12).toFixed(2)}x`
+            },
+            effect: function() {
+                if (player.r.encapsulateFieldHoursWorked.lessThan(1)) return new Decimal(1)
+                return player.r.encapsulateFieldHoursWorked.log(2).add(1)
+            },
+            unlocked() { return hasMilestone("r", 1) },
+            canClick: function() { return !getClickableState("r", 11) && !getClickableState("r", 13) && !getClickableState("r", 14) },
+            onClick: function() {
+                setClickableState("r", 12, !getClickableState("r", 12))
+            },
+            style: {
+                "height": "160px",
+                "width": "200px"
+            }
+        },
+        13: {
+            title: "Optimize formulas",
+            display: function() {
+                return `Take time to figure out how to get that darn bottleneck to O(1), making your productivity slow down like really strongly but you gain yet another boost to productivity based on hours of work produced with this active.\n\nCurrently: ${clickableEffect("r", 13).toFixed(2)}x`
+            },
+            effect: function() {
+                if (player.r.optimizeFormulasHoursWorked.lessThan(1)) return new Decimal(1)
+                return player.r.optimizeFormulasHoursWorked.log(2).add(1)
+            },
+            unlocked() { return hasMilestone("r", 3) },
+            canClick: function() { return !getClickableState("r", 11) && !getClickableState("r", 12) && !getClickableState("r", 14) },
+            onClick: function() {
+                setClickableState("r", 13, !getClickableState("r", 13))
+            },
+            style: {
+                "height": "160px",
+                "width": "200px"
+            }
+        },
+        14: {
+            title: "Roll your own library",
+            display: function() {
+                return `Take time to replace that slow library with your own, making your productivity slow down stronger than you've yet experienced but you gain, surprising no one, another boost to productivity based on hours of work produced with this active.\n\nCurrently: ${clickableEffect("r", 14).toFixed(2)}x`
+            },
+            effect: function() {
+                if (player.r.rollLibraryHoursWorked.lessThan(1)) return new Decimal(1)
+                return player.r.rollLibraryHoursWorked.log(2).add(1)
+            },
+            unlocked() { return hasMilestone("r", 7) },
+            canClick: function() { return !getClickableState("r", 11) && !getClickableState("r", 12) && !getClickableState("r", 13) },
+            onClick: function() {
+                setClickableState("r", 14, !getClickableState("r", 14))
+            },
+            style: {
+                "height": "160px",
+                "width": "200px"
+            }
+        }
+        // TODO Roll your own library
+    },
+    update(diff) {
+        if (getClickableState("r", 11))
+            player.r.renameVariablesHoursWorked = player.r.renameVariablesHoursWorked.add(tmp.pointGen.mul(diff))
+        else if (getClickableState("r", 12))
+            player.r.encapsulateFieldHoursWorked = player.r.encapsulateFieldHoursWorked.add(tmp.pointGen.mul(diff))
+        else if (getClickableState("r", 13))
+            player.r.optimizeFormulasHoursWorked = player.r.optimizeFormulasHoursWorked.add(tmp.pointGen.mul(diff))
+        else if (getClickableState("r", 14))
+            player.r.rollLibraryHoursWorked = player.r.rollLibraryHoursWorked.add(tmp.pointGen.mul(diff))
+    }
+})
+
+addLayer("f", {
+    name: "fame", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "F", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+        total: new Decimal(0),
+        points: new Decimal(0),
+        fans: new Decimal(0)
+    }},
+    branches: [ 'c' ],
+    color: "#F564E7",
+    requires: new Decimal(2000), // Can be a function that takes requirement increases into account
+    base: new Decimal(2000),
+    resource: "fame", // Name of prestige currency
+    baseResource: "cash", // Name of resource prestige is based on
+    baseAmount() {return player.c.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 1.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    canBuyMax() { return true },
+    resetDescription: "Spend all your money to increase your celebrity status by ",
+    roundUpCost: true,
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "f", description: "Increase your celebrity status fame", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){ return player.u.best.gte(50) || player[this.layer].total.gte(1) }
 })

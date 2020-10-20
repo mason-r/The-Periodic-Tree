@@ -28,12 +28,19 @@ function canGenPoints(){
 	return true
 }
 
+function applyProductivitySlowdown(gain, origGain) {
+	let newGain = gain.divide(player.points.add(origGain).sub(player.e.total.times(player.r.points.add(1))).clampMin(1).sqrt())
+	newGain = newGain.divide(player.points.add(origGain).sub(player.e.total.times(player.r.points.add(1))).clampMin(1).sqrt().clampMin(10).log10())
+	return newGain
+}
+
 // Calculate points/sec!
 function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
 	let gain = layers.e.effect()
+	gain = gain.mul(clickableEffect("r", 11))
 	if (hasUpgrade("u", 11)) gain = gain.mul(2)
 	if (hasUpgrade("u", 12)) gain = gain.mul(1.5)
 	if (hasUpgrade("u", 22)) gain = gain.mul(upgradeEffect("u", 22))
@@ -44,8 +51,27 @@ function getPointGen() {
 	if (hasUpgrade("e", 23)) gain = gain.mul(2)
 
 	gain = gain.pow(buyableEffect("c", 11))
-	gain = gain.divide(player.points.sub(player.e.total).clampMin(1).sqrt())
-	gain = gain.divide(player.points.sub(player.e.total).clampMin(0).sqrt().clampMin(10).log10())
+	
+	// Apply productivity slow downs
+	const slowDownModifier = player.points.add(gain.sqrt()).sub(player.e.total.times(player.r.points.add(1))).clampMin(1)
+	gain = gain.divide(slowDownModifier.sqrt())
+	gain = gain.divide(slowDownModifier.sqrt().clampMin(10).log10().pow(2))
+	if (getClickableState("r", 11)) {
+		gain = gain.divide(slowDownModifier.pow(.25))
+	} else if (getClickableState("r", 12)) {
+		gain = gain.divide(slowDownModifier.pow(.25))
+		gain = gain.divide(slowDownModifier.pow(.125))
+	} else if (getClickableState("r", 13)) {
+		gain = gain.divide(slowDownModifier.pow(.25))
+		gain = gain.divide(slowDownModifier.pow(.125))
+		gain = gain.divide(slowDownModifier.pow(.0625))
+	} else if (getClickableState("r", 14)) {
+		gain = gain.divide(slowDownModifier.pow(.25))
+		gain = gain.divide(slowDownModifier.pow(.125))
+		gain = gain.divide(slowDownModifier.pow(.0625))
+		gain = gain.divide(slowDownModifier.pow(.03125))
+	}
+
 	return gain
 }
 
@@ -56,6 +82,12 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	"<br/>",
+	() => player.points < 24 * 3 ? "" :
+		  player.points < 24 * 365 * 3 ?      `equivalent to ${player.points.div(24).toFixed(2)} days of work` :
+		  player.points < 24 * 365 * 300 ?    `equivalent to ${player.points.div(24 * 365).toFixed(2)} years of work` :
+		  player.points < 24 * 365 * 300000 ? `equivalent to ${player.points.div(24 * 365 * 100).toFixed(2)} centuries of work` :
+		  									  `equivalent to ${player.points.div(24 * 365 * 100000).toFixed(2)} eons of work`,
 	() => player.hideIntro ? "" : "<br/>",
 	() => player.hideIntro ? "" : "You've started working on this great little game idea you've had kicking around for awhile!",
 	() => player.hideIntro ? "" : "Unfortunately, the longer you work on it the harder it becomes to keep working on :/",
