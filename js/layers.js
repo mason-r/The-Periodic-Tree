@@ -18,7 +18,7 @@ addLayer("u", {
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+        mult = new Decimal(1).div(buyableEffect("f", 12))
         if (hasUpgrade("u", 21)) mult = mult.div(2)
         if (hasUpgrade("e", 11)) mult = mult.div(upgradeEffect("e", 11))
         return mult
@@ -90,7 +90,7 @@ addLayer("e", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 2, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+        mult = new Decimal(1).mul(buyableEffect("f", 13))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -113,14 +113,12 @@ addLayer("e", {
                     upgradesToKeep.push(upgrade)
                 }
             }
-            const unlocked = player[this.layer].unlocked
-            layerDataReset(this.layer)
+            layerDataReset(this.layer, [ "unlocked", "milestones" ])
             player[this.layer].upgrades = upgradesToKeep
-            player[this.layer].unlocked = unlocked
         }
     },
     resetDescription: "Start Over for ",
-    effectDescription() { return `multiplying productivity by ${this.effect().toFixed(2)}. Your total experience is also delaying the productivity slow down by ${player[this.layer].total.times(player.r.points.add(1))} hours.` },
+    effectDescription() { return `multiplying base productivity by ${this.effect().toFixed(2)}. Your total experience is also delaying the productivity slow down by ${player[this.layer].total.times(player.r.points.add(1))} hours.` },
     roundUpCost: true,
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -186,13 +184,34 @@ addLayer("c", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 1.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(100)
+        mult = new Decimal(100).mul(buyableEffect("f", 12))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    doReset(resettingLayer) { if (['f'].includes(resettingLayer)) layerDataReset(this.layer) },
+    doReset(resettingLayer) {
+        if (['f'].includes(resettingLayer)) {
+            const shouldKeepUpgrades = {
+                11: hasMilestone("f", 0),
+                12: hasMilestone("f", 1),
+                13: hasMilestone("f", 2),
+                14: hasMilestone("f", 3),
+                21: hasMilestone("f", 4),
+                22: hasMilestone("f", 5),
+                23: hasMilestone("f", 6),
+                24: hasMilestone("f", 7)
+            }
+            const upgradesToKeep = []
+            for (let upgrade of player[this.layer].upgrades) {
+                if (shouldKeepUpgrades[upgrade]) {
+                    upgradesToKeep.push(upgrade)
+                }
+            }
+            layerDataReset(this.layer, [ "unlocked", "milestones" ])
+            player[this.layer].upgrades = upgradesToKeep
+        }
+    },
     resetDescription: "Sell game to publisher for ",
     roundUpCost: true,
     row: 1, // Row the layer is in on the tree (0 is the first row)
@@ -213,9 +232,9 @@ addLayer("c", {
         11: {
             title: "Upgrade hardware",
             cost() { return new Decimal(100).mul(new Decimal(2).pow(getBuyableAmount("c", 11))).round() },
-            display() { return `Each upgrade raises your productivity to the ^1.05 power.<br/>Next upgrade cost: ${this.cost()} cash` },
+            display() { return `Each upgrade raises your base productivity to the ^1.1 power.<br/>Next upgrade cost: ${this.cost()} cash` },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
-            effect() { return new Decimal(1.05).pow(getBuyableAmount("c", 11)) },
+            effect() { return new Decimal(1.1).pow(getBuyableAmount("c", 11)) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount("c", 11, getBuyableAmount("c", 11).add(1))
@@ -223,8 +242,8 @@ addLayer("c", {
         }
     },
     upgrades: {
-        rows: 1,
-        cols: 2,
+        rows: 2,
+        cols: 4,
         11: {
             title: "Buy premium text editor",
             description: "Purchase a text editor, allowing you to double your productivity",
@@ -234,6 +253,36 @@ addLayer("c", {
             title: "Buy premium git client",
             description: "Purchase a git client, allowing you to double your productivity",
             cost: new Decimal(100)
+        },
+        13: {
+            title: "Buy ambient sound machine",
+            description: "Purchase an overpriced machine to do a website's job, allowing you to double your productivity",
+            cost: new Decimal(800)
+        },
+        14: {
+            title: "Buy Keurig",
+            description: "Purchase an overhyped coffee machine, allowing you to double your productivity",
+            cost: new Decimal(1200)
+        },
+        21: {
+            title: "Buy incense burner",
+            description: "Purchase an overpriced incense burner, allowing you to double your productivity",
+            cost: new Decimal(2500)
+        },
+        22: {
+            title: "Buy mechanical keyboard",
+            description: "Purchase an overpriced keyboard, allowing you to double your productivity at the expense of your coworkers'",
+            cost: new Decimal(4000)
+        },
+        23: {
+            title: "Buy massaging chair",
+            description: "Purchase an overpriced chair, allowing you to double your productivity",
+            cost: new Decimal(10000)
+        },
+        24: {
+            title: "Buy sensory deprivation egg",
+            description: "Purchase an isolation tank, allowing you to double your productivity",
+            cost: new Decimal(100000)
         },
         // 1XX represents revenue upgrades
         // since they appear in a different tab they can have whatever id I want to give them,
@@ -348,7 +397,6 @@ addLayer("r", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    canBuyMax() { return true },
     resetDescription: "Use all your experience to re-design your game framework for ",
     effectDescription() { return `multiplying all bonuses based on total experience by ${player[this.layer].points.add(1).toFixed(2)}.` },
     roundUpCost: true,
@@ -415,7 +463,7 @@ addLayer("r", {
             },
             effect: function() {
                 if (player.r.renameVariablesHoursWorked.lessThan(1)) return new Decimal(1)
-                return player.r.renameVariablesHoursWorked.log(2).add(1)
+                return player.r.renameVariablesHoursWorked.log(10).pow(2).add(1)
             },
             unlocked() { return hasMilestone("r", 0) },
             canClick: function() { return !getClickableState("r", 12) && !getClickableState("r", 13) && !getClickableState("r", 14) },
@@ -434,7 +482,7 @@ addLayer("r", {
             },
             effect: function() {
                 if (player.r.encapsulateFieldHoursWorked.lessThan(1)) return new Decimal(1)
-                return player.r.encapsulateFieldHoursWorked.log(2).add(1)
+                return player.r.encapsulateFieldHoursWorked.log(10).pow(2).add(1)
             },
             unlocked() { return hasMilestone("r", 1) },
             canClick: function() { return !getClickableState("r", 11) && !getClickableState("r", 13) && !getClickableState("r", 14) },
@@ -453,7 +501,7 @@ addLayer("r", {
             },
             effect: function() {
                 if (player.r.optimizeFormulasHoursWorked.lessThan(1)) return new Decimal(1)
-                return player.r.optimizeFormulasHoursWorked.log(2).add(1)
+                return player.r.optimizeFormulasHoursWorked.log(10).pow(2).add(1)
             },
             unlocked() { return hasMilestone("r", 3) },
             canClick: function() { return !getClickableState("r", 11) && !getClickableState("r", 12) && !getClickableState("r", 14) },
@@ -472,7 +520,7 @@ addLayer("r", {
             },
             effect: function() {
                 if (player.r.rollLibraryHoursWorked.lessThan(1)) return new Decimal(1)
-                return player.r.rollLibraryHoursWorked.log(2).add(1)
+                return player.r.rollLibraryHoursWorked.log(10).pow(2).add(1)
             },
             unlocked() { return hasMilestone("r", 7) },
             canClick: function() { return !getClickableState("r", 11) && !getClickableState("r", 12) && !getClickableState("r", 13) },
@@ -484,7 +532,6 @@ addLayer("r", {
                 "width": "200px"
             }
         }
-        // TODO Roll your own library
     },
     update(diff) {
         if (getClickableState("r", 11))
@@ -504,19 +551,19 @@ addLayer("f", {
     position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: false,
-        total: new Decimal(0),
+        best: new Decimal(0),
         points: new Decimal(0),
-        fans: new Decimal(0)
+        fans: new Decimal(1)
     }},
     branches: [ 'c' ],
     color: "#F564E7",
-    requires: new Decimal(2000), // Can be a function that takes requirement increases into account
-    base: new Decimal(2000),
+    requires: new Decimal(2500), // Can be a function that takes requirement increases into account
+    base: new Decimal(4),
     resource: "fame", // Name of prestige currency
     baseResource: "cash", // Name of resource prestige is based on
     baseAmount() {return player.c.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 1.5, // Prestige currency exponent
+    exponent: 1.25, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         return mult
@@ -525,11 +572,143 @@ addLayer("f", {
         return new Decimal(1)
     },
     canBuyMax() { return true },
-    resetDescription: "Spend all your money to increase your celebrity status by ",
+    resetDescription: "Elevate your social status by ",
+    effect() {
+        return {
+            doubleFrequency: new Decimal(60).div(player[this.layer].points).clampMin(1).log2().div(buyableEffect("f", 11).add(1)),
+            productivityMult: player[this.layer].fans.clampMin(10).log10(),
+            fanMult: buyableEffect("f", 11),
+            cashMult: buyableEffect("f", 12),
+            expMult: buyableEffect("f", 13),
+            upgMult: buyableEffect("f", 14)
+        }
+    },
+    effectDescription() {
+        return player[this.layer].points.lessThan(1) ? "" : `which double your amount of fans every ${format(this.effect().doubleFrequency)} seconds.`
+    },
+    tabFormat: [
+        "main-display",
+        ["display-text", function() {
+            const { productivityMult, fanMult, cashMult, expMult, upgMult } = layers.f.effect()
+            let text = `<br/>You currently have ${format(player.f.fans.floor())} fans, which currently:`
+            text += `<br/>Multiplies productivity by ${format(productivityMult)}x`
+            if (getBuyableAmount("f", 11).gte(1)) text += `<br/>Multiplies fan gain by ${format(fanMult)}x due to discord`
+            if (getBuyableAmount("f", 12).gte(1)) text += `<br/>Multiplies cash gain by ${format(cashMult)}x due to patreon`
+            if (getBuyableAmount("f", 13).gte(1)) text += `<br/>Multiplies experience gain by ${format(expMult)}x due to twitch`
+            if (getBuyableAmount("f", 14).gte(1)) text += `<br/>Multiplies upgrade gain by ${format(upgMult)}x due to github`
+            return text
+        }],
+        "blank",
+        "prestige-button",
+        "blank",
+        "milestones",
+        "buyables"
+    ],
     roundUpCost: true,
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "f", description: "Increase your celebrity status fame", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "f", description: "Elevate your social status", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return player.u.best.gte(50) || player[this.layer].total.gte(1) }
+    layerShown(){ return player.u.best.gte(50) || player[this.layer].best.gte(1) },
+    update(diff) {
+        if (player[this.layer].points.gte(1)) {
+            player[this.layer].fans = player[this.layer].fans.mul(new Decimal(2).pow(new Decimal(diff).div(this.effect().doubleFrequency)))
+        }
+    },
+    milestones: {
+        0: {
+            requirementDescription: "1 fame",
+            effectDescription: "Retain the first equipment upgrade",
+            done() { return player[this.layer].best.gte(1) }
+        },
+        1: {
+            requirementDescription: "2 fame",
+            effectDescription: "Retain the second equipment upgrade",
+            done() { return player[this.layer].best.gte(2) }
+        },
+        2: {
+            requirementDescription: "3 fame",
+            effectDescription: "Retain the third equipment upgrade",
+            done() { return player[this.layer].best.gte(3) },
+            unlocked() { return player[this.layer].best.gte(1) }
+        },
+        3: {
+            requirementDescription: "4 fame",
+            effectDescription: "Retain the fourth equipment upgrade",
+            done() { return player[this.layer].best.gte(4) },
+            unlocked() { return player[this.layer].best.gte(2) }
+        },
+        4: {
+            requirementDescription: "5 fame",
+            effectDescription: "Retain the fifth equipment upgrade",
+            done() { return player[this.layer].best.gte(5) },
+            unlocked() { return player[this.layer].best.gte(3) }
+        },
+        5: {
+            requirementDescription: "6 fame",
+            effectDescription: "Retain the sixth equipment upgrade",
+            done() { return player[this.layer].best.gte(6) },
+            unlocked() { return player[this.layer].best.gte(4) }
+        },
+        6: {
+            requirementDescription: "7 fame",
+            effectDescription: "Retain the seventh equipment upgrade",
+            done() { return player[this.layer].best.gte(7) },
+            unlocked() { return player[this.layer].best.gte(5) }
+        },
+        7: {
+            requirementDescription: "8 fame",
+            effectDescription: "Retain the eigth equipment upgrade",
+            done() { return player[this.layer].best.gte(8) },
+            unlocked() { return player[this.layer].best.gte(6) }
+        }
+    },
+    buyables: {
+        rows: 1,
+        cols: 4,
+        11: {
+            title: "Discord",
+            cost() { return getBuyableAmount("f", 11).add(1) },
+            display() { return getBuyableAmount("f", 11).gte(1) ? `Each upgrade raises your discord effect on fan gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Create a discord, boosting your fan gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
+            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            effect() { return new Decimal(1.1).pow(getBuyableAmount("f", 11).sub(1)).mul(player[this.layer].fans.clampMin(10).log10().sqrt()).add(1) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount("f", 11, getBuyableAmount("f", 11).add(1))
+            }
+        },
+        12: {
+            title: "Patreon",
+            cost() { return getBuyableAmount("f", 12).add(1).mul(2) },
+            display() { return getBuyableAmount("f", 12).gte(1) ? `Each upgrade raises your patreon effect on cash gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Create a patreon, boosting your cash gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
+            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            effect() { return new Decimal(1.1).pow(getBuyableAmount("f", 12).sub(1)).mul(player[this.layer].fans.clampMin(10).log2().sqrt()).add(1) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount("f", 12, getBuyableAmount("f", 12).add(1))
+            }
+        },
+        13: {
+            title: "Twitch",
+            cost() { return getBuyableAmount("f", 13).add(1).mul(2) },
+            display() { return getBuyableAmount("f", 13).gte(1) ? `Each upgrade raises your twitch effect on experience gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Create a twitch where you stream development and get instant feedback, boosting your experience gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
+            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            effect() { return new Decimal(1.1).pow(getBuyableAmount("f", 13).sub(1)).mul(player[this.layer].fans.clampMin(10).log2().pow(0.25)).add(1) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount("f", 13, getBuyableAmount("f", 13).add(1))
+            }
+        },
+        14: {
+            title: "Github",
+            cost() { return getBuyableAmount("f", 14).add(1).mul(3) },
+            display() { return getBuyableAmount("f", 14).gte(1) ? `Each upgrade raises your github effect on update gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Add a link in the game to the github repo, boosting your update gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
+            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            effect() { return new Decimal(1.1).pow(getBuyableAmount("f", 14).sub(1)).mul(player[this.layer].fans.clampMin(10).log10().pow(0.25)).add(1) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount("f", 14, getBuyableAmount("f", 14).add(1))
+            }
+        }
+    }
 })

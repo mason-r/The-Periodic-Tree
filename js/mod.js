@@ -40,17 +40,16 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = layers.e.effect()
+	gain = gain.pow(buyableEffect("c", 11))
+
 	gain = gain.mul(clickableEffect("r", 11))
+	gain = gain.mul(layers.f.effect().productivityMult)
 	if (hasUpgrade("u", 11)) gain = gain.mul(2)
 	if (hasUpgrade("u", 12)) gain = gain.mul(1.5)
 	if (hasUpgrade("u", 22)) gain = gain.mul(upgradeEffect("u", 22))
-	if (hasUpgrade("c", 11)) gain = gain.mul(2)
-	if (hasUpgrade("c", 12)) gain = gain.mul(2)
-	if (hasUpgrade("e", 21)) gain = gain.mul(2)
-	if (hasUpgrade("e", 22)) gain = gain.mul(2)
-	if (hasUpgrade("e", 23)) gain = gain.mul(2)
-
-	gain = gain.pow(buyableEffect("c", 11))
+	for (let r = 1; r <= 2; r++)
+		for (let c = 1; c <= 4; c++)
+			if (hasUpgrade("c", r * 10 + c)) gain = gain.mul(2)
 	
 	// Apply productivity slow downs
 	const slowDownModifier = player.points.add(gain.sqrt()).sub(player.e.total.times(player.r.points.add(1))).clampMin(1)
@@ -83,11 +82,12 @@ function addedPlayerData() { return {
 // Display extra things at the top of the page
 var displayThings = [
 	"<br/>",
-	() => player.points < 24 * 3 ? "" :
-		  player.points < 24 * 365 * 3 ?      `equivalent to ${player.points.div(24).toFixed(2)} days of work` :
-		  player.points < 24 * 365 * 300 ?    `equivalent to ${player.points.div(24 * 365).toFixed(2)} years of work` :
-		  player.points < 24 * 365 * 300000 ? `equivalent to ${player.points.div(24 * 365 * 100).toFixed(2)} centuries of work` :
-		  									  `equivalent to ${player.points.div(24 * 365 * 100000).toFixed(2)} eons of work`,
+	() => player.points < 24 * 3 ? "<br/>" :
+		  player.points < 24 * 365 * 3 ?          `equivalent to ${player.points.div(24).toFixed(2)} days of work` :
+		  player.points < 24 * 365 * 300 ?        `equivalent to ${player.points.div(24 * 365).toFixed(2)} years of work` :
+		  player.points < 24 * 365 * 3000000 ?    `equivalent to ${player.points.div(24 * 365 * 100).toFixed(2)} centuries of work` :
+		  player.points < 24 * 365 * 3000000000 ? `equivalent to ${player.points.div(24 * 365 * 1000000).toFixed(2)} epochs of work` :
+		  									      `equivalent to ${player.points.div(24 * 365 * 1000000000).toFixed(2)} eons of work`,
 	() => player.hideIntro ? "" : "<br/>",
 	() => player.hideIntro ? "" : "You've started working on this great little game idea you've had kicking around for awhile!",
 	() => player.hideIntro ? "" : "Unfortunately, the longer you work on it the harder it becomes to keep working on :/",
@@ -98,7 +98,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return player.points.gte(new Decimal("e1000"))
 }
 
 
