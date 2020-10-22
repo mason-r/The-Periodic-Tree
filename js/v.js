@@ -395,7 +395,7 @@ function loadVue() {
 				ghost: tmp[layer].layerShown == 'ghost',
 				hidden: !tmp[layer].layerShown,
 				locked: !player[layer].unlocked && !tmp[layer].baseAmount.gte(tmp[layer].requires),
-				notify: tmp[layer].notify,
+				notify: tmp[layer].notify || (!player[layer].unlocked && tmp[layer].baseAmount.gte(tmp[layer].requires)),
 				can: player[layer].unlocked,
 			}"
 			v-bind:style="[layerunlocked(layer) ? {

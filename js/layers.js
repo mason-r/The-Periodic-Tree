@@ -27,7 +27,7 @@ addLayer("u", {
         return new Decimal(1)
     },
     canBuyMax() { return true },
-    doReset(resettingLayer) { if (resettingLayer != 'u') layerDataReset(this.layer, [ 'best' ]) },
+    doReset(resettingLayer) { if (resettingLayer != 'u') layerDataReset(this.layer, hasMilestone("s", 0) ? [ 'best', 'upgrades' ] : [ 'best' ]) },
     resetDescription: "Release new build for ",
     roundUpCost: true,
     row: 0, // Row the layer is in on the tree (0 is the first row)
@@ -96,9 +96,9 @@ addLayer("e", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    effect() { return player.e.points.sqrt().add(1) },
+    effect() { return player.e.points.pow(buyableEffect("s", 11)).sqrt().add(1) },
     doReset(resettingLayer) {
-        if (['r'].includes(resettingLayer)) {
+        if (['r', 's'].includes(resettingLayer)) {
             const shouldKeepUpgrades = {
                 11: hasMilestone("r", 2),
                 12: hasMilestone("r", 0),
@@ -118,7 +118,7 @@ addLayer("e", {
         }
     },
     resetDescription: "Start Over for ",
-    effectDescription() { return `multiplying base productivity by ${this.effect().toFixed(2)}. Your total experience is also delaying the productivity slow down by ${player[this.layer].total.times(player.r.points.add(1))} hours.` },
+    effectDescription() { return `multiplying base productivity by ${format(this.effect())}. Your total experience is also delaying the productivity slow down by ${format(player[this.layer].total.times(layers.r.effect()))} hours.` },
     roundUpCost: true,
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -132,7 +132,7 @@ addLayer("e", {
             title: "Learn a new programming language",
             description: "Wow! This programming language is so much easier to write in! Total experience now effects update gain",
             cost: new Decimal(2),
-            effect() { return player.e.total.times(player.r.points.add(1)).clampMin(1).log10().add(1) }
+            effect() { return player.e.total.times(layers.r.effect()).clampMin(1).log10().add(1) }
         },
         12: {
             title: "Contact publisher",
@@ -191,7 +191,7 @@ addLayer("c", {
         return new Decimal(1)
     },
     doReset(resettingLayer) {
-        if (['f'].includes(resettingLayer)) {
+        if (['s', 'f'].includes(resettingLayer)) {
             const shouldKeepUpgrades = {
                 11: hasMilestone("f", 0),
                 12: hasMilestone("f", 1),
@@ -200,7 +200,11 @@ addLayer("c", {
                 21: hasMilestone("f", 4),
                 22: hasMilestone("f", 5),
                 23: hasMilestone("f", 6),
-                24: hasMilestone("f", 7)
+                24: hasMilestone("f", 7),
+                111: hasMilestone("s", 3),
+                112: hasMilestone("s", 3),
+                113: hasMilestone("s", 3),
+                114: hasMilestone("s", 3)
             }
             const upgradesToKeep = []
             for (let upgrade of player[this.layer].upgrades) {
@@ -232,9 +236,9 @@ addLayer("c", {
         11: {
             title: "Upgrade hardware",
             cost() { return new Decimal(100).mul(new Decimal(2).pow(getBuyableAmount("c", 11))).round() },
-            display() { return `Each upgrade raises your base productivity to the ^1.1 power.<br/>Next upgrade cost: ${this.cost()} cash` },
+            display() { return `Each upgrade additively raises your base productivity to the +.25 power.<br/><br/>Currently: ^${format(this.effect())}<br/><br/>Next upgrade cost: ${format(this.cost())} cash` },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
-            effect() { return new Decimal(1.1).pow(getBuyableAmount("c", 11)) },
+            effect() { return new Decimal(0.25).add(buyableEffect("s", 22)).mul(getBuyableAmount("c", 11)).add(1) },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount("c", 11, getBuyableAmount("c", 11).add(1))
@@ -346,7 +350,7 @@ addLayer("c", {
     },
     tabFormat: [
         "main-display",
-        ["display-text", function() { return hasUpgrade("e", 13) && tmp.c.resetGain.times ? `(${tmp.c.resetGain.times(layers.c.revenue(1)).toFixed(2)}/sec)` : "" }],
+        ["display-text", function() { return hasUpgrade("e", 13) && tmp.c.resetGain.times ? `(${format(tmp.c.resetGain.times(layers.c.revenue(1)))}/sec)` : "" }],
         "blank",
         "prestige-button",
         "blank",
@@ -398,13 +402,14 @@ addLayer("r", {
         return new Decimal(1)
     },
     resetDescription: "Use all your experience to re-design your game framework for ",
-    effectDescription() { return `multiplying all bonuses based on total experience by ${player[this.layer].points.add(1).toFixed(2)}.` },
+    effect() { return player[this.layer].points.pow(player[this.layer].points).add(1) },
+    effectDescription() { return `multiplying all bonuses based on total experience by ${format(this.effect())}.` },
     roundUpCost: true,
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "r", description: "Re-design your game framework", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return player.u.best.gte(50) || player[this.layer].total.gte(1) },
+    layerShown(){ return player.u.best.gte(30) || player[this.layer].total.gte(1) },
     milestones: {
         0: {
             requirementDescription: "1 refactor",
@@ -545,6 +550,172 @@ addLayer("r", {
     }
 })
 
+addLayer("s", {
+    name: "school", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+        total: new Decimal(0),
+        points: new Decimal(0),
+        classes: new Decimal(0),
+        time: new Decimal(0),
+        "auto-update": false,
+        "auto-upgradehardware": false,
+        "auto-experience": false,
+        "auto-cash": false
+    }},
+    branches: [ 'e', 'c' ],
+    color: "#917567",
+    requires: new Decimal(1e6), // Can be a function that takes requirement increases into account
+    base: new Decimal(8),
+    resource: "enrollments", // Name of prestige currency
+    baseResource: "experience", // Name of resource prestige is based on
+    baseAmount() {return player.e.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 1.2, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    resetDescription: "Apply to another college for ",
+    effect() {
+        return new Decimal(1).add(new Decimal(0.05).mul(player.s.points))
+    },
+    effectDescription() {
+        return `which raise your class effects to the ^${format(this.effect())} power.`
+    },
+    roundUpCost: true,
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "s", description: "Apply for college", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    layerShown(){ return (player.r.total.gte(1) && player.f.best.gte(1)) || player[this.layer].total.gte(1) },
+    milestones: {
+        0: {
+            requirementDescription: "1 class taken",
+            effectDescription: "Retain all Update upgrades",
+            done() { return player[this.layer].classes.gte(1) }
+        },
+        1: {
+            requirementDescription: "2 classes taken",
+            effectDescription: "Automatically reset Update layer",
+            done() { return player[this.layer].classes.gte(2) },
+            toggles: [["s", "auto-update"]]
+        },
+        2: {
+            requirementDescription: "3 classes taken",
+            effectDescription: "Automatically buy Upgrade Hardware every second",
+            done() { return player[this.layer].classes.gte(3) },
+            toggles: [["s", "auto-upgradehardware"]],
+            unlocked() { return player[this.layer].classes.gte(1) }
+        },
+        3: {
+            requirementDescription: "4 classes taken",
+            effectDescription: "Retain Cash Revenue upgrades",
+            done() { return player[this.layer].classes.gte(4) },
+            unlocked() { return player[this.layer].classes.gte(2) }
+        },
+        4: {
+            requirementDescription: "5 classes taken",
+            effectDescription: "Automatically reset Experience and Cash layers every second<br/>(Recommended to only do 1 at a time)",
+            done() { return player[this.layer].classes.gte(5) },
+            toggles: [["s", "auto-experience"], ["s", "auto-cash"]],
+            unlocked() { return player[this.layer].classes.gte(3) }
+        }
+    },
+    buyables: {
+        rows: 2,
+        cols: 2,
+        11: {
+            title: "CS 1337 Computer Science",
+            cost() { return getBuyableAmount("s", 11).add(6).pow10() },
+            display() { return `Each class additively raises the effectiveness of experience on productivity to the power of +.025<br/><br/>Currently: ^${format(this.effect())}<br/><br/>Next upgrade cost: ${format(this.cost())} cash` },
+            canAfford() { return player.c.points.gte(this.cost()) && player.s.total.gte(1) },
+            effect() { return getBuyableAmount("s", 11).pow(layers.s.effect()).mul(0.025).add(1) },
+            buy() {
+                player.c.points = player.c.points.sub(this.cost())
+                setBuyableAmount("s", 11, getBuyableAmount("s", 11).add(1))
+                player[this.layer].classes = player[this.layer].classes.add(1)
+            }
+        },
+        12: {
+            title: "CS 2305 Discrete Math",
+            cost() { return getBuyableAmount("s", 12).mul(2).add(8).pow10() },
+            display() { return `Each class additively lowers the productivity slowdown modifier to the power of -.05<br/><br/>Currently: ^${format(this.effect())}<br/><br/>Next upgrade cost: ${format(this.cost())} cash` },
+            canAfford() { return player.c.points.gte(this.cost()) },
+            effect() { return getBuyableAmount("s", 12).pow(layers.s.effect()).mul(-0.05).add(1) },
+            buy() {
+                player.c.points = player.c.points.sub(this.cost())
+                setBuyableAmount("s", 12, getBuyableAmount("s", 12).add(1))
+                player[this.layer].classes = player[this.layer].classes.add(1)
+            }
+        },
+        21: {
+            title: "CS 3354 Software Engineering",
+            cost() { return getBuyableAmount("s", 21).mul(3).add(9).pow10() },
+            display() { return `Each class divides this layer's automation milestones interval by 1.5<br/><br/>Currently: /${format(this.effect())}<br/><br/>Next upgrade cost: ${format(this.cost())} cash` },
+            canAfford() { return player.c.points.gte(this.cost()) },
+            effect() { return new Decimal(1.5).pow(getBuyableAmount("s", 21).pow(layers.s.effect())) },
+            buy() {
+                player.c.points = player.c.points.sub(this.cost())
+                setBuyableAmount("s", 21, getBuyableAmount("s", 21).add(1))
+                player[this.layer].classes = player[this.layer].classes.add(1)
+            }
+        },
+        22: {
+            title: "CS 4352 Human Computer Interactions",
+            cost() { return getBuyableAmount("s", 22).mul(4).add(10).pow10() },
+            display() { return `Each class increases the effect of upgrading hardware by +.05<br/><br/>Currently: +${format(this.effect())}<br/><br/>Next upgrade cost: ${format(this.cost())} cash` },
+            canAfford() { return player.c.points.gte(this.cost()) },
+            effect() { return getBuyableAmount("s", 22).pow(layers.s.effect()).mul(0.05) },
+            buy() {
+                player.c.points = player.c.points.sub(this.cost())
+                setBuyableAmount("s", 22, getBuyableAmount("s", 22).add(1))
+                player[this.layer].classes = player[this.layer].classes.add(1)
+            }
+        }
+    },
+    tabFormat: [
+        "main-display",
+        "blank",
+        "prestige-button",
+        "blank",
+        ["display-text", function() { return `You've taken a total of ${format(player.s.classes)} classes` }],
+        "milestones",
+        "buyables"
+    ],
+    update(diff) {
+        if (hasMilestone("s", 1) && player.s["auto-update"] && canReset("u")) {
+            doReset("u")
+        }
+        player.s.time = player.s.time.add(diff)
+        if (player.s.time.gte(new Decimal(1).div(buyableEffect("s", 21)))) {
+            player.s.time = new Decimal(0)
+            if (hasMilestone("s", 2) && player.s["auto-upgradehardware"] && canAffordPurchase("c", layers.c.buyables[11], layers.c.buyables[11].cost())) {
+                buyBuyable("c", 11)
+            }
+            if (hasMilestone("s", 4)) {
+                if (player.s["auto-experience"] && canReset("e")) {
+                    doReset("e")
+                }
+                if (player.s["auto-cash"] && canReset("c")) {
+                    doReset("c")
+                }
+            }
+        }
+    },
+    shouldNotify() {
+        return canAffordPurchase("c", layers[this.layer].buyables[11], layers[this.layer].buyables[11].cost()) ||
+               canAffordPurchase("c", layers[this.layer].buyables[12], layers[this.layer].buyables[12].cost()) ||
+               canAffordPurchase("c", layers[this.layer].buyables[21], layers[this.layer].buyables[21].cost()) ||
+               canAffordPurchase("c", layers[this.layer].buyables[22], layers[this.layer].buyables[22].cost())
+    }
+})
+
 addLayer("f", {
     name: "fame", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "F", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -609,7 +780,7 @@ addLayer("f", {
     hotkeys: [
         {key: "f", description: "Elevate your social status", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return player.u.best.gte(50) || player[this.layer].best.gte(1) },
+    layerShown(){ return player.u.best.gte(30) || player[this.layer].best.gte(1) },
     update(diff) {
         if (player[this.layer].points.gte(1)) {
             player[this.layer].fans = player[this.layer].fans.mul(new Decimal(2).pow(new Decimal(diff).div(this.effect().doubleFrequency)))
@@ -671,7 +842,10 @@ addLayer("f", {
             cost() { return getBuyableAmount("f", 11).add(1) },
             display() { return getBuyableAmount("f", 11).gte(1) ? `Each upgrade raises your discord effect on fan gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Create a discord, boosting your fan gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
-            effect() { return new Decimal(1.1).pow(getBuyableAmount("f", 11).sub(1)).mul(player[this.layer].fans.clampMin(10).log10().sqrt()).add(1) },
+            effect() {
+                if (getBuyableAmount("f", 11).lte(0)) return new Decimal(1)
+                return new Decimal(1.1).pow(getBuyableAmount("f", 11).sub(1)).mul(player[this.layer].fans.clampMin(10).log10().pow(0.3)).add(1)
+            },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount("f", 11, getBuyableAmount("f", 11).add(1))
@@ -682,7 +856,10 @@ addLayer("f", {
             cost() { return getBuyableAmount("f", 12).add(1).mul(2) },
             display() { return getBuyableAmount("f", 12).gte(1) ? `Each upgrade raises your patreon effect on cash gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Create a patreon, boosting your cash gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
-            effect() { return new Decimal(1.1).pow(getBuyableAmount("f", 12).sub(1)).mul(player[this.layer].fans.clampMin(10).log2().sqrt()).add(1) },
+            effect() {
+                if (getBuyableAmount("f", 12).lte(0)) return new Decimal(1)
+                return new Decimal(1.1).pow(getBuyableAmount("f", 12).sub(1)).mul(player[this.layer].fans.clampMin(10).log2().sqrt()).add(1)
+            },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount("f", 12, getBuyableAmount("f", 12).add(1))
@@ -693,7 +870,10 @@ addLayer("f", {
             cost() { return getBuyableAmount("f", 13).add(1).mul(2) },
             display() { return getBuyableAmount("f", 13).gte(1) ? `Each upgrade raises your twitch effect on experience gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Create a twitch where you stream development and get instant feedback, boosting your experience gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
-            effect() { return new Decimal(1.1).pow(getBuyableAmount("f", 13).sub(1)).mul(player[this.layer].fans.clampMin(10).log2().pow(0.25)).add(1) },
+            effect() {
+                if (getBuyableAmount("f", 11).lte(0)) return new Decimal(1)
+                return new Decimal(1.1).pow(getBuyableAmount("f", 13).sub(1)).mul(player[this.layer].fans.clampMin(10).log2().pow(0.25)).add(1)
+            },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount("f", 13, getBuyableAmount("f", 13).add(1))
@@ -704,7 +884,10 @@ addLayer("f", {
             cost() { return getBuyableAmount("f", 14).add(1).mul(3) },
             display() { return getBuyableAmount("f", 14).gte(1) ? `Each upgrade raises your github effect on update gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Add a link in the game to the github repo, boosting your update gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
-            effect() { return new Decimal(1.1).pow(getBuyableAmount("f", 14).sub(1)).mul(player[this.layer].fans.clampMin(10).log10().pow(0.25)).add(1) },
+            effect() {
+                if (getBuyableAmount("f", 11).lte(0)) return new Decimal(1)
+                return new Decimal(1.1).pow(getBuyableAmount("f", 14).sub(1)).mul(player[this.layer].fans.clampMin(10).log10().pow(0.25)).add(1)
+            },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount("f", 14, getBuyableAmount("f", 14).add(1))

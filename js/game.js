@@ -70,6 +70,10 @@ function shouldNotify(layer){
 		}
 	}
 
+	if (layers[layer].type === "static" && (layers[layer].canBuyMax == null || !layers[layer].canBuyMax()) && canReset(layer)) {
+		return true
+	}
+
 	if (layers[layer].shouldNotify){
 		return layers[layer].shouldNotify()
 	}
