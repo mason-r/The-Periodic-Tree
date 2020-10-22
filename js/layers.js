@@ -766,7 +766,7 @@ addLayer("f", {
             if (getBuyableAmount("f", 11).gte(1)) text += `<br/>Multiplies fan gain by ${format(fanMult)}x due to discord`
             if (getBuyableAmount("f", 12).gte(1)) text += `<br/>Multiplies cash gain by ${format(cashMult)}x due to patreon`
             if (getBuyableAmount("f", 13).gte(1)) text += `<br/>Multiplies experience gain by ${format(expMult)}x due to twitch`
-            if (getBuyableAmount("f", 14).gte(1)) text += `<br/>Multiplies upgrade gain by ${format(upgMult)}x due to github`
+            if (getBuyableAmount("f", 14).gte(1)) text += `<br/>Multiplies update gain by ${format(upgMult)}x due to github`
             return text
         }],
         "blank",
