@@ -16,6 +16,13 @@ function commaFormat(num, precision) {
 	return num.toStringWithDecimalPlaces(precision).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
+
+function regularFormat(num, precision) {
+	if (num === null || num === undefined) return "NaN"
+	if (num.mag < 0.001) return (0).toFixed(precision)
+	return num.toStringWithDecimalPlaces(precision)
+}
+
 function fixValue(x, y = 0) {
 	return x || new Decimal(y)
 }
@@ -41,7 +48,7 @@ function format(decimal, precision=2) {
 	} else if (decimal.gte("1e1000")) return exponentialFormat(decimal, 0)
 	else if (decimal.gte(1e9)) return exponentialFormat(decimal, precision)
 	else if (decimal.gte(1e3)) return commaFormat(decimal, 0)
-	else return commaFormat(decimal, precision)
+	else return regularFormat(decimal, precision)
 }
 
 function formatWhole(decimal) {
@@ -157,6 +164,15 @@ function fixSave() {
 	{
 		if (player[layer].best !== undefined) player[layer].best = new Decimal (player[layer].best)
 		if (player[layer].total !== undefined) player[layer].total = new Decimal (player[layer].total)
+
+		if (layers[layer].tabFormat && !Array.isArray(layers[layer].tabFormat)) {
+		
+			if(!Object.keys(layers[layer].tabFormat).includes(player.subtabs[layer].mainTabs)) player.subtabs[layer].mainTabs = Object.keys(layers[layer].tabFormat)[0]
+		}
+		if (layers[layer].microtabs) {
+			for (item in layers[layer].microtabs)
+				if(!Object.keys(layers[layer].microtabs[item]).includes(player.subtabs[layer][item])) player.subtabs[layer][item] = Object.keys(layers[layer].microtabs[item])[0]
+		}
 	}
 }
 
@@ -206,6 +222,8 @@ function load() {
 	versionCheck();
 	changeTheme();
 	changeTreeQuality();
+	updateLayers()
+
 	setupTemp();
 	updateTemp();
 	updateTemp();
@@ -445,6 +463,10 @@ function canAffordPurchase(layer, thing, cost) {
 	else {
 		return !(player[layer].points.lt(cost))
 	}
+}
+
+function buyUpgrade(layer, id) {
+	buyUpg(layer, id)
 }
 
 function buyUpg(layer, id) {

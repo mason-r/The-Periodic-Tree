@@ -5,7 +5,7 @@ var gameEnded = false;
 
 // Don't change this
 const TMT_VERSION = {
-	tmtNum: "2.1.1",
+	tmtNum: "2.1.3.1",
 	tmtName: "We should have thought of this sooner!"
 }
 
@@ -105,7 +105,7 @@ function rowReset(row, layer) {
 }
 
 function layerDataReset(layer, keep = []) {
-	let storedData = {}
+	let storedData = {unlocked: player[layer].unlocked} // Always keep unlocked
 
 	for (thing in keep) {
 		if (player[layer][keep[thing]] !== undefined)
@@ -115,8 +115,10 @@ function layerDataReset(layer, keep = []) {
 	player[layer] = layers[layer].startData();
 	player[layer].upgrades = []
 	player[layer].milestones = []
-	player[layer].challenges = []
+	player[layer].challenges = getStartChallenges(layer)
 	resetBuyables(layer)
+	if (layers[layer].clickables && !player[layer].clickables) 
+		player[layer].clickables = getStartClickables(layer)
 
 	for (thing in storedData) {
 		player[layer][thing] =storedData[thing]
@@ -287,12 +289,33 @@ function gameLoop(diff) {
 
 	addTime(diff)
 	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
-	for (layer in layers){
-		if (layers[layer].update) layers[layer].update(diff);
+
+	for (x = 0; x <= maxRow; x++){
+		for (item in TREE_LAYERS[x]) {
+			let layer = TREE_LAYERS[x][item].layer
+			if (layers[layer].update) layers[layer].update(diff);
+		}
 	}
 
-	for (layer in layers){
-		if (layers[layer].automate) layers[layer].automate();
+	for (row in OTHER_LAYERS){
+		for (item in OTHER_LAYERS[row]) {
+			let layer = OTHER_LAYERS[row][item].layer
+			if (layers[layer].update) layers[layer].update(diff);
+		}
+	}	
+
+	for (x = maxRow; x >= 0; x--){
+		for (item in TREE_LAYERS[x]) {
+			let layer = TREE_LAYERS[x][item].layer
+			if (layers[layer].automate) layers[layer].automate();
+		}
+	}
+
+	for (row in OTHER_LAYERS){
+		for (item in OTHER_LAYERS[row]) {
+			let layer = OTHER_LAYERS[row][item].layer
+			if (layers[layer].automate) layers[layer].automate();
+		}
 	}
 
 	for (layer in layers){

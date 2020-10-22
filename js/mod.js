@@ -1,6 +1,7 @@
 let modInfo = {
 	name: "The Game Dev Tree",
 	id: "gamedevtree",
+	author: "thepaperpilot",
 	pointsName: "hours of work",
 	discordName: "The Paper Pilot Community Server",
 	discordLink: "https://discord.gg/WzejVAx",

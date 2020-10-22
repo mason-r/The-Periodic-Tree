@@ -27,7 +27,7 @@ addLayer("u", {
         return new Decimal(1)
     },
     canBuyMax() { return true },
-    doReset(resettingLayer) { if (resettingLayer != 'u') layerDataReset(this.layer, hasMilestone("s", 0) ? [ 'best', 'upgrades' ] : [ 'best' ]) },
+    doReset(resettingLayer) { if (resettingLayer != 'u') layerDataReset(this.layer, hasMilestone("s", 0) ? [ 'upgrades' ] : []) },
     resetDescription: "Release new build for ",
     roundUpCost: true,
     row: 0, // Row the layer is in on the tree (0 is the first row)
@@ -113,7 +113,7 @@ addLayer("e", {
                     upgradesToKeep.push(upgrade)
                 }
             }
-            layerDataReset(this.layer, [ "unlocked", "milestones" ])
+            layerDataReset(this.layer)
             player[this.layer].upgrades = upgradesToKeep
         }
     },
@@ -124,7 +124,7 @@ addLayer("e", {
     hotkeys: [
         {key: "e", description: "Start a new game idea", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return player.u.best.gte(3) || player[this.layer].total.gte(1) },
+    layerShown(){ return player.u.best.gte(3) },
     upgrades: {
         rows: 2,
         cols: 3,
@@ -212,7 +212,7 @@ addLayer("c", {
                     upgradesToKeep.push(upgrade)
                 }
             }
-            layerDataReset(this.layer, [ "unlocked", "milestones" ])
+            layerDataReset(this.layer, [ "milestones" ])
             player[this.layer].upgrades = upgradesToKeep
         }
     },
@@ -222,7 +222,7 @@ addLayer("c", {
     hotkeys: [
         {key: "c", description: "Sell your game", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return hasUpgrade("e", 12) || player[this.layer].total.gte(1) },
+    layerShown(){ return hasUpgrade("e", 12) },
     milestones: {
         0: {
             requirementDescription: "1 total cash",
@@ -409,7 +409,7 @@ addLayer("r", {
     hotkeys: [
         {key: "r", description: "Re-design your game framework", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return player.u.best.gte(30) || player[this.layer].total.gte(1) },
+    layerShown(){ return player.u.best.gte(30) },
     milestones: {
         0: {
             requirementDescription: "1 refactor",
@@ -593,7 +593,7 @@ addLayer("s", {
     hotkeys: [
         {key: "s", description: "Apply for college", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return (player.r.total.gte(1) && player.f.best.gte(1)) || player[this.layer].total.gte(1) },
+    layerShown() { return (player.r.total.gte(1) && player.f.best.gte(1)) },
     milestones: {
         0: {
             requirementDescription: "1 class taken",
@@ -780,7 +780,7 @@ addLayer("f", {
     hotkeys: [
         {key: "f", description: "Elevate your social status", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return player.u.best.gte(30) || player[this.layer].best.gte(1) },
+    layerShown() { return player.u.best.gte(30) },
     update(diff) {
         if (player[this.layer].points.gte(1)) {
             player[this.layer].fans = player[this.layer].fans.mul(new Decimal(2).pow(new Decimal(diff).div(this.effect().doubleFrequency)))

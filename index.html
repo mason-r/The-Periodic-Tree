@@ -13,7 +13,7 @@
 	<script type="text/javascript" src="js/utils.js"></script>
 	<script type="text/javascript" src="js/v.js"></script>
 	<script type="text/javascript" src="js/canvas.js"></script>
-
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
 </head>
 <body onload="load()">
 	<div id="app">
@@ -32,8 +32,8 @@
 			<button class="longUpg can" onclick="hardReset(true)">Play Again</button>&nbsp;&nbsp;&nbsp;&nbsp;<button class="longUpg can" onclick="keepGoing()">Keep Going</button>
 			<br><br><br>
 			<span v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink" target="_blank">{{modInfo.discordName}}</a><br></span>
-			<a class="link" href="https://discord.gg/F3xveHV" target="_blank">The Modding Tree Discord</a><br>
-			<a class="link" href="http://discord.gg/wwQfgPa" target="_blank">Main Prestige Tree Discord</a><br>
+			<a class="link" href="https://discord.gg/F3xveHV" target="_blank" v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">The Modding Tree Discord</a><br>
+			<a class="link" href="http://discord.gg/wwQfgPa" target="_blank" v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a><br>
 			<br><br>
 			If you would like to speedrun this, press Play Again and record your attempt, then submit on the Discord Server in the channel #speedrun-submissions.
 			<br><br><br>
@@ -49,6 +49,10 @@
 			<h2>{{modInfo.name}}</h2>
 			<br>
 			<h3>{{VERSION.withName}}</h3>
+			<span v-if="modInfo.author">
+				<br>
+				Made by {{modInfo.author}}	
+			</span>
 			<br>
 			The Modding Tree {{TMT_VERSION.tmtNum}} by Acamaeda
 			<br>
@@ -148,9 +152,9 @@
 				<span v-if="canGenPoints()"  class="overlayThing">({{format(getPointGen())}}/sec)</span>
 				<div v-for="thing in tmp.displayThings" class="overlayThing"><span v-if="thing" v-html="thing"></span></div>
 			</div>
-			<span v-for="row in TREE_LAYERS"><table>
+			<span v-for="(n, row) in (maxRow + 1)"><table>
 				<td v-if="player.tab=='tree'&& someLayerUnlocked(row) && row != 0" class="left"><br><br><img class="remove" src="remove.png" onclick="resetRow(row)"></img></td>
-				<td v-for="node in row"><layer-node :layer='node.layer' :abb='layers[node.layer].symbol'></layer-node></td>
+				<td v-for="node in TREE_LAYERS[row]"><layer-node :layer='node.layer' :abb='layers[node.layer].symbol'></layer-node></td>
 				<table><button class="treeNode hidden"></button></td></table>
 			</span>
 			<canvas id="treeCanvas" class="canvas"></canvas>
