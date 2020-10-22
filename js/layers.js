@@ -709,6 +709,7 @@ addLayer("s", {
         }
     },
     shouldNotify() {
+        if (!player.s.unlocked) return false
         return canAffordPurchase("c", layers[this.layer].buyables[11], layers[this.layer].buyables[11].cost()) ||
                canAffordPurchase("c", layers[this.layer].buyables[12], layers[this.layer].buyables[12].cost()) ||
                canAffordPurchase("c", layers[this.layer].buyables[21], layers[this.layer].buyables[21].cost()) ||
