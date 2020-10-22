@@ -547,7 +547,16 @@ addLayer("r", {
             player.r.optimizeFormulasHoursWorked = player.r.optimizeFormulasHoursWorked.add(tmp.pointGen.mul(diff))
         else if (getClickableState("r", 14))
             player.r.rollLibraryHoursWorked = player.r.rollLibraryHoursWorked.add(tmp.pointGen.mul(diff))
-    }
+    },
+    tabFormat: [
+        "main-display",
+        "blank",
+        "prestige-button",
+        "blank",
+        "clickables",
+        "blank",
+        "milestones"
+    ]
 })
 
 addLayer("s", {
@@ -684,9 +693,10 @@ addLayer("s", {
         "blank",
         "prestige-button",
         "blank",
+        "buyables",
+        "blank",
         ["display-text", function() { return `You've taken a total of ${format(player.s.classes)} classes` }],
-        "milestones",
-        "buyables"
+        "milestones"
     ],
     update(diff) {
         if (hasMilestone("s", 1) && player.s["auto-update"] && canReset("u")) {
