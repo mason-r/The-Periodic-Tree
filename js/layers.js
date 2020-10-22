@@ -34,7 +34,7 @@ addLayer("u", {
     hotkeys: [
         {key: "u", description: "Release an update", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){return true},
+    layerShown() { return true },
     upgrades: {
         rows: 2,
         cols: 2,
@@ -124,7 +124,7 @@ addLayer("e", {
     hotkeys: [
         {key: "e", description: "Start a new game idea", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return player.u.best.gte(3) },
+    layerShown(){ return player[this.layer].unlocked || player.u.best.gte(3) },
     upgrades: {
         rows: 2,
         cols: 3,
@@ -222,7 +222,7 @@ addLayer("c", {
     hotkeys: [
         {key: "c", description: "Sell your game", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return hasUpgrade("e", 12) },
+    layerShown() { return player[this.layer].unlocked || hasUpgrade("e", 12) },
     milestones: {
         0: {
             requirementDescription: "1 total cash",
@@ -409,7 +409,7 @@ addLayer("r", {
     hotkeys: [
         {key: "r", description: "Re-design your game framework", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown(){ return player.u.best.gte(30) },
+    layerShown() { return player[this.layer].unlocked || player.u.best.gte(30) },
     milestones: {
         0: {
             requirementDescription: "1 refactor",
@@ -593,7 +593,7 @@ addLayer("s", {
     hotkeys: [
         {key: "s", description: "Apply for college", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown() { return (player.r.total.gte(1) && player.f.best.gte(1)) },
+    layerShown() { return player[this.layer].unlocked || (player.r.total.gte(1) && player.f.best.gte(1)) },
     milestones: {
         0: {
             requirementDescription: "1 class taken",
@@ -780,7 +780,7 @@ addLayer("f", {
     hotkeys: [
         {key: "f", description: "Elevate your social status", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
-    layerShown() { return player.u.best.gte(30) },
+    layerShown() { return player[this.layer].unlocked || player.u.best.gte(30) },
     update(diff) {
         if (player[this.layer].points.gte(1)) {
             player[this.layer].fans = player[this.layer].fans.mul(new Decimal(2).pow(new Decimal(diff).div(this.effect().doubleFrequency)))
