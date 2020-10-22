@@ -783,8 +783,9 @@ addLayer("f", {
         "blank",
         "prestige-button",
         "blank",
-        "milestones",
-        "buyables"
+        "buyables",
+        "blank",
+        "milestones"
     ],
     roundUpCost: true,
     row: 2, // Row the layer is in on the tree (0 is the first row)
