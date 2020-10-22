@@ -27,7 +27,7 @@ addLayer("u", {
         return new Decimal(1)
     },
     canBuyMax() { return true },
-    doReset(resettingLayer) { if (resettingLayer != 'u') layerDataReset(this.layer, hasMilestone("s", 0) ? [ 'upgrades' ] : []) },
+    doReset(resettingLayer) { if (resettingLayer != 'u') layerDataReset(this.layer, hasMilestone("s", 0) ? [ 'upgrades', 'best' ] : [ 'best' ]) },
     resetDescription: "Release new build for ",
     roundUpCost: true,
     row: 0, // Row the layer is in on the tree (0 is the first row)
