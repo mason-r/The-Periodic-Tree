@@ -71,7 +71,7 @@ function getPointGen() {
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
-	hideIntro: false,
+	showStory: true,
 	hqTree: true
 }}
 
@@ -83,13 +83,7 @@ var displayThings = [
 		  player.points < 24 * 365 * 300 ?        `equivalent to ${format(player.points.div(24 * 365))} years of work` :
 		  player.points < 24 * 365 * 3000000 ?    `equivalent to ${format(player.points.div(24 * 365 * 100))} centuries of work` :
 		  player.points < 24 * 365 * 3000000000 ? `equivalent to ${format(player.points.div(24 * 365 * 1000000))} epochs of work` :
-		  									      `equivalent to ${format(player.points.div(24 * 365 * 1000000000))} eons of work`,
-	() => player.hideIntro ? "" : "<br/>",
-	() => player.hideIntro ? "" : "You've started working on this great little game idea you've had kicking around for awhile!",
-	() => player.hideIntro ? "" : "Unfortunately, the longer you work on it the harder it becomes to keep working on :/",
-	() => player.hideIntro ? "" : "<br/>",
-	() => player.hideIntro ? "" : "Also, if you're familiar with other TPT mods, you should know this one works differently: layers are only reset along branches!",
-	() => player.hideIntro ? "" : "(Now that you've read me, you can hide this text in settings)"
+		  									      `equivalent to ${format(player.points.div(24 * 365 * 1000000000))} eons of work`
 ]
 
 // Determines when the game "ends"

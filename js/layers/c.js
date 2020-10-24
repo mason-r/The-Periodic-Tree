@@ -7,6 +7,7 @@ addLayer("c", {
     position: 1,
     resource: "cash",
     baseResource: "updates",
+    lore: "Selling your game to a publisher means needing to start over on a new one, but you can use the money to finally upgrade your PC! You're confident buying new hardware and such is the best way to work more efficiently.",
     resetDescription: "Sell game to publisher for ",
     startData() { return {
         unlocked: false,
@@ -60,6 +61,7 @@ addLayer("c", {
         }
     ],
     tabFormat: [
+        "lore",
         "main-display",
         ["display-text", function() {
                 return hasUpgrade("e", 13) && tmp.c.resetGain.times ? `(${format(tmp.c.resetGain.times(layers.c.revenue(1)))}/sec)` : ""

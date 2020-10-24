@@ -7,6 +7,9 @@ addLayer("s", {
     position: 2,
     resource: "enrollments",
     baseResource: "experience",
+    lore: "With all this programming experience, you think you finally have what it takes to go to college. It'll take a lot of money, and require a lot of experience to get accepted, but the payoff for a formal education should maybe probably help you make games faster.<br/><br/>" +
+          "Each class has very powerful effects, but costs an exorbitant amount of money. Enrolling in multiple colleges helps you take further advantage of this knowledge.<br/><br/>" +
+          "Additionally, the more classes you take the more you should be able to write quick automation scripts to push out builds and such automatically!",
     resetDescription: "Apply to another college for ",
     startData() { return {
         unlocked: false,
@@ -47,6 +50,7 @@ addLayer("s", {
         }
     ],
     tabFormat: [
+        "lore",
         "main-display",
         "blank",
         "prestige-button",

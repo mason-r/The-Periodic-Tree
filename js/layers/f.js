@@ -7,6 +7,8 @@ addLayer("f", {
     position: 3,
     resource: "fame",
     baseResource: "cash",
+    lore: "You've started accumulating a name for yourself. Some people even recognize your name, and check out your new releases. The more fans you have, the more quickly you attract more. Time to take advantage of that!<br/><br/>" +
+          "By creating social media accounts you can harness your fan base for all sorts of benefits! In fact, you may as well create some alt accounts while you're at it: the more the merrier, when fame is involved!",
     resetDescription: "Elevate your social status by ",
     startData() { return {
         unlocked: false,
@@ -50,6 +52,7 @@ addLayer("f", {
         }
     ],
     tabFormat: [
+        "lore",
         "main-display",
         ["display-text", function() {
             const { productivityMult, fanMult, cashMult, expMult, upgMult } = layers.f.effect()
@@ -80,7 +83,7 @@ addLayer("f", {
         11: {
             title: "Discord",
             cost() { return getBuyableAmount("f", 11).add(1) },
-            display() { return getBuyableAmount("f", 11).gte(1) ? `Each upgrade raises your discord effect on fan gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Create a discord, boosting your fan gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
+            display() { return getBuyableAmount("f", 11).gte(1) ? `Each alt account raises your discord effect on fan gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Create a discord, boosting your fan gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             effect() {
                 if (getBuyableAmount("f", 11).lte(0)) return new Decimal(1)
@@ -94,7 +97,7 @@ addLayer("f", {
         12: {
             title: "Patreon",
             cost() { return getBuyableAmount("f", 12).add(1).mul(2) },
-            display() { return getBuyableAmount("f", 12).gte(1) ? `Each upgrade raises your patreon effect on cash gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Create a patreon, boosting your cash gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
+            display() { return getBuyableAmount("f", 12).gte(1) ? `Each alt account raises your patreon effect on cash gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Create a patreon, boosting your cash gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             effect() {
                 if (getBuyableAmount("f", 12).lte(0)) return new Decimal(1)
@@ -108,7 +111,7 @@ addLayer("f", {
         13: {
             title: "Twitch",
             cost() { return getBuyableAmount("f", 13).add(1).mul(2) },
-            display() { return getBuyableAmount("f", 13).gte(1) ? `Each upgrade raises your twitch effect on experience gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Create a twitch where you stream development and get instant feedback, boosting your experience gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
+            display() { return getBuyableAmount("f", 13).gte(1) ? `Each alt account raises your twitch effect on experience gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Create a twitch where you stream development and get instant feedback, boosting your experience gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             effect() {
                 if (getBuyableAmount("f", 11).lte(0)) return new Decimal(1)
@@ -122,7 +125,7 @@ addLayer("f", {
         14: {
             title: "Github",
             cost() { return getBuyableAmount("f", 14).add(1).mul(3) },
-            display() { return getBuyableAmount("f", 14).gte(1) ? `Each upgrade raises your github effect on update gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Add a link in the game to the github repo, boosting your update gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
+            display() { return getBuyableAmount("f", 14).gte(1) ? `Each alt account raises your github effect on update gain to the ^1.1 power.<br/><br/>Next upgrade cost: ${this.cost()} fame` : `Add a link in the game to the github repo, boosting your update gain the more fans you have<br/><br/>Unlock cost: ${this.cost()} fame` },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             effect() {
                 if (getBuyableAmount("f", 11).lte(0)) return new Decimal(1)

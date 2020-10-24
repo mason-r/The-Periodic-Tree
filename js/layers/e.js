@@ -7,6 +7,8 @@ addLayer("e", {
     position: 0,
     resource: "experience",
     baseResource: "updates",
+    lore: "Look, maybe that idea just wasn't very good. You just saw a comment online that gave you this idea for a much better game! You can't even bare to think of your current game now that this new idea is in your head!<br/><br/>" +
+          "Don't worry, though, you're sure your time spent on that last idea will surely help you on this one.",
     resetDescription: "Start Over for ",
     startData() { return {
         unlocked: false,
@@ -59,6 +61,7 @@ addLayer("e", {
         }
     ],
     tabFormat: [
+        "lore",
         "main-display",
         "blank",
         "prestige-button",

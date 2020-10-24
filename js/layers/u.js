@@ -6,6 +6,9 @@ addLayer("u", {
     position: 0,
     resource: "updates",
     baseResource: "hours of work",
+    lore: "You've started working on this great little game idea you've had kicking around for awhile! Unfortunately, the longer you work on it the less your productivity seems to translate into hours of work :/<br/><br/>" +
+          "Also, if you're familiar with other TPT mods, you should know this one works differently: layers are only reset along branches!<br/><br/>" +
+          "(And if story isn't your thing, it can be disabled in settings)",
     resetDescription: "Release new build for ",
     startData() { return {
         unlocked: true,
@@ -41,6 +44,7 @@ addLayer("u", {
         }
     ],
     tabFormat: [
+        "lore",
         "main-display",
         "blank",
         "prestige-button",
