@@ -598,6 +598,6 @@ button > * {
 	visibility: hidden
 }
 
-#treeTab td {
+#treeTab td button {
     margin: 0 10px 0 10px;
 }
