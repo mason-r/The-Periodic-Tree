@@ -52,7 +52,6 @@ addLayer("s", {
     tabFormat: [
         "lore",
         "main-display",
-        "blank",
         "prestige-button",
         "blank",
         "buyables",

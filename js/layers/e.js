@@ -63,7 +63,6 @@ addLayer("e", {
     tabFormat: [
         "lore",
         "main-display",
-        "blank",
         "prestige-button",
         "blank",
         "upgrades"

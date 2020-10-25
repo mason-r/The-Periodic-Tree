@@ -49,7 +49,6 @@ addLayer("r", {
     tabFormat: [
         "lore",
         "main-display",
-        "blank",
         "prestige-button",
         "blank",
         "clickables",
