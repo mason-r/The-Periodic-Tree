@@ -6,8 +6,13 @@ addLayer("u", {
     position: 0,
     resource: "updates",
     baseResource: "hours of work",
-    lore: "You've started working on this great little game idea you've had kicking around for awhile! Unfortunately, the longer you work on it the less your productivity seems to translate into hours of work :/<br/><br/>" +
-          "Also, if you're familiar with other TPT mods, you should know this one works differently: layers are only reset along branches!",
+    infoboxes: {
+        lore: {
+            title: "updates",
+            body: "You've started working on this great little game idea you've had kicking around for awhile! Unfortunately, the longer you work on it the less your productivity seems to translate into hours of work :/<br/><br/>" +
+                  "Also, if you're familiar with other TPT mods, you should know this one works differently: layers are only reset along branches!"
+        }
+    },
     resetDescription: "Release new build for ",
     startData() { return {
         unlocked: true,
@@ -47,7 +52,7 @@ addLayer("u", {
         }
     ],
     tabFormat: [
-        "lore",
+        ["infobox", "lore"],
         "main-display",
         "prestige-button",
         "blank",

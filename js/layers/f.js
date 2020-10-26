@@ -7,8 +7,13 @@ addLayer("f", {
     position: 3,
     resource: "fame",
     baseResource: "cash",
-    lore: "You've started accumulating a name for yourself. Some people even recognize your name, and check out your new releases. The more fans you have, the more quickly you attract more. Time to take advantage of that!<br/><br/>" +
-          "By creating social media accounts you can harness your fan base for all sorts of benefits! In fact, you may as well create some alt accounts while you're at it: the more the merrier, when fame is involved!",
+    infoboxes: {
+        lore: {
+            title: "fame",
+            body: "You've started accumulating a name for yourself. Some people even recognize your name, and check out your new releases. The more fans you have, the more quickly you attract more. Time to take advantage of that!<br/><br/>" +
+                  "By creating social media accounts you can harness your fan base for all sorts of benefits! In fact, you may as well create some alt accounts while you're at it: the more the merrier, when fame is involved!"
+        }
+    },
     resetDescription: "Elevate your social status by ",
     startData() { return {
         unlocked: false,
@@ -65,7 +70,7 @@ addLayer("f", {
         }
     ],
     tabFormat: [
-        "lore",
+        ["infobox", "lore"],
         "main-display",
         ["display-text", function() {
             const { productivityMult, fanMult, cashMult, expMult, upgMult } = layers.f.effect()

@@ -7,8 +7,13 @@ addLayer("g", {
     position: 5,
     resource: "good will",
     baseResource: "fame",
-    lore: "Your massive amounts of fans and fame have gotten your games an amount of good will. Players are more likely to become fans, and trust your games will be good for consumers and fun to boot...<br/><br/>" +
-          "<i>However</i>, this also means there's lots to gain by cashing in that good will. Buying these upgrades will have powerful effects, but good will is permanently harder to gain the more you've earned.",
+    infoboxes: {
+        lore: {
+            title: "good will",
+            body: "Your massive amounts of fans and fame have gotten your games an amount of good will. Players are more likely to become fans, and trust your games will be good for consumers and fun to boot...<br/><br/>" +
+                  "<i>However</i>, this also means there's lots to gain by cashing in that good will. Buying these upgrades will have powerful effects, but good will is permanently harder to gain the more you've earned."
+        }
+    },
     resetDescription: "Get acknowledged as trustworthy by your fans for ",
     startData() { return {
         unlocked: false,
@@ -47,7 +52,7 @@ addLayer("g", {
         }
     ],
     tabFormat: [
-        "lore",
+        ["infobox", "lore"],
         ["display-text", () => `You have <h2 style="color: ${tmp.g.color}; text-shadow: ${tmp.g.color} 0px 0px 10px">${formatWhole(player.g.unused)}</h2> good will, ${layers.g.effectDescription()}`],
         ["display-text", () => `You have earned a total of ${player.g.points} good will.`],
         "blank",

@@ -7,10 +7,15 @@ addLayer("r", {
     position: 1,
     resource: "refactors",
     baseResource: "experience",
-    lore: "After working on a game for so long, you start to realize some initial design decisions haven't really scaled well over so many countless updates.<br/><br/>" +
-          "You do, however, have some ideas on how you would've structured it to better support the features you've since added, and will continue to add. All you have to do is rewrite a couple parts of it.<br/><br/>" +
-          "You'll take a minor setback with your experience on a changing codebase, but it'll pay off dividends in the long run!<br/><br/>" +
-          "This layer also unlocks \"Refactorings\": Enabling these actively refactors your codebase, increasing your productivity based on the hours worked. However, the productivity slow down will be much quicker due to the grueling work.",
+    infoboxes: {
+        lore: {
+            title: "refactors",
+            body: "After working on a game for so long, you start to realize some initial design decisions haven't really scaled well over so many countless updates.<br/><br/>" +
+                  "You do, however, have some ideas on how you would've structured it to better support the features you've since added, and will continue to add. All you have to do is rewrite a couple parts of it.<br/><br/>" +
+                  "You'll take a minor setback with your experience on a changing codebase, but it'll pay off dividends in the long run!<br/><br/>" +
+                  "This layer also unlocks \"Refactorings\": Enabling these actively refactors your codebase, increasing your productivity based on the hours worked. However, the productivity slow down will be much quicker due to the grueling work."
+        }
+    },
     resetDescription: "Use all your experience to re-design your game framework for ",
     startData() { return {
         unlocked: false,
@@ -54,7 +59,7 @@ addLayer("r", {
         }
     ],
     tabFormat: [
-        "lore",
+        ["infobox", "lore"],
         "main-display",
         "prestige-button",
         "blank",

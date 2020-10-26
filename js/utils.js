@@ -53,6 +53,9 @@ function format(decimal, precision=2) {
 }
 
 function formatWhole(decimal) {
+	decimal = new Decimal(decimal)
+	if (decimal.gte(1e9)) return format(decimal, 2)
+	if (decimal.lte(0.95) && !decimal.eq(0)) return format(decimal, 2)
 	return format(decimal, 0)
 }
 
@@ -91,6 +94,7 @@ function startPlayerBase() {
 		keepGoing: false,
 		hasNaN: false,
 		hideChallenges: false,
+		showStory: true,
 		points: modInfo.initialStartPoints,
 		subtabs: {},
 	}
@@ -104,6 +108,8 @@ function getStartPlayer() {
 		for (thing in extradata)
 			playerdata[thing] = extradata[thing]
 	}
+
+	playerdata.infoboxes = {}
 	for (layer in layers){
 		playerdata[layer] = layers[layer].startData()
 		playerdata[layer].buyables = getStartBuyables(layer)
@@ -122,7 +128,11 @@ function getStartPlayer() {
 			for (item in layers[layer].microtabs)
 			playerdata.subtabs[layer][item] = Object.keys(layers[layer].microtabs[item])[0]
 		}
-		playerdata[layer].loreHidden = false
+		if (layers[layer].infoboxes) {
+			if (playerdata.infoboxes[layer] == undefined) playerdata.infoboxes[layer] = {}
+			for (item in layers[layer].infoboxes)
+				playerdata.infoboxes[layer][item] = false
+		}
 	}
 	return playerdata
 }
