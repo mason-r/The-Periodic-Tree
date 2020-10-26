@@ -1,5 +1,5 @@
 addLayer("e", {
-    name: "exp",
+    name: "experience",
     symbol: "E",
     color: "#FF5642",
     branches: [ 'u' ],
@@ -23,6 +23,7 @@ addLayer("e", {
     exponent: 2,
     gainMult() {
         mult = new Decimal(1).mul(buyableEffect("f", 13))
+        if (hasUpgrade("f", 11) && hasUpgrade("g", 12)) mult = mult.mul(upgradeEffect("f", 11))
         return mult
     },
     gainExp() {

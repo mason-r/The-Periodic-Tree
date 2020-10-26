@@ -36,6 +36,7 @@ function sumValues(x) {
 function format(decimal, precision=2) {
 	decimal = new Decimal(decimal)
 	if (isNaN(decimal.sign)||isNaN(decimal.layer)||isNaN(decimal.mag)) {
+		console.trace(decimal + " is NaN")
 		player.hasNaN = true;
 		return "NaN"
 	}

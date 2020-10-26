@@ -24,6 +24,10 @@ addLayer("u", {
         mult = new Decimal(1).div(buyableEffect("f", 12))
         if (hasUpgrade("u", 21)) mult = mult.div(2)
         if (hasUpgrade("e", 11)) mult = mult.div(upgradeEffect("e", 11))
+        if (hasUpgrade("u", 31) && hasUpgrade("g", 13)) mult = mult.div(10)
+        if (hasUpgrade("u", 41) && hasUpgrade("g", 13)) mult = mult.div(upgradeEffect("u", 41))
+        if (hasUpgrade("u", 32) && hasUpgrade("g", 13)) mult = mult.pow(2)
+        if (hasUpgrade("u", 42) && hasUpgrade("g", 13)) mult = mult.pow(upgradeEffect("u", 42))
         return mult
     },
     gainExp() {
@@ -50,7 +54,7 @@ addLayer("u", {
         "upgrades"
     ],
     upgrades: {
-        rows: 2,
+        rows: 4,
         cols: 2,
         11: {
             title: "Convince your friend to help",
@@ -81,6 +85,32 @@ addLayer("u", {
             cost: new Decimal(3),
             effect() { return player.u.points.add(1) },
             unlocked() { return hasUpgrade("u", 12) }
+        },
+        31: {
+            title: "Cosmetics Economy",
+            description: "Let the community make and sell cosmetics in-game, giving 10x update gain",
+            cost: new Decimal(25000),
+            unlocked() { return hasUpgrade("g", 13) }
+        },
+        32: {
+            title: "Workshop Support",
+            description: "Add support for community made mods, squaring update gain",
+            cost: new Decimal(50000),
+            unlocked() { return hasUpgrade("g", 13) }
+        },
+        41: {
+            title: "Featured creators",
+            description: "Make a featured section for popular community creators, multiplying update gain based on the amount of good will",
+            cost: new Decimal(100000),
+            effect() { return player.g.unused.pow10() },
+            unlocked() { return hasUpgrade("g", 13) }
+        },
+        42: {
+            title: "Community Updates",
+            description: "Bundle a bunch of mods together and release them as an \"update\", raising update gain to a power based on the amount of good will",
+            cost: new Decimal(250000),
+            effect() { return player.g.unused.add(1) },
+            unlocked() { return hasUpgrade("g", 13) }
         }
     }
 })

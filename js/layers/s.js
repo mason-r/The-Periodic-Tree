@@ -30,6 +30,7 @@ addLayer("s", {
     exponent: 1.2,
     gainMult() {
         mult = new Decimal(1)
+        if (hasUpgrade("g", 22)) mult = mult.div(upgradeEffect("g", 22))
         return mult
     },
     gainExp() {
@@ -41,6 +42,11 @@ addLayer("s", {
     },
     effectDescription() {
         return `which raise your class effects to the ^${format(this.effect())} power.`
+    },
+    doReset(resettingLayer) {
+        if ([].includes(resettingLayer)) {
+            layerDataReset(this.layer)
+        }
     },
     hotkeys: [
         {

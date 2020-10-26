@@ -24,6 +24,7 @@ addLayer("f", {
     exponent: 1.25,
     gainMult() {
         mult = new Decimal(1)
+        if (hasUpgrade("g", 23)) mult = mult.div(upgradeEffect("g", 23))
         return mult
     },
     gainExp() {
@@ -33,8 +34,8 @@ addLayer("f", {
     canBuyMax() { return true },
     effect() {
         return {
-            doubleFrequency: new Decimal(60).div(player[this.layer].points).clampMin(1).log2().div(buyableEffect("f", 11).add(1)),
-            productivityMult: player[this.layer].fans.clampMin(10).log10(),
+            doubleFrequency: player[this.layer].points.gte(1) ? new Decimal(60).div(player[this.layer].points.mul(layers.g.effect())).div(buyableEffect("f", 11).add(1)) : new Decimal("infinity"),
+            productivityMult: player[this.layer].fans.mul(layers.g.effect()).clampMin(10).log10(),
             fanMult: buyableEffect("f", 11),
             cashMult: buyableEffect("f", 12),
             expMult: buyableEffect("f", 13),
@@ -43,6 +44,18 @@ addLayer("f", {
     },
     effectDescription() {
         return player[this.layer].points.lessThan(1) ? "" : `which double your amount of fans every ${format(this.effect().doubleFrequency)} seconds.`
+    },
+    doReset(resettingLayer) {
+        if (['g'].includes(resettingLayer)) {
+            layerDataReset(this.layer, hasMilestone("g", 2) ? [ 'milestones' ] : [])
+            if (hasMilestone("g", 0)) player[this.layer].fans = new Decimal(1000)
+            if (hasMilestone("g", 1)) {
+                setBuyableAmount("f", 11, new Decimal(1))
+                setBuyableAmount("f", 12, new Decimal(1))
+                setBuyableAmount("f", 13, new Decimal(1))
+                setBuyableAmount("f", 14, new Decimal(1))
+            }
+        }
     },
     hotkeys: [
         {
@@ -56,7 +69,7 @@ addLayer("f", {
         "main-display",
         ["display-text", function() {
             const { productivityMult, fanMult, cashMult, expMult, upgMult } = layers.f.effect()
-            let text = `<br/>You currently have ${format(player.f.fans.floor())} fans, which currently:`
+            let text = `<br/>You currently have ${formatWhole(player.f.fans.floor())} fans, which currently:`
             text += `<br/>Multiplies productivity by ${format(productivityMult)}x`
             if (getBuyableAmount("f", 11).gte(1)) text += `<br/>Multiplies fan gain by ${format(fanMult)}x due to discord`
             if (getBuyableAmount("f", 12).gte(1)) text += `<br/>Multiplies cash gain by ${format(cashMult)}x due to patreon`
@@ -69,12 +82,16 @@ addLayer("f", {
         "blank",
         "buyables",
         "blank",
+        "upgrades",
+        "blank",
         ["display-text", () => `Your best fame is ${player[this.layer].best}`],
         "milestones"
     ],
     update(diff) {
         if (player[this.layer].points.gte(1)) {
-            player[this.layer].fans = player[this.layer].fans.mul(new Decimal(2).pow(new Decimal(diff).div(this.effect().doubleFrequency)))
+            const freq = this.effect().doubleFrequency
+            if (freq.gt(0))
+                player[this.layer].fans = player[this.layer].fans.mul(new Decimal(2).pow(new Decimal(diff).div(freq)))
         }
     },
     buyables: {
@@ -87,7 +104,9 @@ addLayer("f", {
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             effect() {
                 if (getBuyableAmount("f", 11).lte(0)) return new Decimal(1)
-                return new Decimal(1.1).pow(getBuyableAmount("f", 11).sub(1)).mul(player[this.layer].fans.clampMin(10).log10().pow(0.3)).add(1)
+                let effect = new Decimal(1.1).pow(getBuyableAmount("f", 11).sub(1)).mul(player[this.layer].fans.clampMin(10).log10().pow(0.3)).mul(layers.g.effect()).add(1)
+                if (hasUpgrade("f", 14) && hasUpgrade("g", 12)) effect = effect.mul(upgradeEffect("f", 14))
+                return effect
             },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
@@ -101,7 +120,7 @@ addLayer("f", {
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             effect() {
                 if (getBuyableAmount("f", 12).lte(0)) return new Decimal(1)
-                return new Decimal(1.1).pow(getBuyableAmount("f", 12).sub(1)).mul(player[this.layer].fans.clampMin(10).log2().sqrt()).add(1)
+                return new Decimal(1.1).pow(getBuyableAmount("f", 12).sub(1)).mul(player[this.layer].fans.clampMin(10).log2().sqrt()).mul(layers.g.effect()).add(1)
             },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
@@ -115,7 +134,7 @@ addLayer("f", {
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             effect() {
                 if (getBuyableAmount("f", 11).lte(0)) return new Decimal(1)
-                return new Decimal(1.1).pow(getBuyableAmount("f", 13).sub(1)).mul(player[this.layer].fans.clampMin(10).log2().pow(0.25)).add(1)
+                return new Decimal(1.1).pow(getBuyableAmount("f", 13).sub(1)).mul(player[this.layer].fans.clampMin(10).log2().pow(0.25)).mul(layers.g.effect()).add(1)
             },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
@@ -129,12 +148,56 @@ addLayer("f", {
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             effect() {
                 if (getBuyableAmount("f", 11).lte(0)) return new Decimal(1)
-                return new Decimal(1.1).pow(getBuyableAmount("f", 14).sub(1)).mul(player[this.layer].fans.clampMin(10).log10().pow(0.25)).add(1)
+                return new Decimal(1.1).pow(getBuyableAmount("f", 14).sub(1)).mul(player[this.layer].fans.clampMin(10).log10().pow(0.25)).mul(layers.g.effect()).add(1)
             },
             buy() {
                 player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount("f", 14, getBuyableAmount("f", 14).add(1))
             }
+        }
+    },
+    upgrades: {
+        rows: 1,
+        cols: 4,
+        11: {
+            title: "Create p2p botnet",
+            description() { return `Include malware in a game to use your players to pirate textbooks, increasing experience gain based on number of fans.` },
+            currencyDisplayName: "updates",
+            currencyInternalName: "points",
+            currencyLocation() { return player.u },
+            cost: new Decimal(15000),
+            unlocked() { return hasUpgrade("g", 12) },
+            effect() { return player.f.fans.clampMin(10).log10().log(1.5).mul(layers.g.effect()).add(1) }
+        },
+        12: {
+            title: "Use botnet for scalping",
+            description() { return `Use your botnet to buy limited supply items before legitimate buyers, increasing cash gain based on number of fans.` },
+            currencyDisplayName: "updates",
+            currencyInternalName: "points",
+            currencyLocation() { return player.u },
+            cost: new Decimal(20000),
+            unlocked() { return hasUpgrade("g", 12) },
+            effect() { return player.f.fans.clampMin(10).log10().log2().mul(layers.g.effect()).add(1) }
+        },
+        13: {
+            title: "Use botnet for distributed processing",
+            description() { return `Use your botnet to automatically analyze your games with deep learning, increasing refactoring gain based on number of fans.` },
+            currencyDisplayName: "updates",
+            currencyInternalName: "points",
+            currencyLocation() { return player.u },
+            cost: new Decimal(30000),
+            unlocked() { return hasUpgrade("g", 12) },
+            effect() { return player.f.fans.clampMin(10).log10().log2().sqrt().mul(layers.g.effect()).add(1) }
+        },
+        14: {
+            title: "Use botnet for social media manipulation",
+            description() { return `Use your botnet to automatically like posts on social media, increasing fan gain based on number of fans.` },
+            currencyDisplayName: "updates",
+            currencyInternalName: "points",
+            currencyLocation() { return player.u },
+            cost: new Decimal(50000),
+            unlocked() { return hasUpgrade("g", 12) },
+            effect() { return player.f.fans.clampMin(10).log10().log10().mul(layers.g.effect()).add(1) }
         }
     },
     milestones: {
@@ -152,37 +215,37 @@ addLayer("f", {
             requirementDescription: "3 best fame",
             effectDescription: "Retain the third equipment upgrade",
             done() { return player[this.layer].best.gte(3) },
-            unlocked() { return player[this.layer].best.gte(1) }
+            unlocked() { return hasMilestone("f", 0) }
         },
         3: {
             requirementDescription: "4 best fame",
             effectDescription: "Retain the fourth equipment upgrade",
             done() { return player[this.layer].best.gte(4) },
-            unlocked() { return player[this.layer].best.gte(2) }
+            unlocked() { return hasMilestone("f", 1) }
         },
         4: {
             requirementDescription: "5 best fame",
             effectDescription: "Retain the fifth equipment upgrade",
             done() { return player[this.layer].best.gte(5) },
-            unlocked() { return player[this.layer].best.gte(3) }
+            unlocked() { return hasMilestone("f", 2) }
         },
         5: {
             requirementDescription: "6 best fame",
             effectDescription: "Retain the sixth equipment upgrade",
             done() { return player[this.layer].best.gte(6) },
-            unlocked() { return player[this.layer].best.gte(4) }
+            unlocked() { return hasMilestone("f", 3) }
         },
         6: {
             requirementDescription: "7 best fame",
             effectDescription: "Retain the seventh equipment upgrade",
             done() { return player[this.layer].best.gte(7) },
-            unlocked() { return player[this.layer].best.gte(5) }
+            unlocked() { return hasMilestone("f", 4) }
         },
         7: {
             requirementDescription: "8 best fame",
             effectDescription: "Retain the eigth equipment upgrade",
             done() { return player[this.layer].best.gte(8) },
-            unlocked() { return player[this.layer].best.gte(6) }
+            unlocked() { return hasMilestone("f", 5) }
         }
     }
 })

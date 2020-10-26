@@ -29,6 +29,8 @@ addLayer("r", {
     exponent: 1.25,
     gainMult() {
         mult = new Decimal(1)
+        if (hasUpgrade("f", 13) && hasUpgrade("g", 12)) mult = mult.div(upgradeEffect("f", 13))
+        if (hasUpgrade("g", 21)) mult = mult.div(upgradeEffect("g", 21))
         return mult
     },
     gainExp() {
@@ -38,6 +40,11 @@ addLayer("r", {
     effect() { return player[this.layer].points.pow(player[this.layer].points).add(1) },
     effectDescription() {
         return `multiplying all bonuses based on total experience by ${format(this.effect())}x.`
+    },
+    doReset(resettingLayer) {
+        if ([].includes(resettingLayer)) {
+            layerDataReset(this.layer)
+        }
     },
     hotkeys: [
         {

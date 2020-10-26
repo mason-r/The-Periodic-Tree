@@ -21,6 +21,7 @@ addLayer("c", {
     exponent: 1.5,
     gainMult() {
         mult = new Decimal(100).mul(buyableEffect("f", 12))
+        if (hasUpgrade("f", 12) && hasUpgrade("g", 12)) mult = mult.mul(upgradeEffect("f", 12))
         return mult
     },
     gainExp() {
@@ -28,7 +29,7 @@ addLayer("c", {
     },
     roundUpCost: true,
     doReset(resettingLayer) {
-        if (['s', 'f'].includes(resettingLayer)) {
+        if (['s', 'f', 'g'].includes(resettingLayer)) {
             const shouldKeepUpgrades = {
                 11: hasMilestone("f", 0),
                 12: hasMilestone("f", 1),
@@ -41,7 +42,11 @@ addLayer("c", {
                 111: hasMilestone("s", 3),
                 112: hasMilestone("s", 3),
                 113: hasMilestone("s", 3),
-                114: hasMilestone("s", 3)
+                114: hasMilestone("s", 3),
+                121: hasMilestone("s", 3),
+                122: hasMilestone("s", 3),
+                123: hasMilestone("s", 3),
+                124: hasMilestone("s", 3)
             }
             const upgradesToKeep = []
             for (let upgrade of player[this.layer].upgrades) {
@@ -49,7 +54,7 @@ addLayer("c", {
                     upgradesToKeep.push(upgrade)
                 }
             }
-            layerDataReset(this.layer, [ "milestones" ])
+            layerDataReset(this.layer)
             player[this.layer].upgrades = upgradesToKeep
         }
     },
@@ -78,7 +83,8 @@ addLayer("c", {
         "upgrades",
         () => hasUpgrade("e", 13) ? ["display-text", "Revenue", { "font-size": "32px" }] : [],
         () => hasUpgrade("e", 13) ? "blank" : [],
-        () => hasUpgrade("e", 13) ? ["row", [["upgrade", 111], ["upgrade", 112], ["upgrade", 113], ["upgrade", 114]]] : []
+        () => hasUpgrade("e", 13) ? ["row", [["upgrade", 111], ["upgrade", 112], ["upgrade", 113], ["upgrade", 114]]] : [],
+        () => hasUpgrade("g", 11) ? ["row", [["upgrade", 121], ["upgrade", 122], ["upgrade", 123], ["upgrade", 124]]] : []
     ],
     update(diff) {
         generatePoints("c", this.revenue(diff))
@@ -168,6 +174,42 @@ addLayer("c", {
             currencyLocation() { return player.u },
             cost: new Decimal(40),
             unlocked() { return hasUpgrade("c", 113) }
+        },
+        121: {
+            title: "Add cosmetic microtransactions",
+            description: "Cosmetic microtransactions allow players to support you ethically, earning an additional 9% of cash gain per second",
+            currencyDisplayName: "updates",
+            currencyInternalName: "points",
+            currencyLocation() { return player.u },
+            cost: new Decimal(10000),
+            unlocked() { return hasUpgrade("g", 11) }
+        },
+        122: {
+            title: "Add cosmetic loot crates",
+            description: "Adding some randomness to the cosmetics can encourage players to spend even more, earning an additional 90% of cash gain per second",
+            currencyDisplayName: "updates",
+            currencyInternalName: "points",
+            currencyLocation() { return player.u },
+            cost: new Decimal(12500),
+            unlocked() { return hasUpgrade("g", 11) }
+        },
+        123: {
+            title: "Add loot crate weapons",
+            description: "Adding just a little bit of gameplay advantages to paying customers makes sense, and earns an additional 900% of cash gain per second",
+            currencyDisplayName: "updates",
+            currencyInternalName: "points",
+            currencyLocation() { return player.u },
+            cost: new Decimal(15000),
+            unlocked() { return hasUpgrade("g", 11) }
+        },
+        124: {
+            title: "Add gacha mechanics",
+            description: "Completely disregarding the consumer's wellbeing allows you to earn an additional 9000% of cash gain per second",
+            currencyDisplayName: "updates",
+            currencyInternalName: "points",
+            currencyLocation() { return player.u },
+            cost: new Decimal(20000),
+            unlocked() { return hasUpgrade("g", 11) }
         }
     },
     buyables: {
@@ -191,6 +233,10 @@ addLayer("c", {
         if (hasUpgrade("c",112)) cpm += 2
         if (hasUpgrade("c",113)) cpm += 2
         if (hasUpgrade("c",114)) cpm += 5
+        if (hasUpgrade("c",121) && hasUpgrade("g", 11)) cpm += 90
+        if (hasUpgrade("c",122) && hasUpgrade("g", 11)) cpm += 900
+        if (hasUpgrade("c",123) && hasUpgrade("g", 11)) cpm += 9000
+        if (hasUpgrade("c",124) && hasUpgrade("g", 11)) cpm += 90000
         return diff * cpm / 1000
     }
 })
