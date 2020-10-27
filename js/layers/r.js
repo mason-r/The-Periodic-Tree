@@ -84,7 +84,7 @@ addLayer("r", {
         11: {
             title: "Rename variables",
             display: function() {
-                return `Take time to rename your variables more sensibly, making your productivity slow down even stronger but you gain a boost to productivity based on hours of work produced with this active.\n\nCurrently: ${clickableEffect("r", 11).toFixed(2)}x`
+                return `Take time to rename your variables more sensibly, making your productivity slow down even stronger but you gain a boost to productivity based on hours of work produced with this active.\n\nCurrently: ${format(clickableEffect("r", 11))}x`
             },
             effect: function() {
                 if (player.r.renameVariablesHoursWorked.lessThan(1)) return new Decimal(1)
@@ -103,7 +103,7 @@ addLayer("r", {
         12: {
             title: "Encapsulate fields",
             display: function() {
-                return `Take time to comply with arbitrary programming practices, making your productivity slow down even more strongly but you gain another boost to productivity based on hours of work produced with this active.\n\nCurrently: ${clickableEffect("r", 12).toFixed(2)}x`
+                return `Take time to comply with arbitrary programming practices, making your productivity slow down even more strongly but you gain another boost to productivity based on hours of work produced with this active.\n\nCurrently: ${format(clickableEffect("r", 12))}x`
             },
             effect: function() {
                 if (player.r.encapsulateFieldHoursWorked.lessThan(1)) return new Decimal(1)
