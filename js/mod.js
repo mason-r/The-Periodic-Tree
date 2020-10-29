@@ -1,24 +1,25 @@
 let modInfo = {
-	name: "The ??? Tree",
-	id: "mymod",
-	author: "nobody",
+	name: "Prestige Tree Rewritten",
+	id: "ptr",
+	author: "Jacorb (Despacit helped port)",
 	pointsName: "points",
-	discordName: "",
-	discordLink: "",
-	changelogLink: "https://github.com/Acamaeda/The-Modding-Tree/blob/master/changelog.md",
+	discordName: "PT Rewritten Server",
+	discordLink: "https://discord.gg/TFCHJJT",
+	changelogLink: "https://github.com/AbitofTetration/Prestige-Tree-Rewritten/blob/master/changelog.md",
     offlineLimit: 1,  // In hours
-    initialStartPoints: new Decimal (10) // Used for hard resets and new players
+    initialStartPoints: new Decimal(10), // Used for hard resets and new players
+	endgame: new Decimal(200),
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
-	name: "Literally nothing",
+	num: "0.1",
+	name: "Quite Prestigious",
 }
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
+var doNotCallTheseFunctionsEveryTick = ["doReset", "buy", "onPurchase", "blowUpEverything"]
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -26,7 +27,7 @@ function getStartPoints(){
 
 // Determines if it should show points/sec
 function canGenPoints(){
-	return true
+	return hasUpgrade("p", 11);
 }
 
 // Calculate points/sec!
@@ -35,6 +36,8 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	if (hasUpgrade("p", 12)) gain = gain.times(upgradeEffect("p", 12))
+	if (hasUpgrade("p", 13)) gain = gain.times(upgradeEffect("p", 13))
 	return gain
 }
 
@@ -48,7 +51,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return player.points.gte(modInfo.endgame)
 }
 
 

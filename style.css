@@ -446,6 +446,7 @@ a {
 .col.right {
 	top: 0;
 	right: 0;
+	overflow-x: hidden;
 }
 
 #app {

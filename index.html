@@ -114,8 +114,8 @@
 				<span v-if="player.offTime !== undefined"  class="overlayThing">
 					<br>Offline Time: {{formatTime(player.offTime.remain)}}<br>
 				</span>
-				<span v-if="false && !player.keepGoing"  class="overlayThing">
-					<br>Reach {{formatWhole(ENDGAME)}} to beat the game!<br>
+				<span v-if="!player.keepGoing" class="overlayThing">
+					<br>Reach {{formatWhole(modInfo.endgame)+" "+modInfo.pointsName}} to beat the game!<br>
 				</span>
 				<br>
 				<span v-if="player.points.lt('1e1000')"  class="overlayThing">You have </span>
@@ -150,6 +150,7 @@
 				<br>
 				<span v-if="canGenPoints()"  class="overlayThing">({{format(getPointGen())}}/sec)</span>
 				<div v-for="thing in tmp.displayThings" class="overlayThing"><span v-if="thing" v-html="thing"></span></div>
+				<br><br><br>
 			</div>
 			<span v-for="(n, row) in (maxRow + 1)"><table>
 				<td v-if="player.tab=='tree'&& someLayerUnlocked(row) && row != 0" class="left"><br><br><img class="remove" src="remove.png" onclick="resetRow(row)"></img></td>
@@ -161,6 +162,7 @@
 		<div v-for="layer in LAYERS" >
 			<div v-if="player.tab==layer" v-bind:class="'col right fast tab'"  v-bind:style="[tmp[layer].style ? tmp[layer].style : {}, (tmp[layer].tabFormat && !Array.isArray(tmp[layer].tabFormat)) ? tmp[layer].tabFormat[player.subtabs[layer].mainTabs].style : {}]">
 				<button class="back" onclick="showTab('tree')">←</button><br><br><br>
+				<div v-if="layers[layer].row=='side'"><br></div>
 				<div v-if="!tmp[layer].tabFormat">
 					<info-box v-if="tmp[layer].infoboxes" :layer="layer" :data="Object.keys(tmp[layer].infoboxes)[0]"></info-box>
 					<main-display v-bind:style="tmp[layer].componentStyles['main-display']" :layer="layer"></main-display>
