@@ -451,6 +451,136 @@ addLayer("g", {
 		},
 })
 
+addLayer("s", {
+        name: "space", // This is optional, only used in a few places, If absent it just uses the layer id.
+        symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
+        position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+        startData() { return {
+            unlocked: false,
+			points: new Decimal(0),
+			best: new Decimal(0),
+			space: new Decimal(0),
+			spent: new Decimal(0),
+			totalBuildings: new Decimal(0)
+        }},
+        color: "#dfdfdf",
+        requires() { return new Decimal(1e120).times(Decimal.pow("1e200", Decimal.pow(player[this.layer].unlockOrder, 2))) }, // Can be a function that takes requirement increases into account
+        resource: "space energy", // Name of prestige currency
+        baseResource: "points", // Name of resource prestige is based on
+        baseAmount() {return player.points}, // Get the current amount of baseResource
+        type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+        exponent: new Decimal(1.85), // Prestige currency exponent
+        base: new Decimal(1e15),
+        gainMult() { // Calculate the multiplier for main currency from bonuses
+            mult = new Decimal(1)
+            return mult
+        },
+        gainExp() { // Calculate the exponent on main currency from bonuses
+            return new Decimal(1)
+        },
+        row: 3, // Row the layer is in on the tree (0 is the first row)
+        hotkeys: [
+            {key: "s", description: "Space Reset", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        ],
+        increaseUnlockOrder: ["t", "e"],
+        doReset(resettingLayer){ // Triggers when this layer is being reset, along with the layer doing the resetting. Not triggered by lower layers resetting, but is by layers on the same row.
+            // TODO
+        },
+        layerShown(){return player.g.unlocked},
+        branches: ["g"],
+		upgrades: {
+			rows: 4,
+			cols: 4,
+			11: {
+				description: "Add a free level to all Space Buildings.",
+				cost: new Decimal(2),
+				unlocked() { return player[this.layer].unlocked }
+			},
+			12: {
+				description: "Generator Power boosts its own generation.",
+				cost: new Decimal(3),
+				effect() {
+					let eff = player.g.power.add(1).log10().add(1);
+					return eff;
+				},
+				unlocked() { return player[this.layer].best.gte(2) && player[this.layer].unlocked },
+				effectDisplay() { return format(this.effect())+"x" },
+			},
+			13: {
+				description: "Space Building Levels boost Generator Power gain, and get 2 extra Space.",
+				cost: new Decimal(3),
+				effect() { 
+					let eff = Decimal.pow(20, player[this.layer].totalBuildings);
+					return eff;
+				},
+				unlocked() { return hasUpgrade("s", 11) },
+				effectDisplay() { return format(this.effect())+"x" },
+				onPurchase() {
+					player[this.layer].space = player[this.layer].space.add(2)
+				}
+			},
+			14: {
+				description: "Unlock a 4th Space Building, and add a free level to all Space Buildings.",
+				cost: new Decimal(4),
+				unlocked() { return hasUpgrade("s", 12) && hasUpgrade("s", 13) },
+			},
+			21: {
+				description: "All Space Buildings are stronger based on your Generators.",
+				cost: new Decimal(4),
+				unlocked() { return hasUpgrade("s", 14) },
+				currently() { return player.g.points.add(1).log10().div(1.5).add(1) },
+				effectDisplay(x) { return format(x.sub(1).times(100))+"% stronger" },
+			},
+			22: {
+				description: "Space Buildings are stronger based on your Time Energy.",
+				cost: new Decimal(6),
+				unlocked() { return hasUpgrade("s", 14) && player.t.unlocked },
+				currently() { return player.t.energy.add(1).log10().add(1).log10().div(5).add(1) },
+				effectDisplay(x) { return format(x.sub(1).times(100))+"% stronger" },
+			},
+			23: {
+				description: "Space Buildings are stronger based on your Enhancers.",
+				cost: new Decimal(5),
+				unlocked() { return hasUpgrade("s", 14) && player.e.unlocked },
+				currently() { return player.e.enhancers.sqrt().div((player[this.layer].unlockOrder==0)?5:7).add(1) },
+				effectDisplay(x) { return format(x.sub(1).times(100))+"% stronger" },
+			},
+			24: {
+				description: "Space Building costs scale half as fast, and you have 3 more Space.",
+				cost: new Decimal(7),
+				unlocked() { return hasUpgrade("s", 21) && (player.t.unlocked||player.e.unlocked) },
+			},
+			31: {
+				description: "Space Building 1 uses a better formula.",
+				cost: new Decimal(7),
+				unlocked() { return (hasUpgrade("s", 22) && (player.t.unlockOrder==0||player.e.unlocked))||(hasUpgrade("s", 23) && (player.e.unlockOrder==0||player.t.unlocked)) },
+			},
+			32: {
+				description: "Unlock a 5th Space Building.",
+				cost: new Decimal(8),
+				unlocked() { return (hasUpgrade("s", 22) && (player.t.unlockOrder==1||player.e.unlocked))||(hasUpgrade("s", 23) && (player.e.unlockOrder==1||player.t.unlocked)) },
+			},
+			33: {
+				description: "This layer behaves as if you chose it first (base req is now 1e120 points)",
+				cost: new Decimal(12),
+				unlocked() { return (player.t.unlocked&&player.e.unlocked)||hasUpgrade("s", 33) },
+			},
+			34: {
+				description: "Space Buildings boost the Generator Power effect (before all other boosts).",
+				cost: new Decimal(15),
+				unlocked() { return player.t.unlocked && player.e.unlocked && player.t.unlockOrder==0 && player.e.unlockOrder==0 && player[this.layer].unlockOrder==0 },
+				currently() { return Decimal.pow(player[this.layer].totalBuildings, 0.2).div(17.5) },
+				effectDisplay(x) { return "Add "+format(x)+" to exponent" },
+			},
+		},
+		buyables: {
+
+		},
+		milestones: {
+
+		}
+})
+
 addLayer("a", {
         startData() { return {
             unlocked: true,
