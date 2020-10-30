@@ -1,5 +1,11 @@
 # The Game Dev Tree changelog:
 
+### v0.2.3 Stylish - 2020-10-30
+- Re-styled basically everything
+- Added favicon
+- Added header bar
+- Added changelog
+
 ### v0.2.2 Row 3 - 2020-10-22
 - Removed debug statement
 - Moved milestones in F layer beneath the buyables

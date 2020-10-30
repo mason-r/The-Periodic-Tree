@@ -3,6 +3,7 @@ let modInfo = {
 	id: "gamedevtree",
 	author: "thepaperpilot",
 	pointsName: "hours of work",
+	endgame: new Decimal("e50"),
 	discordName: "The Paper Pilot Community Server",
 	discordLink: "https://discord.gg/WzejVAx",
 	changelogLink: "https://github.com/thepaperpilot/The-Modding-Tree/blob/gamedevtree/changelog.md",
@@ -12,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.0",
-	name: "Version Bump",
+	num: "0.2.3",
+	name: "Stylish",
 }
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
@@ -88,7 +89,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e50"))
+	return player.points.gte(modInfo.endgame)
 }
 
 

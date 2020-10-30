@@ -20,7 +20,7 @@ addLayer("g", {
         points: new Decimal(0),
         unused: new Decimal(0)
     }},
-    layerShown() { return player[this.layer].unlocked || player.f.best.gte(8) },
+    layerShown() { return false && (player[this.layer].unlocked || player.f.best.gte(8)) },
     type: "static",
     requires: new Decimal(8),
     base: new Decimal(1.5),

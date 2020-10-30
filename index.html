@@ -130,8 +130,8 @@
 				<span v-if="player.offTime !== undefined"  class="overlayThing">
 					<br>Offline Time: {{formatTime(player.offTime.remain)}}<br>
 				</span>
-				<span v-if="false && !player.keepGoing"  class="overlayThing">
-					<br>Reach {{formatWhole(ENDGAME)}} to beat the game!<br>
+				<span v-if="!player.keepGoing"  class="overlayThing">
+					<br>Reach {{formatWhole(modInfo.endgame)+" "+modInfo.pointsName}} to beat the game!<br>
 				</span>
 				<span v-if="!!getClickableState('r', 11) || !!getClickableState('r', 12) || !!getClickableState('r', 13) || !!getClickableState('r', 14)" class="overlayThing" style="color: red; font-size: 24px">
 					<br>Refactoring active,<br>massively slowing down productivity!<br>
@@ -159,8 +159,8 @@
 				<span v-if="player.offTime !== undefined"  class="overlayThing">
 					<br>Offline Time: {{formatTime(player.offTime.remain)}}<br>
 				</span>
-				<span v-if="false && !player.keepGoing"  class="overlayThing">
-					<br>Reach {{formatWhole(ENDGAME)}} to beat the game!<br>
+				<span v-if="!player.keepGoing"  class="overlayThing">
+					<br>Reach {{formatWhole(modInfo.endgame)+" "+modInfo.pointsName}} to beat the game!<br>
 				</span>
 				<span v-if="!!getClickableState('r', 11) || !!getClickableState('r', 12) || !!getClickableState('r', 13) || !!getClickableState('r', 14)" class="overlayThing" style="color: red; font-size: 24px">
 					<br>Refactoring active,<br>massively slowing down productivity!<br>
