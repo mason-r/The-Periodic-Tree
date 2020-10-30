@@ -356,7 +356,7 @@ a {
 	height: calc(100% - 50px);
 	min-height: calc(100% - 50px);
 	column-span: 1;
-	position: absolute;
+	position: fixed;
 	overflow-y: auto;
 	overflow-x: auto;
 	transition-duration: 0s;
@@ -387,7 +387,7 @@ a {
 .vl {
 	border-left: 6px solid var(--color);
 	height: 100%;
-	position: absolute;
+	position: fixed;
 	left: 50%;
 	margin-left: -3px;
 	top: 0
