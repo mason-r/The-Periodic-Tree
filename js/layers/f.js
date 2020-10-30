@@ -89,7 +89,7 @@ addLayer("f", {
         "blank",
         "upgrades",
         "blank",
-        ["display-text", () => `Your best fame is ${player[this.layer].best}`],
+        ["display-text", () => `Your best fame is ${player.f.best}`],
         "milestones"
     ],
     update(diff) {
