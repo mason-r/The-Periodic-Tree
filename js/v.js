@@ -445,6 +445,8 @@ function loadVue() {
 			hotkeys
 		},
 	})
+
+	new ResizeObserver(_=>resizeCanvas()).observe(document.getElementById("fakeHead"));
 }
 
  
