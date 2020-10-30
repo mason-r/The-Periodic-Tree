@@ -5,15 +5,15 @@ let modInfo = {
 	pointsName: "hours of work",
 	discordName: "The Paper Pilot Community Server",
 	discordLink: "https://discord.gg/WzejVAx",
-	changelogLink: "https://github.com/Acamaeda/The-Modding-Tree/blob/master/changelog.md",
+	changelogLink: "https://github.com/thepaperpilot/The-Modding-Tree/blob/gamedevtree/changelog.md",
     offlineLimit: 5,  // In hours
     initialStartPoints: new Decimal (0) // Used for hard resets and new players
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2.3",
-	name: "Row 3 [Polished]",
+	num: "1.0",
+	name: "Version Bump",
 }
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
@@ -82,7 +82,8 @@ var displayThings = [
 		  player.points < 24 * 365 * 300 ?        `equivalent to ${format(player.points.div(24 * 365))} years of work` :
 		  player.points < 24 * 365 * 3000000 ?    `equivalent to ${format(player.points.div(24 * 365 * 100))} centuries of work` :
 		  player.points < 24 * 365 * 3000000000 ? `equivalent to ${format(player.points.div(24 * 365 * 1000000))} epochs of work` :
-		  									      `equivalent to ${format(player.points.div(24 * 365 * 1000000000))} eons of work`
+		  new Decimal(24 * 365).times("3e1000").gte(player.points) ? `equivalent to ${format(player.points.div(24 * 365 * 1000000000))} eons of work` :
+		                                          `equivalent to ${format(player.points.div(24).div(365).div("1e1000"))} heat deaths of work`
 ]
 
 // Determines when the game "ends"

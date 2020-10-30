@@ -6,7 +6,7 @@
 	<link rel="manifest" href="site.webmanifest">
 
 	<link rel="stylesheet" type="text/css" href="style.css" />
-	<link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
 	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
@@ -174,7 +174,6 @@
 				<div v-for="thing in tmp.displayThings" class="overlayThing"><span v-if="thing" v-html="thing"></span></div>
 			</div>
 			<span v-for="(n, row) in (maxRow + 1)"><table>
-				<td v-if="player.tab=='tree'&& someLayerUnlocked(row) && row != 0" class="left"><br><br><img class="remove" src="remove.png" onclick="resetRow(row)"></img></td>
 				<td v-for="node in TREE_LAYERS[row]"><layer-node :layer='node.layer' :abb='tmp[node.layer].symbol'></layer-node></td>
 				<table><button class="treeNode hidden"></button></td></table>
 			</span>
