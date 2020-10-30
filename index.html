@@ -67,7 +67,8 @@
 			<br>
 			Note by Jacorb: If anyone wishes to make a mod of this game, that is perfectly fine with me, just make sure to name it something different (ex: Prestige Tree NG+) and to let me know on <a href="https://discord.gg/wwQfgPa" target="_blank">my discord</a>.
 			<br><br>
-			Time Played: {{ formatTime(player.timePlayed) }}<br><br>
+			Time Played: {{ formatTime(player.timePlayed) }}<br>
+			<span v-for="layer in LAYERS">First {{layer}} reset: {{formatTime(player[layer].first)}}<br></span><br>
 			<h3>Hotkeys</h3><br>
 			<span v-for="key in hotkeys" v-if="player[key.layer].unlocked"><br>{{key.description}}</span>
 		</div>

@@ -617,6 +617,7 @@ function updateAchievements(layer){
 function addTime(diff, layer) {
 	let data = player
 	let time = data.timePlayed
+	if (!layer && !player.p.unlocked) return;
 	if (layer) {
 		data = data[layer]
 		time = data.time
