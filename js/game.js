@@ -360,6 +360,7 @@ var interval = setInterval(function() {
 	if (player.devSpeed) diff *= player.devSpeed
 	player.time = now
 	if (needCanvasUpdate) resizeCanvas();
+	needCanvasUpdate = false;
 	updateTemp();
 	gameLoop(diff)
 	ticking = false
