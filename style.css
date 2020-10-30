@@ -572,7 +572,7 @@ button > * {
 .nav {
 	background-color: #333c4a;
 	display: flex;
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     top: 0;
@@ -627,7 +627,7 @@ button > * {
 }
 
 #discord-links {
-	position: absolute;
+	position: fixed;
 	top: 0;
 	padding: 30px;
 	padding-top: 80px;
