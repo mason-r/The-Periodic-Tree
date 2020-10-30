@@ -20,7 +20,7 @@ addLayer("g", {
         points: new Decimal(0),
         unused: new Decimal(0)
     }},
-    layerShown() { return false && (player[this.layer].unlocked || player.f.best.gte(8)) },
+    layerShown() { return false && (player[this.layer].unlocked || player.f.best.gte(6)) },
     type: "static",
     requires: new Decimal(8),
     base: new Decimal(1.5),
@@ -121,12 +121,12 @@ addLayer("g", {
     milestones: {
         0: {
             requirementDescription: "1 total good will",
-            effectDescription: "Start resets with 1000 fans",
+            effectDescription: "Start row 4 resets with 1000 fans",
             done() { return player[this.layer].points.gte(1) }
         },
         1: {
             requirementDescription: "2 total good will",
-            effectDescription: "Start resets with 1 of each social media account",
+            effectDescription: "Start row 4 resets with 1 of each social media account",
             done() { return player[this.layer].points.gte(2) }
         },
         2: {

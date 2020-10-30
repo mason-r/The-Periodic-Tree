@@ -36,7 +36,7 @@ addLayer("e", {
     },
     roundUpCost: true,
     doReset(resettingLayer) {
-        if (['r', 's'].includes(resettingLayer)) {
+        if (['r', 's', 'a'].includes(resettingLayer)) {
             const shouldKeepUpgrades = {
                 11: hasMilestone("r", 2),
                 12: hasMilestone("r", 0),
@@ -57,7 +57,7 @@ addLayer("e", {
     },
     effect() { return player.e.points.pow(buyableEffect("s", 11)).sqrt().add(1) },
     effectDescription() {
-        return `multiplying base productivity by ${format(this.effect())}x. Your total experience is also delaying the productivity slow down by ${format(player[this.layer].total.times(layers.r.effect()))} hours.`
+        return `multiplying base productivity by ${format(this.effect())}x.`
     },
     hotkeys: [
         {
@@ -69,6 +69,8 @@ addLayer("e", {
     tabFormat: [
         ["infobox", "lore"],
         "main-display",
+        ["display-text", () => `Your total experience is also delaying the productivity slow down by ${format(player.e.total.times(layers.r.effect()))} hours.`],
+        "blank",
         "prestige-button",
         "blank",
         "upgrades"

@@ -16,7 +16,7 @@ addLayer("r", {
                   "This layer also unlocks \"Refactorings\": Enabling these actively refactors your codebase, increasing your productivity based on the hours worked. However, the productivity slow down will be much quicker due to the grueling work."
         }
     },
-    resetDescription: "Use all your experience to re-design your game framework for ",
+    resetDescription: "Re-design your game framework for ",
     startData() { return {
         unlocked: false,
         total: new Decimal(0),
@@ -42,13 +42,23 @@ addLayer("r", {
         return new Decimal(1)
     },
     roundUpCost: true,
+    buyMax() { return hasMilestone("a", 1) },
     effect() { return player[this.layer].points.pow(player[this.layer].points).add(1) },
     effectDescription() {
         return `multiplying all bonuses based on total experience by ${format(this.effect())}x.`
     },
     doReset(resettingLayer) {
-        if ([].includes(resettingLayer)) {
-            layerDataReset(this.layer)
+        if (['a'].includes(resettingLayer)) {
+            const keep = []
+            if (hasMilestone("a", 2)) keep.push('milestones')
+            if (hasMilestone("a", 2)) keep.push('buyables')
+            layerDataReset(this.layer, keep)
+            if (hasMilestone("a", 0) && !hasMilestone("a", 2)) {
+                player[this.layer].milestones.push(0)
+                player[this.layer].milestones.push(1)
+                player[this.layer].milestones.push(3)
+                player[this.layer].milestones.push(7)
+            }
         }
     },
     hotkeys: [
@@ -96,7 +106,7 @@ addLayer("r", {
                 setClickableState("r", 11, !getClickableState("r", 11))
             },
             style: {
-                "height": "160px",
+                "height": "180px",
                 "width": "200px"
             }
         },
@@ -115,14 +125,14 @@ addLayer("r", {
                 setClickableState("r", 12, !getClickableState("r", 12))
             },
             style: {
-                "height": "160px",
+                "height": "180px",
                 "width": "200px"
             }
         },
         13: {
             title: "Optimize formulas",
             display: function() {
-                return `Take time to figure out how to get that darn bottleneck to O(1), making your productivity slow down like really strongly but you gain yet another boost to productivity based on hours of work produced with this active.\n\nCurrently: ${clickableEffect("r", 13).toFixed(2)}x`
+                return `Take time to figure out how to get that darn bottleneck to O(1), making your productivity slow down like really strongly but you gain yet another boost to productivity based on hours of work produced with this active.\n\nCurrently: ${format(clickableEffect("r", 13))}x`
             },
             effect: function() {
                 if (player.r.optimizeFormulasHoursWorked.lessThan(1)) return new Decimal(1)
@@ -134,14 +144,14 @@ addLayer("r", {
                 setClickableState("r", 13, !getClickableState("r", 13))
             },
             style: {
-                "height": "160px",
+                "height": "180px",
                 "width": "200px"
             }
         },
         14: {
             title: "Roll your own library",
             display: function() {
-                return `Take time to replace that slow library with your own, making your productivity slow down stronger than you've yet experienced but you gain, surprising no one, another boost to productivity based on hours of work produced with this active.\n\nCurrently: ${clickableEffect("r", 14).toFixed(2)}x`
+                return `Take time to replace that slow library with your own, making your productivity slow down most strongly but you gain, surprising no one, another boost to productivity based on hours of work produced with this active.\n\nCurrently: ${format(clickableEffect("r", 14))}x`
             },
             effect: function() {
                 if (player.r.rollLibraryHoursWorked.lessThan(1)) return new Decimal(1)
@@ -153,7 +163,7 @@ addLayer("r", {
                 setClickableState("r", 14, !getClickableState("r", 14))
             },
             style: {
-                "height": "160px",
+                "height": "180px",
                 "width": "200px"
             }
         }

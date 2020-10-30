@@ -74,7 +74,7 @@ addLayer("f", {
         "main-display",
         ["display-text", function() {
             const { productivityMult, fanMult, cashMult, expMult, upgMult } = layers.f.effect()
-            let text = `<br/>You currently have ${formatWhole(player.f.fans.floor())} fans, which currently:`
+            let text = `<br/>You currently have ${format(player.f.fans.floor(), 4)} fans, which currently:`
             text += `<br/>Multiplies productivity by ${format(productivityMult)}x`
             if (getBuyableAmount("f", 11).gte(1)) text += `<br/>Multiplies fan gain by ${format(fanMult)}x due to discord`
             if (getBuyableAmount("f", 12).gte(1)) text += `<br/>Multiplies cash gain by ${format(cashMult)}x due to patreon`
