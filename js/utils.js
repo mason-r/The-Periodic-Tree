@@ -7,7 +7,7 @@ function exponentialFormat(num, precision) {
 		m = new Decimal(1)
 		e = e.add(1)
 	}
-	return m.toStringWithDecimalPlaces(precision)+"e"+e.toStringWithDecimalPlaces(0)
+	return m.toStringWithDecimalPlaces(precision)+"e"+commaFormat(e, 0)
 }
 
 function commaFormat(num, precision) {
@@ -19,6 +19,7 @@ function commaFormat(num, precision) {
 
 function regularFormat(num, precision) {
 	if (num === null || num === undefined) return "NaN"
+	if (num.eq(0)) return (0).toFixed(precision)
 	if (num.mag < 0.001) return num.toExponential(precision)
 	return num.toStringWithDecimalPlaces(precision)
 }
