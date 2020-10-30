@@ -1,4 +1,4 @@
-# The Prestige Tree: Rewritten changelog:
+# The Prestige Tree: Rewritten changelog (major updates only):
 
 ### v0.2: The Boosted Gen - 10/29/20
 - Ported the "B" & "G" layers

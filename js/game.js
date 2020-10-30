@@ -292,6 +292,7 @@ function gameLoop(diff) {
 		for (item in TREE_LAYERS[x]) {
 			let layer = TREE_LAYERS[x][item].layer
 			if (layers[layer].update) layers[layer].update(diff);
+			if (!player[layer].unlocked) player[layer].first += diff;
 		}
 	}
 
