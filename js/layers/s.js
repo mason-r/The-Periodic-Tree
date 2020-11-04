@@ -1,7 +1,7 @@
 addLayer("s", {
     name: "school",
     symbol: "S",
-    color: "#917567",
+    color: schoolColor,
     branches: [ 'e', 'c' ],
     row: 2,
     position: 2,
@@ -10,9 +10,9 @@ addLayer("s", {
     infoboxes: {
         lore: {
             title: "school",
-            body: "With all this programming experience, you think you finally have what it takes to go to college. It'll take a lot of money, and require a lot of experience to get accepted, but the payoff for a formal education should maybe probably help you make games faster.<br/><br/>" +
-                  "Each class has very powerful effects, but costs an exorbitant amount of money. Enrolling in multiple colleges helps you take further advantage of this knowledge.<br/><br/>" +
-                  "Additionally, the more classes you take the more you should be able to write quick automation scripts to push out builds and such automatically!"
+            body: `With all this <span style="color: ${experienceColor}">programming experience</span>, you think you finally have what it takes to go to college. It'll take a lot of <span style="color: ${cashColor}">cash</span>, and require a lot of <span style="color: ${experienceColor}">experience</span> to get accepted, but the payoff for a formal education should maybe probably help you make games faster.<br/><br/>` +
+                  `Each class has very powerful effects, but costs an exorbitant amount of <span style="color: ${cashColor}">cash</span>. Enrolling in multiple colleges helps you take further advantage of this knowledge.<br/><br/>` +
+                  `Additionally, the more classes you take the more you should be able to write quick automation scripts to push out <span style="color: ${updatesColor}">builds</span> and such automatically!`
         }
     },
     resetDescription: "Apply to another college for ",

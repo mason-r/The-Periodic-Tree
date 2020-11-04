@@ -1,7 +1,7 @@
 addLayer("a", {
     name: "api",
     symbol: "A",
-    color: "#AADB60",
+    color: apiColor,
     branches: [ 'r' ],
     row: 3,
     position: 1,
@@ -10,8 +10,8 @@ addLayer("a", {
     infoboxes: {
         lore: {
             title: "api",
-            body: "All this refactoring has given you a new sense of perspective on how all these different game engines tend to work, and you have an idea for a new Application Programming Interface (API) that could simplify everything enormously, making almost everything easier to implement. The more refactoring experience you have, the more API end points you think you can design.<br/><br/>" +
-                  "Designing your API means spending your endpoints on adding or improving the various bonuses available to you."
+            body: `All this refactoring has given you a new sense of perspective on how all these different game engines tend to work, and you have an idea for a new <span style="color: ${apiColor}">Application Programming Interface (API)</span> that could simplify everything enormously, making almost everything easier to implement. The more <span style="color: ${refactoringColor}">refactoring experience</span> you have, the more <span style="color: ${apiColor}">API end points</span> you think you can design.<br/><br/>` +
+                  `Designing your <span style="color: ${apiColor}">API</span> means spending your <span style="color: ${apiColor}">endpoints</span> on adding or improving the various bonuses available to you.`
         }
     },
     resetDescription: "Design ",

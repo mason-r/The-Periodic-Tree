@@ -1,7 +1,7 @@
 addLayer("f", {
     name: "fame",
     symbol: "F",
-    color: "#F564E7",
+    color: fameColor,
     branches: [ 'c' ],
     row: 2,
     position: 3,
@@ -10,8 +10,8 @@ addLayer("f", {
     infoboxes: {
         lore: {
             title: "fame",
-            body: "You've started accumulating a name for yourself. Some people even recognize your name, and check out your new releases. The more fans you have, the more quickly you attract more. Time to take advantage of that!<br/><br/>" +
-                  "By creating social media accounts you can harness your fan base for all sorts of benefits! In fact, you may as well create some alt accounts while you're at it: the more the merrier, when fame is involved!"
+            body: `You've started accumulating a name for yourself. Some people even recognize your name, and check out your new releases. The more <span style="color: ${fameColor}">fans</span> you have, the more quickly you attract more. Time to take advantage of that!<br/><br/>` +
+                  `By creating social media accounts you can harness your <span style="color: ${fameColor}">fan base</span> for all sorts of benefits! In fact, you may as well create some alt accounts while you're at it: the more the merrier, when <span style="color: ${fameColor}">fame</span> is involved!`
         }
     },
     resetDescription: "Elevate your social status by ",

@@ -1,7 +1,7 @@
 addLayer("c", {
     name: "cash",
     symbol: "C",
-    color: "#F5A833",
+    color: cashColor,
     branches: [ 'u' ],
     row: 1,
     position: 1,

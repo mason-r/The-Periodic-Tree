@@ -1,7 +1,7 @@
 addLayer("u", {
     name: "updates",
     symbol: "U",
-    color: "#4BDC13",
+    color: updatesColor,
     row: 0,
     position: 0,
     resource: "updates",

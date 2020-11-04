@@ -1,7 +1,7 @@
 addLayer("g", {
     name: "good will",
     symbol: "G",
-    color: "#156B25",
+    color: goodwillColor,
     branches: [ 'f' ],
     row: 3,
     position: 5,
@@ -10,8 +10,8 @@ addLayer("g", {
     infoboxes: {
         lore: {
             title: "good will",
-            body: "Your massive amounts of fans and fame have gotten your games an amount of good will. Players are more likely to become fans, and trust your games will be good for consumers and fun to boot...<br/><br/>" +
-                  "<i>However</i>, this also means there's lots to gain by cashing in that good will. Buying these upgrades will have powerful effects, but good will is permanently harder to gain the more you've earned."
+            body: `Your massive amounts of <span style="color: ${fameColor}">fans</span> and <span style="color: ${fameColor}">fame</span> have gotten your games an amount of <span style="color: ${goodwillColor}">good will</span>. Players are more likely to become <span style="color: ${fameColor}">fans</span>, and trust your games will be good for consumers and fun to boot...<br/><br/>` +
+                  `<i>However</i>, this also means there's lots to gain by cashing in that <span style="color: ${goodwillColor}">good will</span>. Buying these upgrades will have powerful effects, but <span style="color: ${goodwillColor}">good will</span> is permanently harder to gain the more you've earned.`
         }
     },
     resetDescription: "Get acknowledged as trustworthy by your fans for ",

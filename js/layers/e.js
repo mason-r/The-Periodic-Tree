@@ -1,7 +1,7 @@
 addLayer("e", {
     name: "experience",
     symbol: "E",
-    color: "#FF5642",
+    color: experienceColor,
     branches: [ 'u' ],
     row: 1,
     position: 0,
