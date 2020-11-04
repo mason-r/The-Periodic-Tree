@@ -27,7 +27,7 @@ addLayer("e", {
     baseAmount() { return player.u.points },
     exponent: 2,
     gainMult() {
-        mult = new Decimal(1).mul(buyableEffect("f", 13))
+        mult = new Decimal(1).mul(buyableEffect("f", 13)).mul(buyableEffect("a", 21))
         if (hasUpgrade("f", 11) && hasUpgrade("g", 12)) mult = mult.mul(upgradeEffect("f", 11))
         return mult
     },
@@ -69,7 +69,7 @@ addLayer("e", {
     tabFormat: [
         ["infobox", "lore"],
         "main-display",
-        ["display-text", () => `Your total experience is also delaying the productivity slow down by ${format(player.e.total.times(layers.r.effect()))} hours.`],
+        ["display-text", () => `Your total experience is also delaying the productivity slow down by ${format(player.e.total.mul(layers.r.effect()).mul(buyableEffect("a", 12)))} hours.`],
         "blank",
         "prestige-button",
         "blank",

@@ -10,7 +10,7 @@ addLayer("a", {
     infoboxes: {
         lore: {
             title: "api",
-            body: `All this refactoring has given you a new sense of perspective on how all these different game engines tend to work, and you have an idea for a new <span style="color: ${apiColor}">Application Programming Interface (API)</span> that could simplify everything enormously, making almost everything easier to implement. The more <span style="color: ${refactoringColor}">refactoring experience</span> you have, the more <span style="color: ${apiColor}">API end points</span> you think you can design.<br/><br/>` +
+            body: `All this refactoring has given you a new sense of perspective on how all these different game engines tend to work, and you have an idea for a new <span style="color: ${apiColor}">Application Programming Interface (API)</span> that could simplify everything enormously, making almost everything easier to implement. The more <span style="color: ${refactoringColor}">refactoring experience</span> you have, the more <span style="color: ${apiColor}">API end points</span> you can use to implement your design.<br/><br/>` +
                   `Designing your <span style="color: ${apiColor}">API</span> means spending your <span style="color: ${apiColor}">endpoints</span> on adding or improving the various bonuses available to you.`
         }
     },
@@ -20,7 +20,7 @@ addLayer("a", {
         points: new Decimal(0),
         unused: new Decimal(0)
     }},
-    layerShown() { return false && (player[this.layer].unlocked || player.r.total.gte(8)) },
+    layerShown() { return player[this.layer].unlocked || player.r.total.gte(8) },
     type: "static",
     requires: new Decimal(10),
     base: new Decimal(1.2),
@@ -56,15 +56,124 @@ addLayer("a", {
         "milestones"
     ],
     buyables: {
-        rows: 1,
-        cols: 4,
+        rows: 2,
+        cols: 3,
+        respec() {
+            player.a.unused = player.a.points
+            setBuyableAmount(this.layer, 11, 0)
+            setBuyableAmount(this.layer, 12, 0)
+            setBuyableAmount(this.layer, 13, 0)
+            setBuyableAmount(this.layer, 21, 0)
+            setBuyableAmount(this.layer, 22, 0)
+            setBuyableAmount(this.layer, 23, 0)
+        },
+        respecText: "Re-design API",
         11: {
-            cost(x) { return new Decimal(1).mul(x || getBuyableAmount(this.layer, this.id)) },
-            display() { return "Blah" },
-            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            title: "/refactoring/bonus",
+            display() {
+                const cost = this.cost()
+                return `Each endpoint squares refactoring bonuses.<br/>Currently: ^${format(this.effect())}<br/>Requires ${formatWhole(cost.endpoints)} endpoints and ${format(cost.updates)} updates.`
+            },
+            cost(x) {
+                const amt = x || getBuyableAmount(this.layer, this.id)
+                return {
+                    endpoints: new Decimal(1).add(amt),
+                    updates: new Decimal(7500).mul(new Decimal(1).add(amt))
+                }
+            },
+            canAfford() {
+                const cost = this.cost()
+                return player[this.layer].unused.gte(cost.endpoints) && player.u.points.gte(cost.updates)
+            },
             buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost())
-                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                const cost = this.cost()
+                player[this.layer].unused = player[this.layer].unused.sub(cost.endpoints)
+                player.u.points = player.u.points.sub(cost.updates)
+                setBuyableAmount(this.layer, this.id, new Decimal(1).add(getBuyableAmount(this.layer, this.id)))
+            },
+            effect() {
+                return new Decimal(2).pow(getBuyableAmount(this.layer, this.id))
+            }
+        },
+        12: {
+            title: "/motivation/boost",
+            display() {
+                const cost = this.cost()
+                return `These endpoints delay the productivity slowdown by 10 raised to the power of (5 raised to the power of endpoints).<br/>Currently: /${format(this.effect())}<br/>Requires ${formatWhole(cost.endpoints)} endpoints and ${format(cost.updates)} updates.`
+            },
+            cost(x) {
+                const amt = x || getBuyableAmount(this.layer, this.id)
+                return {
+                    endpoints: new Decimal(1).add(amt),
+                    updates: new Decimal(10000).mul(new Decimal(2).pow(amt))
+                }
+            },
+            canAfford() {
+                const cost = this.cost()
+                return player[this.layer].unused.gte(cost.endpoints) && player.u.points.gte(cost.updates)
+            },
+            buy() {
+                const cost = this.cost()
+                player[this.layer].unused = player[this.layer].unused.sub(cost.endpoints)
+                player.u.points = player.u.points.sub(cost.updates)
+                setBuyableAmount(this.layer, this.id, new Decimal(1).add(getBuyableAmount(this.layer, this.id)))
+            },
+            effect() {
+                return new Decimal(10).pow(new Decimal(5).pow(getBuyableAmount(this.layer, this.id)))
+            }
+        },
+        21: {
+            title: "/experience/gain",
+            display() {
+                const cost = this.cost()
+                return `Each endpoint multiplies experience gain by 50x.<br/>Currently: x${format(this.effect())}<br/>Requires ${formatWhole(cost.endpoints)} endpoints and ${format(cost.updates)} updates.`
+            },
+            cost(x) {
+                const amt = x || getBuyableAmount(this.layer, this.id)
+                return {
+                    endpoints: new Decimal(1).add(amt),
+                    updates: new Decimal(250).mul(new Decimal(5).pow(new Decimal(2).add(amt)))
+                }
+            },
+            canAfford() {
+                const cost = this.cost()
+                return player[this.layer].unused.gte(cost.endpoints) && player.u.points.gte(cost.updates)
+            },
+            buy() {
+                const cost = this.cost()
+                player[this.layer].unused = player[this.layer].unused.sub(cost.endpoints)
+                player.u.points = player.u.points.sub(cost.updates)
+                setBuyableAmount(this.layer, this.id, new Decimal(1).add(getBuyableAmount(this.layer, this.id)))
+            },
+            effect() {
+                return new Decimal(50).pow(getBuyableAmount(this.layer, this.id))
+            }
+        },
+        22: {
+            title: "/refactoring/prod",
+            display() {
+                const cost = this.cost()
+                return `Each endpoint raises the extra slowdown effects of refactoring to the ^.25 power.<br/>Currently: ^${format(this.effect())}<br/>Requires ${formatWhole(cost.endpoints)} endpoints and ${format(cost.updates)} updates.`
+            },
+            cost(x) {
+                const amt = x || getBuyableAmount(this.layer, this.id)
+                return {
+                    endpoints: new Decimal(1).add(amt),
+                    updates: new Decimal(500).mul(new Decimal(5).pow(new Decimal(2).add(amt)))
+                }
+            },
+            canAfford() {
+                const cost = this.cost()
+                return player[this.layer].unused.gte(cost.endpoints) && player.u.points.gte(cost.updates)
+            },
+            buy() {
+                const cost = this.cost()
+                player[this.layer].unused = player[this.layer].unused.sub(cost.endpoints)
+                player.u.points = player.u.points.sub(cost.updates)
+                setBuyableAmount(this.layer, this.id, new Decimal(1).add(getBuyableAmount(this.layer, this.id)))
+            },
+            effect() {
+                return new Decimal(.25).pow(getBuyableAmount(this.layer, this.id))
             }
         },
     },
@@ -75,19 +184,19 @@ addLayer("a", {
             done() { return player[this.layer].points.gte(1) }
         },
         1: {
-            requirementDescription: "5 total API endpoints",
+            requirementDescription: "2 total API endpoints",
             effectDescription: "Buying refactors will buy as many as you can afford",
-            done() { return player[this.layer].points.gte(5) }
+            done() { return player[this.layer].points.gte(2) }
         },
         2: {
-            requirementDescription: "10 total API endpoints",
+            requirementDescription: "3 total API endpoints",
             effectDescription: "Retain all refactors milestones",
-            done() { return player[this.layer].points.gte(10) }
+            done() { return player[this.layer].points.gte(3) }
         },
         3: {
-            requirementDescription: "25 total API endpoints",
+            requirementDescription: "5 total API endpoints",
             effectDescription: "Row 4 resets don't reset refactorings",
-            done() { return player[this.layer].points.gte(25) }
+            done() { return player[this.layer].points.gte(5) }
         }
     }
 })

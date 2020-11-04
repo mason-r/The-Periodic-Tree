@@ -48,9 +48,10 @@ function getPointGen() {
 			if (hasUpgrade("c", r * 10 + c)) gain = gain.mul(2)
 	
 	// Apply productivity slow downs
-	const slowDownModifier = player.points.add(gain.sqrt()).sub(player.e.total.times(layers.r.effect())).pow(buyableEffect("s", 12)).clampMin(1)
+	let slowDownModifier = player.points.add(gain.sqrt()).sub(player.e.total.times(layers.r.effect())).div(buyableEffect("a", 12)).pow(buyableEffect("s", 12)).clampMin(1)
 	gain = gain.divide(slowDownModifier.sqrt())
 	gain = gain.divide(slowDownModifier.sqrt().clampMin(10).log10().pow(2))
+	slowDownModifier = slowDownModifier.pow(buyableEffect("a", 22))
 	if (getClickableState("r", 11)) {
 		gain = gain.divide(slowDownModifier.pow(.25))
 	} else if (getClickableState("r", 12)) {

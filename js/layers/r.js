@@ -98,7 +98,7 @@ addLayer("r", {
             },
             effect: function() {
                 if (player.r.renameVariablesHoursWorked.lessThan(1)) return new Decimal(1)
-                return player.r.renameVariablesHoursWorked.log(10).pow(2).add(1)
+                return player.r.renameVariablesHoursWorked.log(10).pow(2).add(1).pow(buyableEffect("a", 11))
             },
             unlocked() { return hasMilestone("r", 0) },
             canClick: function() { return !getClickableState("r", 12) && !getClickableState("r", 13) && !getClickableState("r", 14) },
@@ -117,7 +117,7 @@ addLayer("r", {
             },
             effect: function() {
                 if (player.r.encapsulateFieldHoursWorked.lessThan(1)) return new Decimal(1)
-                return player.r.encapsulateFieldHoursWorked.log(10).pow(2).add(1)
+                return player.r.encapsulateFieldHoursWorked.log(10).pow(2).add(1).pow(buyableEffect("a", 11))
             },
             unlocked() { return hasMilestone("r", 1) },
             canClick: function() { return !getClickableState("r", 11) && !getClickableState("r", 13) && !getClickableState("r", 14) },
@@ -136,7 +136,7 @@ addLayer("r", {
             },
             effect: function() {
                 if (player.r.optimizeFormulasHoursWorked.lessThan(1)) return new Decimal(1)
-                return player.r.optimizeFormulasHoursWorked.log(10).pow(2).add(1)
+                return player.r.optimizeFormulasHoursWorked.log(10).pow(2).add(1).pow(buyableEffect("a", 11))
             },
             unlocked() { return hasMilestone("r", 3) },
             canClick: function() { return !getClickableState("r", 11) && !getClickableState("r", 12) && !getClickableState("r", 14) },
@@ -155,7 +155,7 @@ addLayer("r", {
             },
             effect: function() {
                 if (player.r.rollLibraryHoursWorked.lessThan(1)) return new Decimal(1)
-                return player.r.rollLibraryHoursWorked.log(10).pow(2).add(1)
+                return player.r.rollLibraryHoursWorked.log(10).pow(2).add(1).pow(buyableEffect("a", 11))
             },
             unlocked() { return hasMilestone("r", 7) },
             canClick: function() { return !getClickableState("r", 11) && !getClickableState("r", 12) && !getClickableState("r", 13) },
@@ -172,48 +172,48 @@ addLayer("r", {
         0: {
             requirementDescription: "1 refactor",
             effectDescription: "Unlock first refactoring, and retain the second and third Experience upgrades",
-            done() { return player[this.layer].total.gte(1) }
+            done() { return player[this.layer].total.gte(1) || player.a.unlocked }
         },
         1: {
             requirementDescription: "2 refactors",
             effectDescription: "Unlock second refactoring",
-            done() { return player[this.layer].total.gte(2) }
+            done() { return player[this.layer].total.gte(2) || player.a.unlocked }
         },
         2: {
             requirementDescription: "3 refactors",
             effectDescription: "Retain the first Experience upgrade",
             done() { return player[this.layer].total.gte(3) },
-            unlocked() { return player[this.layer].total.gte(1) }
+            unlocked() { return player[this.layer].total.gte(1) || player.a.unlocked }
         },
         3: {
             requirementDescription: "4 refactors",
             effectDescription: "Unlock third refactoring",
             done() { return player[this.layer].total.gte(4) },
-            unlocked() { return player[this.layer].total.gte(2) }
+            unlocked() { return player[this.layer].total.gte(2) || player.a.unlocked }
         },
         4: {
             requirementDescription: "5 refactors",
             effectDescription: "Retain the fourth Experience upgrade",
             done() { return player[this.layer].total.gte(5) },
-            unlocked() { return player[this.layer].total.gte(3) }
+            unlocked() { return player[this.layer].total.gte(3) || player.a.unlocked }
         },
         5: {
             requirementDescription: "6 refactors",
             effectDescription: "Retain the fifth Experience upgrade",
             done() { return player[this.layer].total.gte(6) },
-            unlocked() { return player[this.layer].total.gte(4) }
+            unlocked() { return player[this.layer].total.gte(4) || player.a.unlocked }
         },
         6: {
             requirementDescription: "7 refactors",
             effectDescription: "Retain the sixth Experience upgrade",
             done() { return player[this.layer].total.gte(7) },
-            unlocked() { return player[this.layer].total.gte(5) }
+            unlocked() { return player[this.layer].total.gte(5) || player.a.unlocked }
         },
         7: {
             requirementDescription: "8 refactors",
             effectDescription: "Unlock fourth refactoring",
             done() { return player[this.layer].total.gte(8) },
-            unlocked() { return player[this.layer].total.gte(6) }
+            unlocked() { return player[this.layer].total.gte(6) || player.a.unlocked }
         }
     }
 })
