@@ -11,7 +11,7 @@ addLayer("g", {
         lore: {
             title: "good will",
             body: `Your massive amounts of <span style="color: ${fameColor}">fans</span> and <span style="color: ${fameColor}">fame</span> have gotten your games an amount of <span style="color: ${goodwillColor}">good will</span>. Players are more likely to become <span style="color: ${fameColor}">fans</span>, and trust your games will be good for consumers and fun to boot...<br/><br/>` +
-                  `<i>However</i>, this also means there's lots to gain by cashing in that <span style="color: ${goodwillColor}">good will</span>. Buying these upgrades will have powerful effects, but <span style="color: ${goodwillColor}">good will</span> is permanently harder to gain the more you've earned.`
+                  `<i>However</i>, this also means there's lots to gain by cashing in that <span style="color: ${goodwillColor}">good will</span>. Buying these upgrades will have powerful effects, but <span style="color: ${goodwillColor}">good will</span> is <span style="text-shadow: 0px 0px 4px">permanently</span> harder to gain the more you've earned, so it may be better to hold off until you have a lot of <span style="color: ${fameColor}">fans</span> before spending <span style="color: ${goodwillColor}">good will</span>.`
         }
     },
     resetDescription: "Get acknowledged as trustworthy by your fans for ",
