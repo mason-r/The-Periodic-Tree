@@ -1,5 +1,8 @@
 # The Game Dev Tree changelog:
 
+### v1.0.1 Version Bump [rebalanced] - 2020-11-08
+- Buffed several TAs
+
 ### v1.0 Version Bump - 2020-11-08
 - Finished row 4
 - Added colored text to lore

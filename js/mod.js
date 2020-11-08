@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.0",
-	name: "Version Bump",
+	num: "1.0.1",
+	name: "Version Bump [rebalanced]",
 }
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.

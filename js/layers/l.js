@@ -205,7 +205,7 @@ addLayer("l", {
             title: "Hire L",
             cost: new Decimal(50),
             description() { return "<br/>L will autopurchase alt accounts and not spend any fame, and increase fame gain based on level<br/>" },
-            effect() { return inChallenge("d", 21) ? new Decimal(1) : player[this.layer].lLevel.add(1).pow(.33) },
+            effect() { return inChallenge("d", 21) ? new Decimal(1) : player[this.layer].lLevel.add(1).pow(.9) },
             effectDisplay() { return `${format(this.effect())}x fame gain` },
             unlocked() { return hasUpgrade("l", 11) }
         },
@@ -213,7 +213,7 @@ addLayer("l", {
             title: "Hire Jean",
             cost: new Decimal(2000),
             description() { return "<br/>Jean will square updates gain, and increase updates gain based on level<br/>" },
-            effect() { return inChallenge("d", 21) ? new Decimal(1) : new Decimal(1.5).pow(player[this.layer].carmackLevel) },
+            effect() { return inChallenge("d", 21) ? new Decimal(1) : new Decimal(1.75).pow(player[this.layer].carmackLevel) },
             effectDisplay() { return `${format(this.effect())}x update gain` },
             unlocked() { return hasUpgrade("l", 12) }
         },
@@ -221,7 +221,7 @@ addLayer("l", {
             title: "Hire Jen",
             cost: new Decimal(60000),
             description() { return "<br/>Jen will make taking classes not spend any cash, and increase enrollments gain based on level<br/>" },
-            effect() { return inChallenge("d", 21) ? new Decimal(1) : new Decimal(1.25).pow(player[this.layer].thompsonLevel) },
+            effect() { return inChallenge("d", 21) ? new Decimal(1) : new Decimal(1.5).pow(player[this.layer].thompsonLevel) },
             effectDisplay() { return `${format(this.effect())}x enrollments gain` },
             unlocked() { return hasUpgrade("l", 13) }
         },
