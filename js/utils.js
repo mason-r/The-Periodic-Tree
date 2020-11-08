@@ -577,7 +577,7 @@ function showTab(name) {
 
 function layOver(obj1, obj2) {
 	for (let x in obj2) {
-		if (obj2[x] instanceof Object) layOver(obj1[x], obj2[x]);
+		if (obj2[x] instanceof Object && !(obj2[x] instanceof Decimal)) layOver(obj1[x], obj2[x]);
 		else obj1[x] = obj2[x];
 	}
 }
