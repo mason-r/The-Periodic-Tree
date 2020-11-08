@@ -566,9 +566,11 @@ function showTab(name) {
 	player.tab = name
 	
 	if (toTreeTab != onTreeTab) {
-		document.getElementById("treeTab").className = toTreeTab ? "fullWidth" : "col left"
+		requestAnimationFrame(() => {
+			document.getElementById("treeTab").className = toTreeTab ? "fullWidth" : "col left"
+			resizeCanvas()
+		})
 		onTreeTab = toTreeTab
-		resizeCanvas()
 	}
 	delete player.notify[name]
 }

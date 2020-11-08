@@ -1,5 +1,8 @@
 # The Game Dev Tree changelog:
 
+### v1.0.2 Version Bump [rebalanced,debugged] - 2020-11-08
+- Fixed tree lines being hidden after hitting "keepGoing" in the victory screen
+
 ### v1.0.1 Version Bump [rebalanced] - 2020-11-08
 - Buffed several TAs
 
