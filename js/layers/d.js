@@ -84,7 +84,7 @@ addLayer("d", {
         cols: 1,
         11: {
             title: "Write Thesis",
-            description: "Finally, the culmination of all your work: Your Magnum Opus, \"The Theory of Game Development\". Completing this work finishes the game.",
+            description: "Finally, the culmination of all your work: Your Magnum Opus, \"The Game Dev Tree\". Completing this work finishes the game.",
             cost: new Decimal("ee12"),
             currencyDisplayName: "hours of work",
             currencyInternalName: "points",
