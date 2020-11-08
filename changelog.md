@@ -1,5 +1,11 @@
 # The Game Dev Tree changelog:
 
+### v1.0 Version Bump - 2020-11-08
+- Finished row 4
+- Added colored text to lore
+- Fixed some visual bugs with milestones
+- Probably other stuff lol its been a week
+
 ### v0.2.3 Stylish - 2020-10-30
 - Re-styled basically everything
 - Added favicon

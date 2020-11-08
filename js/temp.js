@@ -24,6 +24,7 @@ function setupTemp() {
 		tmp[layer].nextAtDisp = {}
 		tmp[layer].notify = {}
 		tmp[layer].canReset = {}
+		tmp[layer].activeChallenge = {}
 		tmp[layer].prestigeButtonText = {}
 		setupBarStyles(layer)
 	}
@@ -64,6 +65,7 @@ function updateTemp() {
 		tmp[layer].nextAtDisp = getNextAt(layer, true)
 		tmp[layer].notify = shouldNotify(layer)
 		tmp[layer].canReset = canReset(layer)
+		tmp[layer].activeChallenge = player[layer].activeChallenge
 		tmp[layer].prestigeButtonText = prestigeButtonText(layer)
 		constructBarStyles(layer)
 	}

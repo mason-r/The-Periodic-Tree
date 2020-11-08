@@ -181,9 +181,11 @@ function doReset(layer, force=false) {
 	if (tmp[layer].resetsNothing) return
 
 
+	/*
 	for (layerResetting in layers) {
 		if (row >= layers[layerResetting].row && (!force || layerResetting != layer)) completeChallenge(layerResetting)
 	}
+	*/
 
 	prevOnReset = {...player} //Deep Copy
 	player.points = (row == 0 ? new Decimal(0) : getStartPoints())
@@ -221,8 +223,11 @@ function startChallenge(layer, x) {
 	} else {
 		enter = true
 	}	
+	if(enter) {
+		player[layer].activeChallenge = x
+		if (isFunction(layers[layer].challenges[x].onStart)) layers[layer].challenges[x].onStart()
+	}
 	doReset(layer, true)
-	if(enter) player[layer].activeChallenge = x
 
 	updateChallengeTemp(layer)
 }
@@ -288,6 +293,11 @@ function gameLoop(diff) {
 		diff = limit
 
 	addTime(diff)
+
+	if (layers.t) diff *= layers.t.effect()
+	if(diff > limit)
+		diff = limit
+
 	player.points = player.points.add(tmp.pointGen.times(diff)).max(0)
 
 	for (x = 0; x <= maxRow; x++){

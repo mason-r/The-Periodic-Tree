@@ -10,7 +10,7 @@ addLayer("c", {
     infoboxes: {
         lore: {
             title: "cash",
-            body: "Selling your game to a publisher means needing to start over on a new one, but you can use the money to finally upgrade your PC! You're confident buying new hardware and such is the best way to work more efficiently."
+            body: `<span style="color: ${cashColor}">Selling</span> your game to a publisher means needing to start over on a new one, but you can use the <span style="color: ${cashColor}">money</span> to finally upgrade your PC! You're confident buying new hardware and such is the best way to work more efficiently.`
         }
     },
     resetDescription: "Sell game to publisher for ",
@@ -27,14 +27,18 @@ addLayer("c", {
     gainMult() {
         mult = new Decimal(100).mul(buyableEffect("f", 12))
         if (hasUpgrade("f", 12) && hasUpgrade("g", 12)) mult = mult.mul(upgradeEffect("f", 12))
+        if (hasUpgrade("l", 11)) mult = mult.mul(upgradeEffect("l", 11))
         return mult
     },
     gainExp() {
         return new Decimal(1)
     },
     roundUpCost: true,
+    onPrestige(gain) {
+        if (hasMilestone("d", 1)) addPoints("e", getResetGain("e"))
+    },
     doReset(resettingLayer) {
-        if (['s', 'f', 'g'].includes(resettingLayer)) {
+        if (['s', 'f', 't', 'd', 'l', 'g'].includes(resettingLayer)) {
             const shouldKeepUpgrades = {
                 11: hasMilestone("f", 0),
                 12: hasMilestone("f", 1),
@@ -63,6 +67,7 @@ addLayer("c", {
             player[this.layer].upgrades = upgradesToKeep
         }
     },
+    resetsNothing() { return hasMilestone("s", 5) },
     hotkeys: [
         {
             key: "c",
@@ -89,7 +94,7 @@ addLayer("c", {
         () => hasUpgrade("e", 13) ? ["display-text", "Revenue", { "font-size": "32px" }] : [],
         () => hasUpgrade("e", 13) ? "blank" : [],
         () => hasUpgrade("e", 13) ? ["row", [["upgrade", 111], ["upgrade", 112], ["upgrade", 113], ["upgrade", 114]]] : [],
-        () => hasUpgrade("g", 11) ? ["row", [["upgrade", 121], ["upgrade", 122], ["upgrade", 123], ["upgrade", 124]]] : []
+        () => hasUpgrade("g", 11) && !inChallenge("d", 11) ? ["row", [["upgrade", 121], ["upgrade", 122], ["upgrade", 123], ["upgrade", 124]]] : []
     ],
     update(diff) {
         generatePoints("c", this.revenue(diff))
@@ -187,7 +192,7 @@ addLayer("c", {
             currencyInternalName: "points",
             currencyLocation() { return player.u },
             cost: new Decimal(10000),
-            unlocked() { return hasUpgrade("g", 11) }
+            unlocked() { return hasUpgrade("g", 11) && !inChallenge("d", 11) }
         },
         122: {
             title: "Add cosmetic loot crates",
@@ -196,7 +201,7 @@ addLayer("c", {
             currencyInternalName: "points",
             currencyLocation() { return player.u },
             cost: new Decimal(12500),
-            unlocked() { return hasUpgrade("g", 11) }
+            unlocked() { return hasUpgrade("g", 11) && !inChallenge("d", 11) }
         },
         123: {
             title: "Add loot crate weapons",
@@ -205,7 +210,7 @@ addLayer("c", {
             currencyInternalName: "points",
             currencyLocation() { return player.u },
             cost: new Decimal(15000),
-            unlocked() { return hasUpgrade("g", 11) }
+            unlocked() { return hasUpgrade("g", 11) && !inChallenge("d", 11) }
         },
         124: {
             title: "Add gacha mechanics",
@@ -214,7 +219,7 @@ addLayer("c", {
             currencyInternalName: "points",
             currencyLocation() { return player.u },
             cost: new Decimal(20000),
-            unlocked() { return hasUpgrade("g", 11) }
+            unlocked() { return hasUpgrade("g", 11) && !inChallenge("d", 11) }
         }
     },
     buyables: {
@@ -227,7 +232,8 @@ addLayer("c", {
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             effect() { return new Decimal(0.25).add(buyableEffect("s", 22)).mul(getBuyableAmount("c", 11)).add(1) },
             buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                if (!hasUpgrade("l", 11) || inChallenge("d", 21))
+                    player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount("c", 11, getBuyableAmount("c", 11).add(1))
             }
         }
@@ -238,10 +244,10 @@ addLayer("c", {
         if (hasUpgrade("c",112)) cpm += 2
         if (hasUpgrade("c",113)) cpm += 2
         if (hasUpgrade("c",114)) cpm += 5
-        if (hasUpgrade("c",121) && hasUpgrade("g", 11)) cpm += 90
-        if (hasUpgrade("c",122) && hasUpgrade("g", 11)) cpm += 900
-        if (hasUpgrade("c",123) && hasUpgrade("g", 11)) cpm += 9000
-        if (hasUpgrade("c",124) && hasUpgrade("g", 11)) cpm += 90000
+        if (hasUpgrade("c",121) && hasUpgrade("g", 11) && !inChallenge("d", 11)) cpm += 90
+        if (hasUpgrade("c",122) && hasUpgrade("g", 11) && !inChallenge("d", 11)) cpm += 900
+        if (hasUpgrade("c",123) && hasUpgrade("g", 11) && !inChallenge("d", 11)) cpm += 9000
+        if (hasUpgrade("c",124) && hasUpgrade("g", 11) && !inChallenge("d", 11)) cpm += 90000
         return diff * cpm / 1000
     }
 })

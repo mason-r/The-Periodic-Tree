@@ -29,10 +29,15 @@ addLayer("u", {
         mult = new Decimal(1).div(buyableEffect("f", 12))
         if (hasUpgrade("u", 21)) mult = mult.div(2)
         if (hasUpgrade("e", 11)) mult = mult.div(upgradeEffect("e", 11))
-        if (hasUpgrade("u", 31) && hasUpgrade("g", 13)) mult = mult.div(10)
-        if (hasUpgrade("u", 41) && hasUpgrade("g", 13)) mult = mult.div(upgradeEffect("u", 41))
-        if (hasUpgrade("u", 32) && hasUpgrade("g", 13)) mult = mult.pow(2)
-        if (hasUpgrade("u", 42) && hasUpgrade("g", 13)) mult = mult.pow(upgradeEffect("u", 42))
+        if (hasUpgrade("l", 13)) mult = mult.div(upgradeEffect("l", 13))
+        if (!inChallenge("d", 11)) {
+            if (hasUpgrade("u", 31) && hasUpgrade("g", 13)) mult = mult.div(10)
+            if (hasUpgrade("u", 41) && hasUpgrade("g", 13)) mult = mult.div(upgradeEffect("u", 41))
+            if (hasUpgrade("u", 32) && hasUpgrade("g", 13)) mult = mult.pow(2)
+            if (hasUpgrade("u", 42) && hasUpgrade("g", 13)) mult = mult.pow(upgradeEffect("u", 42))
+        }
+        mult = mult.pow(buyableEffect("a", 13))
+        if (hasUpgrade("l", 13) && !inChallenge("d", 21)) mult = mult.pow(2)
         return mult
     },
     gainExp() {
@@ -41,9 +46,13 @@ addLayer("u", {
     roundUpCost: true,
     canBuyMax() { return true },
     doReset(resettingLayer) {
-        if (resettingLayer != 'u')
-            layerDataReset(this.layer, hasMilestone("s", 0) ? [ 'upgrades', 'best' ] : [ 'best' ])
+        if (resettingLayer != 'u') {
+            const keep = [ 'best' ]
+            if (hasMilestone("s", 0)) keep.push('upgrades')
+            layerDataReset(this.layer, keep)
+        }
     },
+    resetsNothing() { return hasMilestone("d", 0) },
     hotkeys: [
         {
             key: "u",
@@ -95,27 +104,35 @@ addLayer("u", {
             title: "Cosmetics Economy",
             description: "Let the community make and sell cosmetics in-game, giving 10x update gain",
             cost: new Decimal(25000),
-            unlocked() { return hasUpgrade("g", 13) }
+            unlocked() { return hasUpgrade("g", 13) && !inChallenge("d", 11) }
         },
         32: {
             title: "Workshop Support",
             description: "Add support for community made mods, squaring update gain",
             cost: new Decimal(50000),
-            unlocked() { return hasUpgrade("g", 13) }
+            unlocked() { return hasUpgrade("g", 13) && !inChallenge("d", 11) }
         },
         41: {
             title: "Featured creators",
             description: "Make a featured section for popular community creators, multiplying update gain based on the amount of good will",
             cost: new Decimal(100000),
-            effect() { return player.g.unused.pow10() },
-            unlocked() { return hasUpgrade("g", 13) }
+            effect() {
+                let ret = player.g.unused
+                if (challengeCompletions("d", 12) > 0) ret = ret.add(player.g.points.sub(player.g.unused).div(2))
+                return ret.pow10()
+            },
+            unlocked() { return hasUpgrade("g", 13) && !inChallenge("d", 11) }
         },
         42: {
             title: "Community Updates",
             description: "Bundle a bunch of mods together and release them as an \"update\", raising update gain to a power based on the amount of good will",
             cost: new Decimal(250000),
-            effect() { return player.g.unused.add(1) },
-            unlocked() { return hasUpgrade("g", 13) }
+            effect() {
+                let ret = player.g.unused
+                if (challengeCompletions("d", 12) > 0) ret = ret.add(player.g.points.sub(player.g.unused).div(2))
+                return ret.add(1)
+            },
+            unlocked() { return hasUpgrade("g", 13) && !inChallenge("d", 11) }
         }
     }
 })

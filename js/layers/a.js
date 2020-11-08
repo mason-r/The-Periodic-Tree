@@ -10,7 +10,7 @@ addLayer("a", {
     infoboxes: {
         lore: {
             title: "api",
-            body: `All this refactoring has given you a new sense of perspective on how all these different game engines tend to work, and you have an idea for a new <span style="color: ${apiColor}">Application Programming Interface (API)</span> that could simplify everything enormously, making almost everything easier to implement. The more <span style="color: ${refactoringColor}">refactoring experience</span> you have, the more <span style="color: ${apiColor}">API end points</span> you can use to implement your design.<br/><br/>` +
+            body: `All this <span style="color: ${refactoringColor}">refactoring</span> has given you a new sense of perspective on how all these different game engines tend to work, and you have an idea for a new <span style="color: ${apiColor}">Application Programming Interface (API)</span> that could simplify everything enormously, making almost everything easier to implement. The more <span style="color: ${refactoringColor}">refactoring experience</span> you have, the more <span style="color: ${apiColor}">API end points</span> you can use to implement your design.<br/><br/>` +
                   `Designing your <span style="color: ${apiColor}">API</span> means spending your <span style="color: ${apiColor}">endpoints</span> on adding or improving the various bonuses available to you.`
         }
     },
@@ -25,7 +25,7 @@ addLayer("a", {
     requires: new Decimal(10),
     base: new Decimal(1.2),
     baseAmount() { return player.r.points },
-    exponent: 1.1,
+    exponent: 1,
     gainMult() {
         mult = new Decimal(1)
         return mult
@@ -37,6 +37,7 @@ addLayer("a", {
     onPrestige(gain) {
         player[this.layer].unused = player[this.layer].unused.add(gain)
     },
+    tooltip() { return `${formatWhole(player.a.unused)} endpoints` },
     hotkeys: [
         {
             key: "a",
@@ -46,6 +47,7 @@ addLayer("a", {
     ],
     tabFormat: [
         ["infobox", "lore"],
+        ["display-text", () => inChallenge("d", 12) ? `<h2 style="color: red;">Disabled during ${layers.d.challenges[player.d.activeChallenge].name} degree plan</h2>` : ""],
         ["display-text", () => `You have <h2 style="color: ${tmp.a.color}; text-shadow: ${tmp.a.color} 0px 0px 10px">${formatWhole(player.a.unused)}</h2> endpoints`],
         ["display-text", () => `You have earned a total of ${player.a.points} endpoints.`],
         "blank",
@@ -66,6 +68,7 @@ addLayer("a", {
             setBuyableAmount(this.layer, 21, 0)
             setBuyableAmount(this.layer, 22, 0)
             setBuyableAmount(this.layer, 23, 0)
+            doReset("a", true)
         },
         respecText: "Re-design API",
         11: {
@@ -92,7 +95,7 @@ addLayer("a", {
                 setBuyableAmount(this.layer, this.id, new Decimal(1).add(getBuyableAmount(this.layer, this.id)))
             },
             effect() {
-                return new Decimal(2).pow(getBuyableAmount(this.layer, this.id))
+                return inChallenge("d", 12) ? new Decimal(1) : new Decimal(2).pow(Decimal.mul(getBuyableAmount(this.layer, this.id), buyableEffect("a", 23)))
             }
         },
         12: {
@@ -119,20 +122,20 @@ addLayer("a", {
                 setBuyableAmount(this.layer, this.id, new Decimal(1).add(getBuyableAmount(this.layer, this.id)))
             },
             effect() {
-                return new Decimal(10).pow(new Decimal(5).pow(getBuyableAmount(this.layer, this.id)))
+                return inChallenge("d", 12) ? new Decimal(1) : new Decimal(10).pow(new Decimal(5).pow(Decimal.mul(getBuyableAmount(this.layer, this.id), buyableEffect("a", 23))).sub(1))
             }
         },
-        21: {
-            title: "/experience/gain",
+        13: {
+            title: "/updates",
             display() {
                 const cost = this.cost()
-                return `Each endpoint multiplies experience gain by 50x.<br/>Currently: x${format(this.effect())}<br/>Requires ${formatWhole(cost.endpoints)} endpoints and ${format(cost.updates)} updates.`
+                return `Each endpoint quadruples update gain.<br/>Currently: x${format(this.effect())}<br/>Requires ${formatWhole(cost.endpoints)} endpoints and ${format(cost.updates)} updates.`
             },
             cost(x) {
                 const amt = x || getBuyableAmount(this.layer, this.id)
                 return {
                     endpoints: new Decimal(1).add(amt),
-                    updates: new Decimal(250).mul(new Decimal(5).pow(new Decimal(2).add(amt)))
+                    updates: new Decimal(2).pow(amt).mul(50000)
                 }
             },
             canAfford() {
@@ -146,14 +149,42 @@ addLayer("a", {
                 setBuyableAmount(this.layer, this.id, new Decimal(1).add(getBuyableAmount(this.layer, this.id)))
             },
             effect() {
-                return new Decimal(50).pow(getBuyableAmount(this.layer, this.id))
+                return inChallenge("d", 12) ? new Decimal(1) : new Decimal(4).pow(Decimal.mul(getBuyableAmount(this.layer, this.id), buyableEffect("a", 23)))
+            },
+            unlocked() { return challengeCompletions("d", 11) > 0 }
+        },
+        21: {
+            title: "/experience",
+            display() {
+                const cost = this.cost()
+                return `Each endpoint multiplies experience gain by 50x.<br/>Currently: x${format(this.effect())}<br/>Requires ${formatWhole(cost.endpoints)} endpoints and ${format(cost.updates)} updates.`
+            },
+            cost(x) {
+                const amt = x || getBuyableAmount(this.layer, this.id)
+                return {
+                    endpoints: new Decimal(1).add(amt),
+                    updates: new Decimal(1000).mul(new Decimal(5).pow(new Decimal(1).add(amt)))
+                }
+            },
+            canAfford() {
+                const cost = this.cost()
+                return player[this.layer].unused.gte(cost.endpoints) && player.u.points.gte(cost.updates)
+            },
+            buy() {
+                const cost = this.cost()
+                player[this.layer].unused = player[this.layer].unused.sub(cost.endpoints)
+                player.u.points = player.u.points.sub(cost.updates)
+                setBuyableAmount(this.layer, this.id, new Decimal(1).add(getBuyableAmount(this.layer, this.id)))
+            },
+            effect() {
+                return inChallenge("d", 12) ? new Decimal(1) : new Decimal(50).pow(Decimal.mul(getBuyableAmount(this.layer, this.id), buyableEffect("a", 23)))
             }
         },
         22: {
             title: "/refactoring/prod",
             display() {
                 const cost = this.cost()
-                return `Each endpoint raises the extra slowdown effects of refactoring to the ^.25 power.<br/>Currently: ^${format(this.effect())}<br/>Requires ${formatWhole(cost.endpoints)} endpoints and ${format(cost.updates)} updates.`
+                return `Each endpoint raises the extra slowdown effects of refactoring to the ^.2 power.<br/>Currently: ^${format(this.effect())}<br/>Requires ${formatWhole(cost.endpoints)} endpoints and ${format(cost.updates)} updates.`
             },
             cost(x) {
                 const amt = x || getBuyableAmount(this.layer, this.id)
@@ -173,9 +204,37 @@ addLayer("a", {
                 setBuyableAmount(this.layer, this.id, new Decimal(1).add(getBuyableAmount(this.layer, this.id)))
             },
             effect() {
-                return new Decimal(.25).pow(getBuyableAmount(this.layer, this.id))
+                return inChallenge("d", 12) ? new Decimal(1) : new Decimal(.2).pow(Decimal.mul(getBuyableAmount(this.layer, this.id), buyableEffect("a", 23)))
             }
         },
+        23: {
+            title: "/api/v2",
+            display() {
+                const cost = this.cost()
+                return `Each endpoint multiplies all other endpoint effects by 50%.<br/>Currently: x${format(this.effect())}<br/>Requires ${formatWhole(cost.endpoints)} endpoints and ${format(cost.updates)} updates.`
+            },
+            cost(x) {
+                const amt = x || getBuyableAmount(this.layer, this.id)
+                return {
+                    endpoints: new Decimal(1).add(amt),
+                    updates: new Decimal(2).pow(amt).mul(75000)
+                }
+            },
+            canAfford() {
+                const cost = this.cost()
+                return player[this.layer].unused.gte(cost.endpoints) && player.u.points.gte(cost.updates)
+            },
+            buy() {
+                const cost = this.cost()
+                player[this.layer].unused = player[this.layer].unused.sub(cost.endpoints)
+                player.u.points = player.u.points.sub(cost.updates)
+                setBuyableAmount(this.layer, this.id, new Decimal(1).add(getBuyableAmount(this.layer, this.id)))
+            },
+            effect() {
+                return inChallenge("d", 12) ? new Decimal(1) : new Decimal(1.5).pow(getBuyableAmount(this.layer, this.id))
+            },
+            unlocked() { return challengeCompletions("d", 11) > 0 }
+        }
     },
     milestones: {
         0: {
@@ -194,6 +253,11 @@ addLayer("a", {
             done() { return player[this.layer].points.gte(3) }
         },
         3: {
+            requirementDescription: "4 total API endpoints",
+            effectDescription: "Unlock a new Degree program",
+            done() { return player[this.layer].points.gte(4) }
+        },
+        4: {
             requirementDescription: "5 total API endpoints",
             effectDescription: "Row 4 resets don't reset refactorings",
             done() { return player[this.layer].points.gte(5) }

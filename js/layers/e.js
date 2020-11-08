@@ -28,15 +28,18 @@ addLayer("e", {
     exponent: 2,
     gainMult() {
         mult = new Decimal(1).mul(buyableEffect("f", 13)).mul(buyableEffect("a", 21))
-        if (hasUpgrade("f", 11) && hasUpgrade("g", 12)) mult = mult.mul(upgradeEffect("f", 11))
+        if (hasUpgrade("f", 11) && hasUpgrade("g", 12) && !inChallenge("d", 11)) mult = mult.mul(upgradeEffect("f", 11))
         return mult
     },
     gainExp() {
         return new Decimal(1)
     },
     roundUpCost: true,
+    onPrestige(gain) {
+        if (hasMilestone("d", 1)) addPoints("c", getResetGain("c"))
+    },
     doReset(resettingLayer) {
-        if (['r', 's', 'a'].includes(resettingLayer)) {
+        if (['r', 's', 'a', 't', 'd', 'l'].includes(resettingLayer)) {
             const shouldKeepUpgrades = {
                 11: hasMilestone("r", 2),
                 12: hasMilestone("r", 0),
@@ -55,6 +58,7 @@ addLayer("e", {
             player[this.layer].upgrades = upgradesToKeep
         }
     },
+    resetsNothing() { return hasMilestone("s", 5) },
     effect() { return player.e.points.pow(buyableEffect("s", 11)).sqrt().add(1) },
     effectDescription() {
         return `multiplying base productivity by ${format(this.effect())}x.`

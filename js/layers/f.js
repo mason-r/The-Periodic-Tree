@@ -29,7 +29,8 @@ addLayer("f", {
     exponent: 1.25,
     gainMult() {
         mult = new Decimal(1)
-        if (hasUpgrade("g", 23)) mult = mult.div(upgradeEffect("g", 23))
+        if (hasUpgrade("g", 23) && !inChallenge("d", 11)) mult = mult.div(upgradeEffect("g", 23))
+        if (hasUpgrade("l", 12)) mult = mult.div(upgradeEffect("l", 12))
         return mult
     },
     gainExp() {
@@ -51,10 +52,10 @@ addLayer("f", {
         return player[this.layer].points.lessThan(1) ? "" : `which double your amount of fans every ${format(this.effect().doubleFrequency)} seconds.`
     },
     doReset(resettingLayer) {
-        if (['g'].includes(resettingLayer)) {
-            layerDataReset(this.layer, hasMilestone("g", 2) ? [ 'milestones' ] : [])
-            if (hasMilestone("g", 0)) player[this.layer].fans = new Decimal(1000)
-            if (hasMilestone("g", 1)) {
+        if (['d', 'l', 'g'].includes(resettingLayer)) {
+            layerDataReset(this.layer, hasMilestone("g", 2) && !inChallenge("d", 11) ? [ 'milestones', 'upgrades' ] : [])
+            if (hasMilestone("g", 0) && !inChallenge("d", 11)) player[this.layer].fans = new Decimal(1000)
+            if (hasMilestone("g", 1) && !inChallenge("d", 11)) {
                 setBuyableAmount("f", 11, new Decimal(1))
                 setBuyableAmount("f", 12, new Decimal(1))
                 setBuyableAmount("f", 13, new Decimal(1))
@@ -62,6 +63,7 @@ addLayer("f", {
             }
         }
     },
+    resetsNothing() { return challengeCompletions("d", 22) > 0 },
     hotkeys: [
         {
             key: "f",
@@ -98,6 +100,10 @@ addLayer("f", {
             if (freq.gt(0))
                 player[this.layer].fans = player[this.layer].fans.mul(new Decimal(2).pow(new Decimal(diff).div(freq)))
         }
+        if (hasUpgrade("l", 12) && !inChallenge("d", 21))
+            [11, 12, 13, 14].forEach(id => {
+                if (layers.f.buyables[id].canAfford()) layers.f.buyables[id].buy()
+            })
     },
     buyables: {
         rows: 1,
@@ -110,11 +116,11 @@ addLayer("f", {
             effect() {
                 if (getBuyableAmount("f", 11).lte(0)) return new Decimal(1)
                 let effect = new Decimal(1.1).pow(getBuyableAmount("f", 11).sub(1)).mul(player[this.layer].fans.clampMin(10).log10().pow(0.3)).mul(layers.g.effect()).add(1)
-                if (hasUpgrade("f", 14) && hasUpgrade("g", 12)) effect = effect.mul(upgradeEffect("f", 14))
+                if (hasUpgrade("f", 14) && hasUpgrade("g", 12) && !inChallenge("d", 11)) effect = effect.mul(upgradeEffect("f", 14))
                 return effect
             },
             buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                if (!hasUpgrade("l", 12) || inChallenge("d", 21)) player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount("f", 11, getBuyableAmount("f", 11).add(1))
             }
         },
@@ -128,7 +134,7 @@ addLayer("f", {
                 return new Decimal(1.1).pow(getBuyableAmount("f", 12).sub(1)).mul(player[this.layer].fans.clampMin(10).log2().sqrt()).mul(layers.g.effect()).add(1)
             },
             buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                if (!hasUpgrade("l", 12) || inChallenge("d", 21)) player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount("f", 12, getBuyableAmount("f", 12).add(1))
             }
         },
@@ -142,7 +148,7 @@ addLayer("f", {
                 return new Decimal(1.1).pow(getBuyableAmount("f", 13).sub(1)).mul(player[this.layer].fans.clampMin(10).log2().pow(0.25)).mul(layers.g.effect()).add(1)
             },
             buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                if (!hasUpgrade("l", 12) || inChallenge("d", 21)) player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount("f", 13, getBuyableAmount("f", 13).add(1))
             }
         },
@@ -156,7 +162,7 @@ addLayer("f", {
                 return new Decimal(1.1).pow(getBuyableAmount("f", 14).sub(1)).mul(player[this.layer].fans.clampMin(10).log10().pow(0.25)).mul(layers.g.effect()).add(1)
             },
             buy() {
-                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                if (!hasUpgrade("l", 12) || inChallenge("d", 21)) player[this.layer].points = player[this.layer].points.sub(this.cost())
                 setBuyableAmount("f", 14, getBuyableAmount("f", 14).add(1))
             }
         }
@@ -171,7 +177,7 @@ addLayer("f", {
             currencyInternalName: "points",
             currencyLocation() { return player.u },
             cost: new Decimal(15000),
-            unlocked() { return hasUpgrade("g", 12) },
+            unlocked() { return hasUpgrade("g", 12) && !inChallenge("d", 11) },
             effect() { return player.f.fans.clampMin(10).log10().log(1.5).mul(layers.g.effect()).add(1) }
         },
         12: {
@@ -181,7 +187,7 @@ addLayer("f", {
             currencyInternalName: "points",
             currencyLocation() { return player.u },
             cost: new Decimal(20000),
-            unlocked() { return hasUpgrade("g", 12) },
+            unlocked() { return hasUpgrade("g", 12) && !inChallenge("d", 11) },
             effect() { return player.f.fans.clampMin(10).log10().log2().mul(layers.g.effect()).add(1) }
         },
         13: {
@@ -191,7 +197,7 @@ addLayer("f", {
             currencyInternalName: "points",
             currencyLocation() { return player.u },
             cost: new Decimal(30000),
-            unlocked() { return hasUpgrade("g", 12) },
+            unlocked() { return hasUpgrade("g", 12) && !inChallenge("d", 11) },
             effect() { return player.f.fans.clampMin(10).log10().log2().sqrt().mul(layers.g.effect()).add(1) }
         },
         14: {
@@ -201,7 +207,7 @@ addLayer("f", {
             currencyInternalName: "points",
             currencyLocation() { return player.u },
             cost: new Decimal(50000),
-            unlocked() { return hasUpgrade("g", 12) },
+            unlocked() { return hasUpgrade("g", 12) && !inChallenge("d", 11) },
             effect() { return player.f.fans.clampMin(10).log10().log10().mul(layers.g.effect()).add(1) }
         }
     },

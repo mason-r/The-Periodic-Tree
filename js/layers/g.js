@@ -23,11 +23,12 @@ addLayer("g", {
     layerShown() { return player[this.layer].unlocked || player.f.best.gte(6) },
     type: "static",
     requires: new Decimal(8),
-    base: new Decimal(1.5),
+    base: new Decimal(1.25),
     baseAmount() { return player.f.points },
-    exponent: 1.25,
+    exponent: 0.9,
     gainMult() {
         mult = new Decimal(1)
+        if (hasUpgrade("l", 15)) mult = mult.div(upgradeEffect("l", 15))
         return mult
     },
     gainExp() {
@@ -38,12 +39,18 @@ addLayer("g", {
         player[this.layer].unused = player[this.layer].unused.add(gain)
     },
     effect() {
-        return player.g.unused.add(1).pow(2)
+        if (inChallenge("d", 11))
+            return new Decimal(1)
+        let ret = player.g.unused.add(1)
+        if (challengeCompletions("d", 12) > 0) ret = ret.add(player[this.layer].points.sub(player[this.layer].unused).div(2))
+        ret = ret.pow(2.5)
+        if (hasUpgrade("l", 15)) ret = ret.pow(2)
+        return ret
     },
     effectDescription() {
         return `which multiplies your fame and fan effects by x${formatWhole(this.effect())}.`
     },
-    tooltip() { return `${formatWhole(player.g.unused)} goodwill` },
+    tooltip() { return `${formatWhole(player.g.unused)} good will` },
     hotkeys: [
         {
             key: "g",
@@ -53,6 +60,7 @@ addLayer("g", {
     ],
     tabFormat: [
         ["infobox", "lore"],
+        ["display-text", () => inChallenge("d", 11) ? `<h2 style="color: red;">Disabled during ${layers.d.challenges[player.d.activeChallenge].name} degree plan</h2>` : ""],
         ["display-text", () => `You have <h2 style="color: ${tmp.g.color}; text-shadow: ${tmp.g.color} 0px 0px 10px">${formatWhole(player.g.unused)}</h2> good will, ${layers.g.effectDescription()}`],
         ["display-text", () => `You have earned a total of ${player.g.points} good will.`],
         "blank",
@@ -126,12 +134,12 @@ addLayer("g", {
         },
         1: {
             requirementDescription: "2 total good will",
-            effectDescription: "Start row 4 resets with 1 of each social media account",
+            effectDescription: "Start row 4 resets with 1 of each social media account, and unlock a new Degree program",
             done() { return player[this.layer].points.gte(2) }
         },
         2: {
             requirementDescription: "3 total good will",
-            effectDescription: "Retain fame milestones",
+            effectDescription: "Retain fame milestones and upgrades",
             done() { return player[this.layer].points.gte(3) }
         }
     },

@@ -20,6 +20,9 @@
 	<script type="text/javascript" src="js/layers/s.js"></script>
 	<script type="text/javascript" src="js/layers/f.js"></script>
 	<script type="text/javascript" src="js/layers/a.js"></script>
+	<script type="text/javascript" src="js/layers/t.js"></script>
+	<script type="text/javascript" src="js/layers/d.js"></script>
+	<script type="text/javascript" src="js/layers/l.js"></script>
 	<script type="text/javascript" src="js/layers/g.js"></script>
 	<script type="text/javascript" src="js/mod.js"></script>
 	<script type="text/javascript" src="js/temp.js"></script>
@@ -53,8 +56,7 @@
 		<div v-if="player.tab=='gameEnded'" class="fullWidth">
 			<br>
 			<h2>{{modInfo.name}} {{VERSION.withoutName}}</h2><br><br>
-			<h3>Congratulations! You have reached the end and beaten this game, but for now...</h3><br>
-			<h3>Please check the Discord to see if there are new content updates!</h3><br><br>
+			<h3>Congratulations! You have completed your magnum opus and beaten the game!</h3><br>
 			<div v-if="!player.timePlayedReset">It took you {{formatTime(player.timePlayed)}} to beat the game.</div>
 			<div v-if="player.timePlayedReset">Make sure that you record the time in your stream or else your speedrun won't count!</div>
 			<br>
@@ -63,11 +65,6 @@
 			<span v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink" target="_blank">{{modInfo.discordName}}</a><br></span>
 			<a class="link" href="https://discord.gg/F3xveHV" target="_blank" v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">The Modding Tree Discord</a><br>
 			<a class="link" href="http://discord.gg/wwQfgPa" target="_blank" v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a><br>
-			<br><br>
-			If you would like to speedrun this, press Play Again and record your attempt, then submit on the Discord Server in the channel #speedrun-submissions.
-			<br><br><br>
-			<h1>Oh, you are still reading this?</h1>
-			<br>
 		</div>
 		<div v-if="player.tab=='changelog'" class="col right">
 			<button class="back" onclick="showTab('tree')">←</button><br><br><br>
@@ -132,9 +129,6 @@
 				<span v-if="player.offTime !== undefined"  class="overlayThing">
 					<br>Offline Time: {{formatTime(player.offTime.remain)}}<br>
 				</span>
-				<span v-if="!player.keepGoing"  class="overlayThing">
-					<br>Reach {{formatWhole(modInfo.endgame)+" "+modInfo.pointsName}} to beat the game!<br>
-				</span>
 				<span v-if="!!getClickableState('r', 11) || !!getClickableState('r', 12) || !!getClickableState('r', 13) || !!getClickableState('r', 14)" class="overlayThing" style="color: red; font-size: 24px">
 					<br>Refactoring active,<br>massively slowing down productivity!<br>
 				</span>
@@ -160,9 +154,6 @@
 				</span>
 				<span v-if="player.offTime !== undefined"  class="overlayThing">
 					<br>Offline Time: {{formatTime(player.offTime.remain)}}<br>
-				</span>
-				<span v-if="!player.keepGoing"  class="overlayThing">
-					<br>Reach {{formatWhole(modInfo.endgame)+" "+modInfo.pointsName}} to beat the game!<br>
 				</span>
 				<span v-if="!!getClickableState('r', 11) || !!getClickableState('r', 12) || !!getClickableState('r', 13) || !!getClickableState('r', 14)" class="overlayThing" style="color: red; font-size: 24px">
 					<br>Refactoring active,<br>massively slowing down productivity!<br>

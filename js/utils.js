@@ -20,7 +20,7 @@ function commaFormat(num, precision) {
 function regularFormat(num, precision) {
 	if (num === null || num === undefined) return "NaN"
 	if (num.eq(0)) return (0).toFixed(precision)
-	if (num.mag < 0.001) return num.toExponential(precision)
+	if (num.mag < 0.01) return num.toExponential(precision)
 	return num.toStringWithDecimalPlaces(precision)
 }
 
@@ -515,31 +515,34 @@ function buyUpg(layer, id) {
 }
 
 function buyMaxBuyable(layer, id) {
-	if (!player[layer].unlocked) return
-	if (!tmp[layer].buyables[id].unlocked) return
-	if (!tmp[layer].buyables[id].canAfford) return
-	if (!layers[layer].buyables[id].buyMax) return
+	if (!player[layer].unlocked) return false
+	if (!tmp[layer].buyables[id].unlocked) return false
+	if (!tmp[layer].buyables[id].canAfford) return false
+	if (!layers[layer].buyables[id].buyMax) return false
 
 	layers[layer].buyables[id].buyMax()
 	updateBuyableTemp(layer)
+	return true
 }
 
 function buyBuyable(layer, id) {
-	if (!player[layer].unlocked) return
-	if (!tmp[layer].buyables[id].unlocked) return
-	if (!tmp[layer].buyables[id].canAfford) return
+	if (!player[layer].unlocked) return false
+	if (!tmp[layer].buyables[id].unlocked) return false
+	if (!tmp[layer].buyables[id].canAfford) return false
 
 	layers[layer].buyables[id].buy()
 	updateBuyableTemp(layer)
+	return true
 }
 
 function clickClickable(layer, id) {
-	if (!player[layer].unlocked) return
-	if (!tmp[layer].clickables[id].unlocked) return
-	if (!tmp[layer].clickables[id].canClick) return
+	if (!player[layer].unlocked) return false
+	if (!tmp[layer].clickables[id].unlocked) return false
+	if (!tmp[layer].clickables[id].canClick) return false
 
 	layers[layer].clickables[id].onClick()
 	updateClickableTemp(layer)
+	return true
 }
 
 // Function to determine if the player is in a challenge
@@ -550,7 +553,7 @@ function inChallenge(layer, id){
 	if (challenge==id) return true
 
 	if (layers[layer].challenges[challenge].countsAs)
-		return tmp[layer].challenges[id].countsAs.includes(id)
+		return tmp[layer].challenges[challenge].countsAs.includes(id)
 }
 
 // ************ Misc ************

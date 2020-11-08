@@ -13,13 +13,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2.3",
-	name: "Stylish",
+	num: "1.0",
+	name: "Version Bump",
 }
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
-var doNotCallTheseFunctionsEveryTick = ["blowUpEverything"]
+var doNotCallTheseFunctionsEveryTick = ["blowUpEverything", "onStart"]
 
 function getStartPoints(){
     return new Decimal(modInfo.initialStartPoints)
@@ -48,7 +48,7 @@ function getPointGen() {
 			if (hasUpgrade("c", r * 10 + c)) gain = gain.mul(2)
 	
 	// Apply productivity slow downs
-	let slowDownModifier = player.points.add(gain.sqrt()).sub(player.e.total.times(layers.r.effect())).div(buyableEffect("a", 12)).pow(buyableEffect("s", 12)).clampMin(1)
+	let slowDownModifier = player.points.add(gain.sqrt()).sub(player.e.total.times(layers.r.effect())).clampMin(0).div(buyableEffect("a", 12)).pow(buyableEffect("s", 12)).clampMin(1)
 	gain = gain.divide(slowDownModifier.sqrt())
 	gain = gain.divide(slowDownModifier.sqrt().clampMin(10).log10().pow(2))
 	slowDownModifier = slowDownModifier.pow(buyableEffect("a", 22))
@@ -85,12 +85,12 @@ var displayThings = [
 		  player.points < 24 * 365 * 3000000 ?    `equivalent to ${format(player.points.div(24 * 365 * 100))} centuries of work` :
 		  player.points < 24 * 365 * 3000000000 ? `equivalent to ${format(player.points.div(24 * 365 * 1000000))} epochs of work` :
 		  new Decimal(24 * 365).times("3e1000").gte(player.points) ? `equivalent to ${format(player.points.div(24 * 365 * 1000000000))} eons of work` :
-		                                          `equivalent to ${format(player.points.div(24).div(365).div("1e1000"))} heat deaths of work`
+		                                          `equivalent to heat death ^${format(player.points.log(new Decimal(24).mul(365).mul("1e1000")))} of work`
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(modInfo.endgame)
+	return hasUpgrade("d", 11)
 }
 
 
@@ -99,5 +99,5 @@ function isEndgame() {
 
 // You can change this if you have things that can be messed up by long tick lengths
 function maxTickLength() {
-	return(3600000) // Default is 1 hour which is just arbitrarily large
+	return(3600000000) // Default is 1 hour which is just arbitrarily large
 }
