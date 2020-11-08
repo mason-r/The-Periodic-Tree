@@ -1,5 +1,8 @@
 # The Game Dev Tree changelog:
 
+### v1.0.3 Version Bump [rebalanced,debuggedx2] - 2020-11-08
+- Fixed API milestone 4 not working
+
 ### v1.0.2 Version Bump [rebalanced,debugged] - 2020-11-08
 - Fixed tree lines being hidden after hitting "keepGoing" in the victory screen
 
