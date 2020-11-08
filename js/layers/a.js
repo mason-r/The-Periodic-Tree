@@ -239,7 +239,7 @@ addLayer("a", {
     milestones: {
         0: {
             requirementDescription: "1 total API endpoints",
-            effectDescription: "Retain the first, second, fourth, and eigth refactors milestones",
+            effectDescription: "Retain the first, second, fourth, and eighth refactors milestones",
             done() { return player[this.layer].points.gte(1) }
         },
         1: {

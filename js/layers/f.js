@@ -254,7 +254,7 @@ addLayer("f", {
         },
         7: {
             requirementDescription: "8 best fame",
-            effectDescription: "Retain the eigth equipment upgrade",
+            effectDescription: "Retain the eighth equipment upgrade",
             done() { return player[this.layer].best.gte(8) },
             unlocked() { return hasMilestone("f", 5) }
         }
