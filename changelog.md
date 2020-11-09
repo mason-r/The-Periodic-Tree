@@ -1,5 +1,8 @@
 # The Game Dev Tree changelog:
 
+### v1.0.4 Version Bump [rebalanced,debuggedx3] - 2020-11-09
+- Fixed refactorings 2, 3, and 4 not actually affecting productivity
+
 ### v1.0.3 Version Bump [rebalanced,debuggedx2] - 2020-11-08
 - Fixed API milestone 4 not working
 

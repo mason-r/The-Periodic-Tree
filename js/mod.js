@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.0.3",
-	name: "Version Bump [rebalanced,debuggedx2]",
+	num: "1.0.4",
+	name: "Version Bump [rebalanced,debuggedx3]",
 }
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
@@ -39,6 +39,9 @@ function getPointGen() {
 	gain = gain.pow(buyableEffect("c", 11))
 
 	gain = gain.mul(clickableEffect("r", 11))
+	gain = gain.mul(clickableEffect("r", 12))
+	gain = gain.mul(clickableEffect("r", 13))
+	gain = gain.mul(clickableEffect("r", 14))
 	gain = gain.mul(layers.f.effect().productivityMult)
 	if (hasUpgrade("u", 11)) gain = gain.mul(2)
 	if (hasUpgrade("u", 12)) gain = gain.mul(1.5)
