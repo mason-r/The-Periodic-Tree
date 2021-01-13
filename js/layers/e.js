@@ -10,7 +10,7 @@ addLayer("e", {
     infoboxes: {
         lore: {
             title: "experience",
-            body: "Look, maybe that idea just wasn't very good. You just saw a comment online that gave you this idea for a much better game! You can't even bare to think of your current game now that this new idea is in your head!<br/><br/>" +
+            body: "Look, maybe that idea just wasn't very good. You just saw a comment online that gave you this idea for a much better game! You can't even bear to think of your current game now that this new idea is in your head!<br/><br/>" +
                   "Don't worry, though, you're sure your time spent on that last idea will surely help you on this one."
         }
     },
