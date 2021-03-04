@@ -23,14 +23,14 @@ addLayer("generators", {
 			return new Decimal(0);
 		}
 		let gain = new Decimal(0);
-		if (player.generators.flowerActive) {
-			gain = gain.add(getJobLevel("flowers").div(10));
+		if (player.generators.flowerActive && (player.tab === "flowers" || player.flowers.timeLoopActive)) {
+			gain = gain.add(getJobLevel("flowers").div(25));
 		}
-		if (player.generators.studyActive) {
+		if (player.generators.studyActive && (player.tab === "study" || player.study.timeLoopActive)) {
 			gain = gain.add(getJobLevel("study").div(10));
 		}
-		if (player.generators.sandsActive) {
-			gain = gain.add(getJobLevel("sands").div(10));
+		if (player.generators.sandsActive && (player.tab === "sands" || player.sands.timeLoopActive)) {
+			gain = gain.add(getJobLevel("sands").div(5));
 		}
 		gain = gain.times(new Decimal(1.1).pow(getJobLevel(this.layer)));
 		return gain;
