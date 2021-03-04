@@ -38,7 +38,7 @@ addLayer("generators", {
 	passiveGeneration: new Decimal(1),
 	tabFormat: {
 		"Main": {
-			content: () => [
+			content: () => player.tab !== "generators" ? null : [
 				"main-display",
 				["display-text", `You are collecting <span style="color: ${electricColor}; text-shadow: ${electricColor} 0 0 10px">${format(tmp.generators.getResetGain)}</span> joules per second`],
 				"blank",

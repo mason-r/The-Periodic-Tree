@@ -1,22 +1,65 @@
-function getInstrument(instrument, requiredLevel, symbol, label = instrument.charAt(0).toUpperCase() + instrument.slice(1)) {
-	if (getJobLevel("distill").lt(requiredLevel)) {
-		return null;
+const instrumentData = {
+	retort: {
+		minLevel: 0,
+		label: "Retort",
+		logo: "🝭"
+	},
+	alembic: {
+		minLevel: 2,
+		label: "Alembic",
+		logo: "🝪"
+	},
+	crucible: {
+		minLevel: 4,
+		label: "Crucible",
+		logo: "🝧"
+	},
+	bainMarie: {
+		minLevel: 6,
+		label: "Bain-Marie",
+		logo: "🝫"
+	},
+	vapours: {
+		minLevel: 8,
+		label: "Bath of Vapours",
+		logo: "🝬"
 	}
-	return ["row", [
-		["column", [
-			["buyable", instrument],
-			["display-text", `<button class="smallUpg${layers.distill.buyables[instrument].canAfford() ? " can" : " locked"}" style="width: 175px; background: ${layers.distill.buyables[instrument].canAfford() ? distillColor : "#bf8f8f"}; border-radius: 20px; color: black;" onClick="layers.distill.buyables.${instrument}.buyMax()">Buy Max</button>`]
-		]],
-		"blank",
-		["display-text", `<div class="instrument" style="--instrument-progress: ${player.distill.anims ? Decimal.times(player.distill[`${instrument}Progress`], buyableEffect("distill", instrument)).times(100).toFixed(2) : 0}%">
-			<span>${label}</span><br/>
-			<span class="instrumentLogo">${symbol}</span><br/>
-			<span>x${format(player.distill[`${instrument}Completions`].div(100).add(1))}</span>
-		</div>`]
-	]];
-}
+};
 
-function getInstrumentBuyable(id, title, baseSpeed, baseCost, costExponent) {
+Vue.component("instrument", {
+	props: ["layer", "data"],
+	template: `
+		<div v-if="completions.gt(0) || getJobLevel('distill').gte(instrumentData[data].minLevel)" class="upgTable instant">
+			<div class="upgRow">
+				<div class="upgTable instant">
+					<div class="upgCol">
+						<buyable :layer="layer" :data="data"></buyable>
+						<button v-bind:class="{ smallUpg: true, can: canAfford, locked: !canAfford }" v-bind:style="{ width: '175px', background: canAfford ? distillColor : '' }" v-on:click="layers.distill.buyables[data].buyMax">Buy Max</button>
+					</div>
+				</div>
+				<blank />
+				<div class="instrument" v-bind:style="{ '--instrument-progress': progress + '%' }">
+					<span>{{ instrumentData[data].label }}</span>
+					<span class="instrumentLogo">{{ instrumentData[data].logo }}</span>
+					<span>x{{ format(completions.div(100).add(1)) }}</span>
+				</div>
+			</div>
+		</div>
+	`,
+	computed: {
+		completions() {
+			return player.distill[`${this.data}Completions`];
+		},
+		canAfford() {
+			return layers.distill.buyables[this.data].canAfford();
+		},
+		progress() {
+			return player.distill.anims ? Decimal.times(player.distill[`${this.data}Progress`], buyableEffect("distill", this.data)).times(100).toFixed(2) : 0;
+		}
+	}
+});
+
+function getInstrumentBuyable(id, instrumentName, title, baseSpeed, baseCost, costExponent) {
 	return {
 		title: `${title}<br/>`,
 		style: {
@@ -24,7 +67,7 @@ function getInstrumentBuyable(id, title, baseSpeed, baseCost, costExponent) {
 			height: "175px"
 		},
 		display() {
-			return `Make retort finish ${format(baseSpeed, 3)} more times/sec.<br/>(Capped at ${format(baseSpeed.times(100))})${getBuyableAmount("distill", id).lt(100) ? `<br/><br/>Currently: ${format(this.effect())}<br/><br/>Cost: ${format(this.cost())} essentia` : ""}`;
+			return `Make ${instrumentName} finish ${format(baseSpeed, 3)} more times/sec.<br/>(Capped at ${format(baseSpeed.times(100))})${getBuyableAmount("distill", id).lt(100) ? `<br/><br/>Currently: ${format(this.effect())}<br/><br/>Cost: ${format(this.cost())} essentia` : ""}`;
 		},
 		cost(x) {
 			const amount = x || getBuyableAmount("distill", id);
@@ -109,7 +152,7 @@ addLayer("distill", {
 			vapoursCompletions: new Decimal(0)
 		};
 	},
-	tabFormat: () => [
+	tabFormat: () => player.tab !== "distill" ? null : [
 		"main-display",
 		["display-text", `You are getting ${format(getEssentiaMult())} essentia every time an instrument finishes.`],
 		"blank",
@@ -135,15 +178,15 @@ addLayer("distill", {
 			["toggle", ["distill", "anims"]]
 		]],
 		"blank",
-		getInstrument("retort", 0, "🝭"),
+		["instrument", "retort"],
 		"blank",
-		getInstrument("alembic", 2, "🝪"),
+		["instrument", "alembic"],
 		"blank",
-		getInstrument("crucible", 4, "🝧"),
+		["instrument", "crucible"],
 		"blank",
-		getInstrument("bainMarie", 6, "🝫", "Bain-Marie"),
+		["instrument", "bainMarie"],
 		"blank",
-		getInstrument("vapours", 8, "🝬", "Bath of Vapours"),
+		["instrument", "vapours"],
 		"blank",
 		["milestones-filtered", [2, 5, 6]]
 	],
@@ -207,10 +250,10 @@ addLayer("distill", {
 		}
 	},
 	buyables: {
-		retort: getInstrumentBuyable("retort", "Be excellent to each other.", new Decimal(0.06), new Decimal(10), new Decimal(1.05)),
-		alembic: getInstrumentBuyable("alembic", "EXCELLENT!", new Decimal(0.03), new Decimal(100), new Decimal(1.1)),
-		crucible: getInstrumentBuyable("crucible", "Party on dudes!", new Decimal(0.02), new Decimal(1000), new Decimal(1.15)),
-		bainMarie: getInstrumentBuyable("bainMarie", "Greetings, my excellent friends.", new Decimal(0.015), new Decimal(10000), new Decimal(1.2)),
-		vapours: getInstrumentBuyable("vapours", "Most outstanding, Rufus! Let's jam!", new Decimal(0.012), new Decimal(100000), new Decimal(1.25))
+		retort: getInstrumentBuyable("retort", "retort", "Be excellent to each other.", new Decimal(0.06), new Decimal(10), new Decimal(1.05)),
+		alembic: getInstrumentBuyable("alembic", "alembic", "EXCELLENT!", new Decimal(0.03), new Decimal(100), new Decimal(1.1)),
+		crucible: getInstrumentBuyable("crucible", "crucible", "Party on dudes!", new Decimal(0.02), new Decimal(1000), new Decimal(1.15)),
+		bainMarie: getInstrumentBuyable("bainMarie", "bain-marie", "Greetings, my excellent friends.", new Decimal(0.015), new Decimal(10000), new Decimal(1.2)),
+		vapours: getInstrumentBuyable("vapours", "bath of vapours", "Most outstanding, Rufus! Let's jam!", new Decimal(0.012), new Decimal(100000), new Decimal(1.25))
 	}
 });

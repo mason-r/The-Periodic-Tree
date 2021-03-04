@@ -72,11 +72,14 @@ addLayer("tree-tab", {
 	tabFormat: () => player.chapter < 3 ?
 		[
 			// TODO babble buds stage?
-			["infobox", "genesis", { "--lore-color": "white" }],
-			player.chapter === 2 ? ["infobox", "discovery", { "--lore-color": "orange" }] : null,
+			["column", [
+				["infobox", "genesis", { "--lore-color": "white" }],
+				player.chapter === 2 ? ["infobox", "discovery", { "--lore-color": "orange" }] : null,
+			]],
 			"blank",
 			"blank",
-			player.chapter === 2 ? ["display-text", `You have <span style="color: white; text-shadow: white 0 0 10px">${formatWhole(player.timeSlots.sub(player.usedTimeSlots))}</span> free time slots`] : null,
+			player.chapter === 2 ? ["display-text", `You have <h2 style="color: white; text-shadow: white 0 0 10px">${formatWhole(player.timeSlots.sub(player.usedTimeSlots))}</h2> free time slots`] : null,
+			"blank",
 			player.chapter === 2 ? "blank" : null,
 			["job", "flowers"],
 			["job", "distill"],
@@ -88,8 +91,13 @@ addLayer("tree-tab", {
 			"Main": {
 				content: [
 					// TODO babble buds stage?
-					["infobox", "genesis", { "--lore-color": "white" }],
-					["infobox", "discovery", { "--lore-color": "orange" }],
+					["column", [
+						["infobox", "genesis", { "--lore-color": "white" }],
+						["infobox", "discovery", { "--lore-color": "orange" }],
+					]],
+					"blank",
+					"blank",
+					["display-text", `You have <span style="color: white; text-shadow: white 0 0 10px">${formatWhole(player.timeSlots.sub(player.usedTimeSlots))}</span> free time slots`],
 					"blank",
 					"blank",
 					["job", "flowers"],

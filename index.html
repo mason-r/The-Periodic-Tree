@@ -58,7 +58,7 @@
 			<img id="optionWheel" v-if="player.tab!='options'" src="options_wheel.png" onclick="showTab('options-tab')"></img>
 		</div>
 		<div v-if="false" id="loadingSection" class="fullWidth">
-			<h1>Loading... (If this takes too long it means there was a serious error!)←</h1>
+			<h1>Loading...<br>(If this takes too long it means there was a serious error!)</h1>
 		</div>
 		<div class="vl" v-if="player.navTab!= 'none' &&player.tab!='none'&&!(gameEnded && !player.keepGoing)"></div>
 		<div v-if="(gameEnded && !player.keepGoing)" class="fullWidth">
@@ -93,7 +93,7 @@
 
 		<div v-if="!(gameEnded && !player.keepGoing)" id="treeTab" v-bind:style="{'z-index': (tmp.scrolled ? '1' : '5000')}" onscroll="resizeCanvas()"
 			v-bind:class="{ fullWidth: (player.tab == 'none' || player.navTab == 'none'), col: (player.tab !== 'none' && player.navTab !== 'none'), left: (player.tab !== 'none' && player.navTab !== 'none')}">
-			<br><br><br><br>
+			<br>
 			<overlay-head id="fakeHead" style="visibility: hidden;">
 			</overlay-head>
 

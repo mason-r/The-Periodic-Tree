@@ -12,17 +12,22 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.20",
-	name: "Chapter 2 (Distilling)",
+	num: "0.21",
+	name: "Chapter 2 (Polishing)",
 };
 
 let changelog = `<h1>Changelog:</h1><br>
+	<br><h3>v.0.21</h3><br>
+		- Made "Keep Moving Forward" work by hovering rather than holding down<br>
+		- Re-styled things to look nicer<br>
+		- Performance optimizations<br>
+		- Several bug fixes<br>
 	<br><h3>v.0.20</h3><br>
-		- Re-arranged and re-balanced jobs
-		- Added distill job
-		- Added first mechanic of generators job
-		- Reset saves back to start of chapter 2
-		- Several bug fixes
+		- Re-arranged and re-balanced jobs<br>
+		- Added distill job<br>
+		- Added first mechanic of generators job<br>
+		- Reset saves back to start of chapter 2<br>
+		- Several bug fixes<br>
 	<br><h3>v.0.15</h3><br>
 		- Finishing naming time experiments job upgrades<br>
 		- Rebalanced time experiments job<br>

@@ -82,13 +82,13 @@ function loadVue() {
 	Vue.component("infobox", {
 		props: ["layer", "data"],
 		template: `
-		<div class="story instant" v-if="tmp[layer].infoboxes && tmp[layer].infoboxes[data]!== undefined && tmp[layer].infoboxes[data].unlocked" v-bind:style="[{'border-color': tmp[layer].color, 'border-radius': player.infoboxes[layer][data] ? 0 : '8px'}, tmp[layer].infoboxes[data].style]">
-			<button class="story-title" v-bind:style="[{'background-color': tmp[layer].color}, tmp[layer].infoboxes[data].titleStyle]"
+		<div v-bind:class="{ story: true, instant: true, closed: player.infoboxes[layer][data] }" v-if="tmp[layer].infoboxes && tmp[layer].infoboxes[data]!== undefined && tmp[layer].infoboxes[data].unlocked" v-bind:style="[{'border-color': tmp[layer].color}, tmp[layer].infoboxes[data].style]">
+			<button class="story-title instant" v-bind:style="[{'background-color': tmp[layer].color}, tmp[layer].infoboxes[data].titleStyle]"
 				v-on:click="player.infoboxes[layer][data] = !player.infoboxes[layer][data]">
 				<span class="story-toggle">{{player.infoboxes[layer][data] ? "+" : "-"}}</span>
 				<span v-html="tmp[layer].infoboxes[data].title ? tmp[layer].infoboxes[data].title : (tmp[layer].name)"></span>
 			</button>
-			<div v-if="!player.infoboxes[layer][data]" class="story-text" v-bind:style="tmp[layer].infoboxes[data].bodyStyle">
+			<div class="story-text instant" v-bind:style="tmp[layer].infoboxes[data].bodyStyle">
 				<span v-html="tmp[layer].infoboxes[data].body ? tmp[layer].infoboxes[data].body : 'Blah'"></span>
 			</div>
 		</div>
@@ -329,9 +329,8 @@ function loadVue() {
 			const { layer, data } = this;
 			const handlers = {
 				click: () => clickClickable(layer, data),
-				mousedown: layers[layer].clickables[data].touchstart,
+				mouseenter: layers[layer].clickables[data].touchstart,
 				touchstart: layers[layer].clickables[data].touchstart,
-				mouseup: layers[layer].clickables[data].touchend,
 				touchend: layers[layer].clickables[data].touchend,
 				mouseleave: layers[layer].clickables[data].touchend
 			};

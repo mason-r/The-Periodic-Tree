@@ -129,6 +129,7 @@ function fixSave() {
 	defaultData = getStartPlayer();
 	fixData(defaultData, player);
 	setBuyableAmount("distill", "retort", (getBuyableAmount("distill", "retort") || new Decimal(0)).max(5));
+	player.sands.chipping = false;
 
 	for (layer in layers) {
 		if (player[layer].best !== undefined) {

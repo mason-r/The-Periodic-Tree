@@ -197,7 +197,7 @@ addLayer("study", {
 	},
 	tabFormat: {
 		"Main": {
-			content: () => [
+			content: () => player.tab !== "study" ? null : [
 				["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied,<br/>and <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`],
 				"blank",
 				["display-text", (() => {
@@ -224,10 +224,10 @@ addLayer("study", {
 			]
 		},
 		"Deck": {
-			content: () => [["row", player.study.cards.map(cardFormat)]]
+			content: () => player.tab !== "study" ? null : [["row", player.study.cards.map(cardFormat)]]
 		},
 		"Buy Cards": {
-			content: () => [
+			content: () => player.tab !== "study" ? null : [
 				["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`],
 				"blank",
 				["display-text", `Cards refresh in ${new Decimal(getRefreshPeriod() - player.study.refreshProgress).clampMax(getRefreshPeriod() - 0.01).toFixed(2)} seconds`],
@@ -242,7 +242,7 @@ addLayer("study", {
 			unlocked: () => hasMilestone("study", 0)
 		},
 		"Destroy Cards": {
-			content: () => [
+			content: () => player.tab !== "study" ? null : [
 				["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied`],
 				"blank",
 				["clickable", "sell"],
@@ -252,7 +252,7 @@ addLayer("study", {
 			unlocked: () => hasMilestone("study", 1)
 		},
 		"Upgrade Cards": {
-			content: () => [
+			content: () => player.tab !== "study" ? null : [
 				hasMilestone("study", 4) ? ["column", [
 					["display-text", `Deep Thought is currently giving <span style="text-shadow: white 0 0 10px">${formatWhole(player.study.deep)}</span> bonus levels to every card,<br/>but makes each draw take <span style="text-shadow: white 0 0 10px">${formatWhole(new Decimal(2).pow(player.study.deep))}x</span> longer due to processing time.<br/><br/>You cannot add more bonus levels than your level at this job.`],
 					"blank",

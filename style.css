@@ -101,7 +101,8 @@ h1, h2, h3, b, input {
 
 
 .locked {
-	background-color: #bf8f8f;
+	background-color: #3a3e45;
+	color: white;
 	cursor: not-allowed;
 }
 
@@ -134,7 +135,7 @@ h1, h2, h3, b, input {
 }
 
 .bought {
-	background-color: #77bf5f;
+	background-color: #5C8A58;
 	cursor: default;
 }
 
@@ -197,7 +198,7 @@ h1, h2, h3, b, input {
     position: absolute;
 	overflow: hidden;
 	margin-left: -0.5px;
-	transition-duration: 0s;
+	transition-property: : clip-path;
 }
 
 .overlayText {
@@ -233,10 +234,11 @@ h1, h2, h3, b, input {
 .upg {
 	height: 150px;
 	width: 150px;
-	border-radius: 25%;
+	border-radius: 5px;
 	border: 2px solid;
 	border-color: rgba(0, 0, 0, 0.125);
 	font-size: 10px;
+	margin: 5px;
 }
 
 .achievement {
@@ -257,7 +259,7 @@ h1, h2, h3, b, input {
 .buyable {
 	height: 200px;
 	width: 200px;
-	border-radius: 25%;
+	border-radius: 5px;
 	border: 2px solid;
 	border-color: rgba(0, 0, 0, 0.125);
 	font-size: 10px;
@@ -284,9 +286,10 @@ h1, h2, h3, b, input {
 .smallUpg {
 	height: 40px;
 	width: 40px;
-	border-radius: 25%;
+	border-radius: 5px;
 	border: 2px solid;
 	border-color: rgba(0, 0, 0, 0.125);
+	margin-top: 4px;
 }
 
 #points {
@@ -349,7 +352,7 @@ a {
 	padding-left: 5px;
 	padding-right: 5px;
 	height: 75px;
-	background-color: #bf8f8f;
+	background-color: #3a3e45;
 	border: 4px solid;
 	border-radius: 4px;
 	border-color: rgba(0, 0, 0, 0.125);
@@ -363,7 +366,7 @@ a {
 	padding-right: 5px;
 
 	height: 75px;
-	background-color: #77bf5f;
+	background-color: #5C8A58;
 	border: 4px solid;
 	border-radius: 4px;
 	border-color: rgba(0, 0, 0, 0.125);
@@ -400,7 +403,7 @@ a {
     box-sizing: border-box;
 }
 
-.instant {
+.instant, .buyable > span, .buyable h2, .upg > span, .upg h2 {
 	transition-duration: 0s !important
 }
 
@@ -539,6 +542,8 @@ ul {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+    background: black;
+    z-index: 100000000000000;
 }
 
 .treeOverlay {
@@ -571,8 +576,6 @@ button > * {
 .story {
     width: 600px;
     max-width: 95%;
-    border-bottom: solid 4px;
-    border-radius: 8px;
     text-align: left;
     color: var(--lore-color);
 }
@@ -583,8 +586,7 @@ button > * {
     color: black;
     cursor: pointer;
     border: none;
-    padding: 2px;
-    border-radius: 8px 8px 0 0;
+    padding: 4px;
     width: 100%;
     background-color: var(--lore-color);
 }
@@ -599,13 +601,33 @@ button > * {
 }
 
 .story-text {
-	padding: 2px;
+	padding: 8px;
     border: solid 4px;
     border-color: inherit;
-    border-radius: inherit;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    margin-bottom: -2px;
+    max-height: 100%;
+    overflow-y: hidden;
+	transition-duration: 0s;
+}
+
+.story.closed .story-text {
+	max-height: 0;
+	padding: 0 8px;
+	border-width: 0 4px;
+}
+
+div:first-child > .story .story-title {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+div:last-child > .story:not(.closed) .story-text {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+div:last-child > .story.closed .story-title {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 #treeTab td button {
@@ -822,7 +844,7 @@ button > * {
 	--polygonH: polygon(0% 0%,100% 0%,100% 5.55%,95% 5.55%,95% 28%,60% 46%,60% 54%,95% 72%,95% 94.45%,100% 94.45%,100% 100%,0% 100%,0% 94.45%,5% 94.45%,5% 72%,40% 54%,40% 46%,5% 28%,5% 5.55%,0% 5.55%);
 	animation-name: flipHourglass;
 	animation-duration: var(--flip-duration);
-	animation-delay: 0;
+	animation-delay: 0s;
 	animation-play-state: var(--flip-state);
 	animation-timing-function: ease-in-out;
 	background-image: linear-gradient(#C2B280 0.5em,#737a8c55 0.5em 8.5em,#C2B280 8.5em);
@@ -863,7 +885,7 @@ button > * {
 .hourglass:after {
 	animation-name: glare;
 	animation-duration: var(--flip-duration);
-	animation-delay: 0;
+	animation-delay: 0s;
 	animation-play-state: var(--flip-state);
 	background:
 		linear-gradient(90deg,#0000 0.5em,#0003 0.5em 1.5em,#0000 1.5em 3.5em,#fff3 3.5em 4.5em,#fff0 4.5em 6.5em,#0003 6.5em 7.5em,#0000 7.5em) 0 0 / 100% 0.5em,
@@ -962,6 +984,8 @@ b, h3 {
     border: 2px solid rgb(138, 255, 193);
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-flow: column;
 }
 
 .instrument::before {

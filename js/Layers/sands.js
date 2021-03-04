@@ -1,3 +1,51 @@
+Vue.component("sand", {
+	props: ["layer", "data"],
+	template: `
+		<div class="chipping-container">
+			<div v-for="i in 100" class="chipping">
+				<div class="chipping-fill instant" v-bind:style="{ height: percentChipped.sub(i * 100).clamp(0, 100).div(10).floor().times(10).toNumber() + '%' }"></div>
+				<div class="chipping-fill instant" v-bind:style="{ float: 'left', height: '10%', width: percentChipped.sub(i * 100).clamp(0, 100).sub(percentChipped.sub(i * 100).clamp(0, 100).div(10).floor().times(10)).times(10).toNumber() + '%' }"></div>
+			</div>
+		</div>
+	`,
+	computed: {
+		percentChipped: () => new Decimal(1).sub(player.sands.shrunkAmount.div(nextStoneCost())).times(10000)
+	}
+});
+
+/*
+Cannot use this class because the animations don't reset properly, and seem to be calcualting the duration or delays incorrectly.
+For now it seems easier to just keep it as a display-text. I don't think it's actually that non-performant.
+
+Vue.component("hourglass", {
+	props: ["layer", "data"],
+	template: `<div>
+		<div>{{ formatWhole(totalGrains.sub(grainsFallen)) }}</div>
+		<div v-bind:style="userStyle">
+			<div class="hourglass"></div>
+		</div>
+		<div>{{ formatWhole(grainsFallen) }}</div>
+	</div>`,
+	computed: {
+		userStyle: () => {
+			const flipping = player.sands.flipping;
+			const finished = player.sands.grainsFallen.eq(getTotalGrains());
+			const fallSpeed = new Decimal(4).div(player.devSpeed || 1).div(getFallSpeed());
+			const fallMult = getFallMult();
+			return {
+				"--fill-duration": (flipping || finished ? 1 : getTotalGrains().div(fallMult).ceil().times(fallSpeed).toNumber() + 0.05) + "s",
+				"--fill-delay": "-" + (flipping || finished ? .999 : player.sands.grainsFallen.div(fallMult).floor().times(fallSpeed).toNumber()) + "s",
+				"--fill-state": flipping || finished ? "paused" : "running",
+				"--flip-duration": new Decimal(5).div(player.devSpeed || 1).div(getFlipSpeed()).toNumber() + 0.05 + "s",
+				"--flip-state": flipping ? "running" : "paused"
+			};
+		},
+		totalGrains: getTotalGrains,
+		grainsFallen: () => player.sands.grainsFallen
+	}
+});
+*/
+
 function nextStoneCost() {
 	return new Decimal(10).times(new Decimal(1.1).pow(player.sands.stonesChipped));
 }
@@ -68,7 +116,7 @@ addLayer("sands", {
 	color: sandsColor,
 	jobName: "Experiments with time",
 	showJobDelay: 0.75,
-	layerShown: () => hasMilestone("distill", 2),
+	layerShown: () => hasMilestone("distill", 5),
 	startData() {
 		return {
 			unlocked: true,
@@ -89,8 +137,9 @@ addLayer("sands", {
 		"Main": {
 			content: () => {
 				const percentChipped = new Decimal(1).sub(player.sands.shrunkAmount.div(nextStoneCost())).times(10000);
-				return [
+				return player.tab !== "sands" ? null : [
 					"main-display",
+					"blank",
 					["display-text", (() => {
 						if (!hasMilestone("sands", 0)) {
 							return "Discover new ways to experiment at level 2";
@@ -122,14 +171,7 @@ addLayer("sands", {
 					"blank",
 					["display-text", `Zoom Level: 1 / ${format(nextStoneCost().div(10))}x`],
 					"blank",
-					["display-text", `<div class="chipping-container">${new Array(100).fill(1).reduce((acc,_,i) => {
-						const singleSquarePercentChipped = percentChipped.sub(i * 100).clamp(0, 100);
-						const rowHeight = singleSquarePercentChipped.div(10).floor().times(10);
-						return acc + `<div class="chipping">
-								<div class="chipping-fill" style="height: ${rowHeight.toNumber()}%"></div>
-								<div class="chipping-fill" style="float: left; height: 10%; width: ${singleSquarePercentChipped.sub(rowHeight).times(10).toNumber()}%"></div>
-							</div>`;
-					}, "")}</div>`],
+					"sand",
 					"blank",
 					["clickable", "chip"],
 					"blank",
@@ -139,7 +181,7 @@ addLayer("sands", {
 			}
 		},
 		"Upgrades": {
-			content: () => [
+			content: () => player.tab !== "sands" ? null : [
 				"main-display",
 				"blank",
 				["display-text", (() => {
@@ -303,7 +345,7 @@ addLayer("sands", {
 	clickables: {
 		chip: {
 			title: "Keep Moving Forward<br/>",
-			display: "Hold down the mouse to chip away at the stone until its the size of a grain of sand.",
+			display: "Hover over this to chip away at the stone until its the size of a grain of sand.",
 			touchstart: () => {
 				player.sands.chipping = true;
 			},

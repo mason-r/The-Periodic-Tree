@@ -138,7 +138,7 @@ addLayer("flowers", {
 		4: {
 			title: "The story was so fantastic and incredible,",
 			requirementDescription: "Level 10",
-			"effectDescription": "Unlock study flowers job",
+			"effectDescription": "Unlock distill flowers job",
 			done: () => player.flowers.xp.gte(1e9),
 			unlocked: () => player.chapter > 1
 		},
