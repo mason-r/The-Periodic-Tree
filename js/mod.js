@@ -12,11 +12,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.21",
+	num: "0.22",
 	name: "Chapter 2 (Polishing)",
 };
 
 let changelog = `<h1>Changelog:</h1><br>
+	<br><h3>v.0.22</h3><br>
+		- Update generators' looks<br>
+		- Added distill generator<br>
 	<br><h3>v.0.21</h3><br>
 		- Made "Keep Moving Forward" work by hovering rather than holding down<br>
 		- Re-styled things to look nicer<br>
