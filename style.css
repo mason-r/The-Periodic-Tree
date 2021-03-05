@@ -959,7 +959,7 @@ b, h3 {
     left: 0;
     right: 0;
     bottom: 0;
-    border-radius: 25%;
+    border-radius: 5px;
 }
 .gradient-border::after {
 	position: absolute;
@@ -972,7 +972,7 @@ b, h3 {
 	background: linear-gradient(60deg, rgba(14,0,255,1) 0%, rgba(4,194,118,1) 16%, rgba(9,9,121,1) 35%, rgba(6,139,170,1) 59%, rgba(113,3,216,1) 81%, rgba(0,212,255,1) 100%);
 	background-size: 300% 300%;
 	background-position: 0 50%;
-	border-radius: 25%;
+	border-radius: 5px;
 	animation: moveGradient 8s alternate infinite;
 }
 @keyframes moveGradient {
