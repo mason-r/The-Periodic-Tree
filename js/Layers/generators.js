@@ -14,6 +14,7 @@ addLayer("generators", {
 			lastLevel: new Decimal(0),
 			timeLoopActive: false,
 			flowerActive: false,
+			distillActive: false,
 			studyActive: false,
 			sandsActive: false
 		};
@@ -24,7 +25,10 @@ addLayer("generators", {
 		}
 		let gain = new Decimal(0);
 		if (player.generators.flowerActive && (player.tab === "flowers" || player.flowers.timeLoopActive)) {
-			gain = gain.add(getJobLevel("flowers").div(25));
+			gain = gain.add(getJobLevel("flowers").div(50));
+		}
+		if (player.generators.distillActive && (player.tab === "distill" || player.distill.timeLoopActive)) {
+			gain = gain.add(getJobLevel("distill").div(25));
 		}
 		if (player.generators.studyActive && (player.tab === "study" || player.study.timeLoopActive)) {
 			gain = gain.add(getJobLevel("study").div(10));
@@ -62,7 +66,7 @@ addLayer("generators", {
 				})()],
 				"blank",
 				"blank",
-				["row", [["clickable", "flowersGenerator"], "blank", ["clickable", "studyGenerator"], "blank", ["clickable", "sandsGenerator"]]],
+				["row", [["clickable", "flowersGenerator"], "blank", ["clickable", "distillGenerator"], "blank", ["clickable", "studyGenerator"], "blank", ["clickable", "sandsGenerator"]]],
 				"blank",
 				"blank",
 				["milestones-filtered", [2, 5, 6]]
@@ -123,7 +127,7 @@ addLayer("generators", {
 	clickables: {
 		flowersGenerator: {
 			title: "I hate manure!<br/>",
-			display: () => `Generate electricity based on gather level.<br/><br/>Flowers gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.flowerActive ? "ACTIVE" : "INACTIVE"}</b>`,
+			display: () => `Generate <b>${format(getJobLevel("flowers").div(50))}</b> joules/s if collecting job is active.<br/>(based on collecting level)<br/><br/>Flowers gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.flowerActive ? "ACTIVE" : "INACTIVE"}</b>`,
 			class: () => ({ "gradient-border": player.generators.flowerActive }),
 			style: {
 				width: "200px",
@@ -133,9 +137,21 @@ addLayer("generators", {
 				player.generators.flowerActive = !player.generators.flowerActive;
 			}
 		},
+		distillGenerator: {
+			title: "Wait A Minute, Doc.<br/>",
+			display: () => `Generate <b>${format(getJobLevel("distill").div(25))}</b> joules/s if distilling job is active.<br/>(based on distilling level)<br/><br/>Essentia gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.distillActive ? "ACTIVE" : "INACTIVE"}</b>`,
+			class: () => ({ "gradient-border": player.generators.distillActive }),
+			style: {
+				width: "200px",
+				height: "200px"
+			},
+			onClick() {
+				player.generators.distillActive = !player.generators.distillActive;
+			}
+		},
 		studyGenerator: {
 			title: "Great Scott!<br/>",
-			display: () => `Generate electricity based on study level.<br/><br/>Properties gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.studyActive ? "ACTIVE" : "INACTIVE"}</b>`,
+			display: () => `Generate <b>${format(getJobLevel("study").div(10))}</b> joules/s if studying job is active.<br/>(based on studying level)<br/><br/>Properties gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.studyActive ? "ACTIVE" : "INACTIVE"}</b>`,
 			class: () => ({ "gradient-border": player.generators.studyActive }),
 			style: {
 				width: "200px",
@@ -147,7 +163,7 @@ addLayer("generators", {
 		},
 		sandsGenerator: {
 			title: "This is heavy!<br/>",
-			display: () => `Generate electricity based on experiment level.<br/><br/>Potentia gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.sandsActive ? "ACTIVE" : "INACTIVE"}</b>`,
+			display: () => `Generate <b>${format(getJobLevel("sands").div(5))}</b> joules/s if experiments job is active.<br/>(based on experimenting level)<br/><br/>Potentia gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.sandsActive ? "ACTIVE" : "INACTIVE"}</b>`,
 			class: () => ({ "gradient-border": player.generators.sandsActive }),
 			style: {
 				width: "200px",
@@ -157,9 +173,8 @@ addLayer("generators", {
 				player.generators.sandsActive = !player.generators.sandsActive;
 			}
 		},
-		// TODO ??? generator
+		// TODO ritual generator
 		// "Nobody Calls Me Chicken."
-		// "Wait A Minute, Doc."
 		// "When the hell are they."
 	},
 	buyables: {
