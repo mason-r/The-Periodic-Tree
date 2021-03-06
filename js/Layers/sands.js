@@ -61,7 +61,7 @@ function getFallSpeed() {
 			fallSpeed = fallSpeed.times(2);
 		}
 	}
-	if (player.generators.sandsActive) {
+	if (player.generators.sandsActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 		fallSpeed = fallSpeed.div(10);
 	}
 	return fallSpeed;
@@ -71,7 +71,7 @@ function getFlipSpeed() {
 	let flipSpeed = new Decimal(1);
 	flipSpeed = flipSpeed.times(new Decimal(1.1).pow(getJobLevel("sands")));
 	flipSpeed = flipSpeed.times(buyableEffect("sands", 22));
-	if (player.generators.sandsActive) {
+	if (player.generators.sandsActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 		flipSpeed = flipSpeed.div(10);
 	}
 	return flipSpeed;
@@ -103,7 +103,7 @@ function getPotentiaMult() {
 			gain = gain.times(2);
 		}
 	}
-	if (player.generators.sandsActive) {
+	if (player.generators.sandsActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 		gain = gain.sqrt();
 	}
 	return gain;
@@ -247,7 +247,7 @@ addLayer("sands", {
 				shrinkGain = shrinkGain.times(new Decimal(1.1).pow(getJobLevel(this.layer)));
 				shrinkGain = shrinkGain.times(buyableEffect("sands", 11));
 				shrinkGain = shrinkGain.times(buyableEffect("sands", 21));
-				if (player.generators.sandsActive) {
+				if (player.generators.sandsActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 					shrinkGain = shrinkGain.div(10);
 				}
 				player[this.layer].shrunkAmount = player[this.layer].shrunkAmount.add(shrinkGain);

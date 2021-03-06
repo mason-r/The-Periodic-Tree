@@ -36,7 +36,7 @@ addLayer("flowers", {
 		}
 		gain = gain.times(buyableEffect("flowers", 11));
 		gain = gain.pow(buyableEffect("flowers", 13));
-		if (player.generators.flowerActive) {
+		if (player.generators.flowerActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 			gain = gain.sqrt().div(10);
 		}
 		return gain;
@@ -99,7 +99,7 @@ addLayer("flowers", {
 	],
 	update(diff) {
 		if (player.tab === this.layer || player[this.layer].timeLoopActive) {
-			if (player.generators.flowerActive) {
+			if (player.generators.flowerActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 				diff = diff / 10;
 			}
 			player[this.layer].realTime += diff;

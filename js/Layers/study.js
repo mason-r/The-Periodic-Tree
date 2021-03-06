@@ -139,7 +139,7 @@ function getDrawDuration() {
 	let drawSpeed = new Decimal(10);
 	drawSpeed = drawSpeed.div(new Decimal(1.1).pow(getJobLevel("study")));
 	drawSpeed = drawSpeed.times(new Decimal(2).pow(player.study.deep));
-	if (player.generators.studyActive) {
+	if (player.generators.studyActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 		drawSpeed = drawSpeed.times(10);
 	}
 	return drawSpeed;
@@ -147,7 +147,7 @@ function getDrawDuration() {
 
 function getRefreshPeriod() {
 	let refreshPeriod = new Decimal(120);
-	if (player.generators.studyActive) {
+	if (player.generators.studyActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 		refreshPeriod = refreshPeriod.times(10);
 	}
 	return refreshPeriod;
@@ -190,7 +190,7 @@ addLayer("study", {
 		let gain = new Decimal(10);
 		gain = gain.times(softcap(player.study.increasePointsGain, new Decimal(100).times(cardLevel("increasePointsGain").add(1))).times(0.1).add(1));
 		gain = gain.times(new Decimal(1.02).pow(softcap(player.study.multiplyPointsGain, new Decimal(100).times(cardLevel("multiplyPointsGain").div(4).add(1)), .2)));
-		if (player.generators.studyActive) {
+		if (player.generators.studyActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 			gain = gain.sqrt().div(10);
 		}
 		return gain;
@@ -353,7 +353,7 @@ addLayer("study", {
 			title: "to boldly split infinitives that no man had split before—",
 			requirementDescription: "Level 10",
 			"effectDescription": "Unlock generators job",
-			done: () => player.study.xp.gte(1e9),
+			 && (player.tab === "generators" || player.generators.timeLoopActive)done: () => player.study.xp.gte(1e9),
 			unlocked: () => hasMilestone("study", 2)
 		},
 		6: {

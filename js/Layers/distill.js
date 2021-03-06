@@ -117,7 +117,7 @@ function getEssentiaMult() {
 	gain = gain.times(player.distill.crucibleCompletions.div(100).add(1));
 	gain = gain.times(player.distill.bainMarieCompletions.div(100).add(1));
 	gain = gain.times(player.distill.vapoursCompletions.div(100).add(1));
-	if (player.generators.distillActive) {
+	if (player.generators.distillActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 		gain = gain.sqrt();
 	}
 	return gain;
@@ -192,7 +192,7 @@ addLayer("distill", {
 	],
 	update(diff) {
 		if (player.tab === this.layer || player[this.layer].timeLoopActive) {
-			if (player.generators.distillActive) {
+			if (player.generators.distillActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 				diff = new Decimal(diff).div(10);
 			}
 			updateInstrument("retort", 0, diff);
