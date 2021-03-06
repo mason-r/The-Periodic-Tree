@@ -401,8 +401,8 @@ addLayer("study", {
 		"deep0": {
 			title: "0",
 			style: {
-				width: "100px",
-				height: "100px"
+				width: "60px",
+				height: "60px"
 			},
 			canClick: () => player.study.deep.neq(0),
 			onClick: () => {
@@ -412,8 +412,8 @@ addLayer("study", {
 		"deep-": {
 			title: "- 1",
 			style: {
-				width: "100px",
-				height: "100px"
+				width: "60px",
+				height: "60px"
 			},
 			canClick: () => player.study.deep.gt(0),
 			onClick: () => {
@@ -423,8 +423,8 @@ addLayer("study", {
 		"deep+": {
 			title: "+ 1",
 			style: {
-				width: "100px",
-				height: "100px"
+				width: "60px",
+				height: "60px"
 			},
 			canClick: () => player.study.deep.lt(getJobLevel("study")),
 			onClick: () => {
@@ -434,8 +434,8 @@ addLayer("study", {
 		"deepMax": {
 			title: () => formatWhole(getJobLevel("study")),
 			style: {
-				width: "100px",
-				height: "100px"
+				width: "60px",
+				height: "60px"
 			},
 			canClick: () => player.study.deep.neq(getJobLevel("study")),
 			onClick: () => {

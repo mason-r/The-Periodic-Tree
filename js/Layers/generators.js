@@ -27,7 +27,7 @@ function getBatteryCharger(id, title, name) {
 			return `Charge battery with joules.<br/><br/>Currently: ${format(player[this.layer].batteries[this.id])}/${format(layers[this.layer].buyables[this.id].effect())}`;
 		},
 		onClick() {
-			const chargeAmount = Decimal.min(player.generators.points, layers[this.layer].buyables[this.id].effect().sub(player.generators.batteries[this.id]));
+			const chargeAmount = Decimal.min(player.generators.points.times(player.generators.allocPerc), layers[this.layer].buyables[this.id].effect().sub(player.generators.batteries[this.id]));
 			if (chargeAmount.gt(0)) {
 				player.generators.points = player.generators.points.sub(chargeAmount);
 				player.generators.batteries[this.id] = player.generators.batteries[this.id].add(chargeAmount);
@@ -88,6 +88,7 @@ addLayer("generators", {
 			xp: new Decimal(0),
 			lastLevel: new Decimal(0),
 			timeLoopActive: false,
+			allocPerc: new Decimal(1),
 			batteries: {
 				generators: new Decimal(0),
 				flowers: new Decimal(0),
@@ -155,6 +156,16 @@ addLayer("generators", {
 			content: () => player.tab !== "generators" ? null : [
 				"main-display",
 				["display-text", "Each battery effects a job's output.<br/>Every power of 10 joules increases that job's gain by 1x.<br/>Batteries slowly lose charge over time.<br/>"],
+				"blank",
+				["row", [
+					["clickable", "perc1"],
+					"blank",
+					["clickable", "perc10"],
+					"blank",
+					["clickable", "perc50"],
+					"blank",
+					["clickable", "perc100"]
+				]],
 				"blank",
 				["row", [["battery", "flowers"], ["battery", "distill"]]],
 				["row", [["battery", "study"], ["battery", "sands"]]],
@@ -276,7 +287,51 @@ addLayer("generators", {
 		study: getBatteryCharger("study", "I figured, what the hell?"),
 		sands: getBatteryCharger("sands", "Ronald Reagan? The actor? Ha!", "Experiments"),
 		generators: getBatteryCharger("generators", "Good night, future boy!"),
-		// TODO ritual charger
+		// TODO ritual charger,
+		"perc1": {
+			title: "1%",
+			style: {
+				width: "60px",
+				height: "60px"
+			},
+			canClick: () => player.generators.allocPerc.neq(0.01),
+			onClick: () => {
+				player.generators.allocPerc = new Decimal(0.01);
+			}
+		},
+		"perc10": {
+			title: "10%",
+			style: {
+				width: "60px",
+				height: "60px"
+			},
+			canClick: () => player.generators.allocPerc.neq(0.1),
+			onClick: () => {
+				player.generators.allocPerc = new Decimal(0.1);
+			}
+		},
+		"perc50": {
+			title: "50%",
+			style: {
+				width: "60px",
+				height: "60px"
+			},
+			canClick: () => player.generators.allocPerc.neq(0.5),
+			onClick: () => {
+				player.generators.allocPerc = new Decimal(0.5);
+			}
+		},
+		"perc100": {
+			title: "100%",
+			style: {
+				width: "60px",
+				height: "60px"
+			},
+			canClick: () => player.generators.allocPerc.neq(1),
+			onClick: () => {
+				player.generators.allocPerc = new Decimal(1);
+			}
+		}
 	},
 	buyables: {
 		rows: 1,
