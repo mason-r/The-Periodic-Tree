@@ -1008,3 +1008,29 @@ b, h3 {
 .instrumentLogo {
 	font-size: xxx-large;
 }
+
+.battery {
+	height: 200px;
+	width: 100px;
+	border: solid 4px white;
+	border-radius: 20px;
+}
+
+.battery svg {
+  align-self: center;
+  width: 100px;
+  border-bottom: solid 2px;
+  border-radius: 20px;
+  background: rgb(1, 1, 1, .25);
+}
+
+.battery path {
+  stroke: #88f;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.battery #glow feDropShadow {
+  flood-color: #b7daff;
+}

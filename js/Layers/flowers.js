@@ -35,6 +35,7 @@ addLayer("flowers", {
 			gain = gain.times(upgradeEffect("flowers", 14));
 		}
 		gain = gain.times(buyableEffect("flowers", 11));
+		gain = gain.times(layers.generators.clickables[this.layer].effect());
 		gain = gain.pow(buyableEffect("flowers", 13));
 		if (player.generators.flowerActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 			gain = gain.sqrt().div(10);

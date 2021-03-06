@@ -190,6 +190,7 @@ addLayer("study", {
 		let gain = new Decimal(10);
 		gain = gain.times(softcap(player.study.increasePointsGain, new Decimal(100).times(cardLevel("increasePointsGain").add(1))).times(0.1).add(1));
 		gain = gain.times(new Decimal(1.02).pow(softcap(player.study.multiplyPointsGain, new Decimal(100).times(cardLevel("multiplyPointsGain").div(4).add(1)), .2)));
+		gain = gain.times(layers.generators.clickables[this.layer].effect());
 		if (player.generators.studyActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 			gain = gain.sqrt().div(10);
 		}
@@ -353,7 +354,7 @@ addLayer("study", {
 			title: "to boldly split infinitives that no man had split before—",
 			requirementDescription: "Level 10",
 			"effectDescription": "Unlock generators job",
-			 && (player.tab === "generators" || player.generators.timeLoopActive)done: () => player.study.xp.gte(1e9),
+			done: () => player.study.xp.gte(1e9),
 			unlocked: () => hasMilestone("study", 2)
 		},
 		6: {

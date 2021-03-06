@@ -117,6 +117,7 @@ function getEssentiaMult() {
 	gain = gain.times(player.distill.crucibleCompletions.div(100).add(1));
 	gain = gain.times(player.distill.bainMarieCompletions.div(100).add(1));
 	gain = gain.times(player.distill.vapoursCompletions.div(100).add(1));
+	gain = gain.times(layers.generators.clickables.distill.effect());
 	if (player.generators.distillActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 		gain = gain.sqrt();
 	}

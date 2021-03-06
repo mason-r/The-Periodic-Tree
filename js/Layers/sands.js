@@ -103,6 +103,7 @@ function getPotentiaMult() {
 			gain = gain.times(2);
 		}
 	}
+	gain = gain.times(layers.generators.clickables.sands.effect());
 	if (player.generators.sandsActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 		gain = gain.sqrt();
 	}
