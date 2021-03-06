@@ -1,10 +1,10 @@
 Vue.component("battery", {
 	props: ["layer", "data"],
-	template: `<div style="margin: 20px">
+	template: `<div style="margin: 20px" v-if="player[data].unlocked">
 		<h2>{{ layers.generators.clickables[data].name || data[0].toUpperCase() + data.slice(1) }} battery</h2>
 		<div>x{{ format(layers.generators.clickables[data].effect()) }}<br>{{ layers[data].resource }} gain</div><br>
 		<div class="battery" v-bind:style="{ borderColor: layers[data].color }">
-			<svg v-bind:style="{ height: (player[layer].batteries[data] || new Decimal(0)).div(getBatteryCap(layer, data)).toNumber() * maxHeight + margin * 2 + 'px', borderColor: layers[data].color }">
+			<svg v-bind:style="{ height: (player[layer].batteries[data] || new Decimal(0)).div(layers[layer].buyables[data].effect()).toNumber() * maxHeight + margin * 2 + 'px', borderColor: layers[data].color }">
 				<defs>
 					<filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
 			      		<feDropShadow dx="0" dy="0" stdDeviation="3"></feDropShadow>
@@ -13,32 +13,63 @@ Vue.component("battery", {
 			  	<path style="filter:url(#glow)" d="M10,0 L100,0"/>
 			</svg>
 		</div><br>
-		<clickable :layer="layer" :data="data" />
+		<row :layer="layer" :data="[['clickable', data], ['buyable', data]]" />
 	</div>`
 });
 
-function getBatteryCap(layer, data) {
-	return new Decimal(10);
-}
-
-function getBatteryCharger(job, title) {
+function getBatteryCharger(id, title, name) {
 	return {
 		title: title + "<br/>",
 		layer: "generators",
-		id: job,
+		id,
+		name,
 		display() {
-			return `Charge battery with joules.<br/><br/>Currently: ${format(player[this.layer].batteries[this.id])}/${format(getBatteryCap(this.layer, this.id))}`;
+			return `Charge battery with joules.<br/><br/>Currently: ${format(player[this.layer].batteries[this.id])}/${format(layers[this.layer].buyables[this.id].effect())}`;
 		},
 		onClick() {
-			const chargeAmount = Decimal.min(player.generators.points, getBatteryCap(this.layer, this.id).sub(player.generators.batteries[this.id]));
+			const chargeAmount = Decimal.min(player.generators.points, layers[this.layer].buyables[this.id].effect().sub(player.generators.batteries[this.id]));
 			if (chargeAmount.gt(0)) {
 				player.generators.points = player.generators.points.sub(chargeAmount);
 				player.generators.batteries[this.id] = player.generators.batteries[this.id].add(chargeAmount);
 			}
 		},
 		effect() {
+			if (!tmp[this.layer].layerShown || (player.tab !== this.layer && !player[this.layer].timeLoopActive)) {
+				return new Decimal(1);
+			}
 			return player[this.layer].batteries[this.id].max(1).log10().add(1);
 		}
+	};
+}
+
+function getBatteryCapBuyable(id, title) {
+	return {
+		title: title + "<br/>",
+		layer: "generators",
+		id,
+		name,
+		style: {
+			width: "150px",
+			height: "150px"
+		},
+		display() {
+			return `Mutliply battery cap by 10x.<br/><br/>Currently: ${formatWhole(this.effect())}<br/><br/>Cost: ${formatWhole(this.cost())} charge`;
+		},
+		cost(x) {
+			const amount = x || getBuyableAmount(this.layer, this.id);
+			return Decimal.pow(10, amount.add(1)).times(0.9);
+		},
+		canAfford() {
+			return player[this.layer].batteries[this.id].gte(this.cost());
+		},
+		buy() {
+			player[this.layer].batteries[this.id] = player[this.layer].batteries[this.id].sub(this.cost());
+			setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
+		},
+		effect() {
+			return Decimal.pow(10, getBuyableAmount(this.layer, this.id).add(1));
+		},
+		unlocked: () => hasMilestone("generators", 1)
 	};
 }
 
@@ -125,8 +156,9 @@ addLayer("generators", {
 				"main-display",
 				["display-text", "Each battery effects a job's output.<br/>Every power of 10 joules increases that job's gain by 1x.<br/>Batteries slowly lose charge over time.<br/>"],
 				"blank",
-				["row", [["battery", "flowers"], ["battery", "distill"], ["battery", "study"]]],
-				["row", [["battery", "sands"], ["battery", "generators"]]] // TODO rituals battery
+				["row", [["battery", "flowers"], ["battery", "distill"]]],
+				["row", [["battery", "study"], ["battery", "sands"]]],
+				["row", [["battery", "generators"]]] // TODO rituals battery
 			],
 			unlocked: () => hasMilestone("generators", 0)
 		}
@@ -134,7 +166,7 @@ addLayer("generators", {
 	update(diff) {
 		if (player.tab === this.layer || player[this.layer].timeLoopActive) {
 			Object.keys(player[this.layer].batteries).forEach(key => {
-				player[this.layer].batteries[key] = player[this.layer].batteries[key].times(Decimal.pow(Math.E, Decimal.times(diff, -0.1))).clamp(0, getBatteryCap(this.layer, key));
+				player[this.layer].batteries[key] = player[this.layer].batteries[key].times(Decimal.pow(Math.E, Decimal.times(diff, -0.1))).clamp(0, layers[this.layer].buyables[key].effect());
 				if (player[this.layer].batteries[key].lt(0.01)) {
 					player[this.layer].batteries[key] = new Decimal(0);
 				}
@@ -243,7 +275,7 @@ addLayer("generators", {
 		distill: getBatteryCharger("distill", "You disintegrated Einstein!"),
 		study: getBatteryCharger("study", "I figured, what the hell?"),
 		sands: getBatteryCharger("sands", "Ronald Reagan? The actor? Ha!", "Experiments"),
-		generators: getBatteryCharger("generators", "Good night, future boy!")
+		generators: getBatteryCharger("generators", "Good night, future boy!"),
 		// TODO ritual charger
 	},
 	buyables: {
@@ -260,7 +292,12 @@ addLayer("generators", {
 		},
 		14: {
 			title: "I finally invent something that works!<br/>"
-		}
+		},
+		flowers: getBatteryCapBuyable("flowers", "History is gonna change."),
+		distill: getBatteryCapBuyable("distill", "History is gonna change."),
+		study: getBatteryCapBuyable("study", "History is gonna change."),
+		sands: getBatteryCapBuyable("sands", "History is gonna change."),
+		generators: getBatteryCapBuyable("generators", "History is gonna change."),
 	}
 });
 
