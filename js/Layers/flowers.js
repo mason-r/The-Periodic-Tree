@@ -163,7 +163,7 @@ addLayer("flowers", {
 				const amount = x || getBuyableAmount(this.layer, this.id);
 				if (amount.gte(10)) {
 					// goes up 10x instead of 3x after 10 levels
-					return new Decimal(1000).times(new Decimal(3).pow(10)).add(Decimal.pow(10, amount.sub(10)));
+					return new Decimal(1000).times(new Decimal(3).pow(10)).times(Decimal.pow(10, amount.sub(10)));
 				}
 				return new Decimal(1000).times(new Decimal(3).pow(amount));
 			},
