@@ -244,9 +244,9 @@ addLayer("study", {
 		},
 		"Destroy Cards": {
 			content: () => player.tab !== "study" ? null : [
-				["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied`],
+				["sticky", [0, ["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied`]]],
 				"blank",
-				["clickable", "sell"],
+				["sticky", ["50px", ["clickable", "sell"]]],
 				"blank",
 				["row", player.study.cards.map((card, i) => cardFormat(card, "", player.study.selected === i ? "selectedCard cursor" : "cursor", `toggleSelectCard(${i})`)), { width: "100%" }]
 			],
@@ -254,6 +254,8 @@ addLayer("study", {
 		},
 		"Upgrade Cards": {
 			content: () => player.tab !== "study" ? null : [
+				["sticky", [0, ["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights`]]],
+				"blank",
 				hasMilestone("study", 4) ? ["column", [
 					["display-text", `Deep Thought is currently giving <span style="text-shadow: white 0 0 10px">${formatWhole(player.study.deep)}</span> bonus levels to every card,<br/>but makes each draw take <span style="text-shadow: white 0 0 10px">${formatWhole(new Decimal(2).pow(player.study.deep))}x</span> longer due to processing time.<br/><br/>You cannot add more bonus levels than your level at this job.`],
 					"blank",

@@ -69,11 +69,11 @@ function loadVue() {
 		template: `
 		<div class="upgTable instant">
 			<div class="upgCol">
-				<div v-for="(item, index) in data">
+				<template v-for="(item, index) in data">
 					<div v-if="!Array.isArray(item)" v-bind:is="item" :layer= "layer" v-bind:style="tmp[layer].componentStyles[item]" :key="key + '-' + index"></div>
 					<div v-else-if="item.length==3" v-bind:style="[tmp[layer].componentStyles[item[0]], (item[2] ? item[2] : {})]" v-bind:is="item[0]" :layer= "layer" :data= "item[1]" :key="key + '-' + index"></div>
 					<div v-else-if="item.length==2" v-bind:is="item[0]" :layer= "layer" :data= "item[1]" v-bind:style="tmp[layer].componentStyles[item[0]]" :key="key + '-' + index"></div>
-				</div>
+				</template>
 			</div>
 		</div>
 		`
@@ -237,7 +237,7 @@ function loadVue() {
 	Vue.component("main-display", {
 		props: ["layer"],
 		template: `
-		<div><span v-if="player[layer].points.lt('1e1000')">You have </span><h2 v-bind:style="{'color': tmp[layer].color, 'text-shadow': '0px 0px 10px ' + tmp[layer].color}">{{formatWhole(player[layer].points)}}</h2> {{tmp[layer].resource}}<span v-if="tmp[layer].effectDescription">, <span v-html="tmp[layer].effectDescription"></span></span><br><br></div>
+		<div class="sticky"><span v-if="player[layer].points.lt('1e1000')">You have </span><h2 v-bind:style="{'color': tmp[layer].color, 'text-shadow': '0px 0px 10px ' + tmp[layer].color}">{{formatWhole(player[layer].points)}}</h2> {{tmp[layer].resource}}<span v-if="tmp[layer].effectDescription">, <span v-html="tmp[layer].effectDescription"></span></span></div>
 		`
 	});
 
@@ -462,6 +462,14 @@ function loadVue() {
 	Vue.component("info-tab", systemComponents["info-tab"]);
 	Vue.component("options-tab", systemComponents["options-tab"]);
 
+
+	Vue.component("sticky", {
+		props: ["layer", "data"],
+		template: `<div class="sticky" v-bind:style="{ top: data[0] || 0 }">
+			<div v-bind:is="data[1][0]" :layer= "layer" :data= "data[1][1]" v-bind:style="tmp[layer].componentStyles[data[1][0]]"></div>
+		</div>
+	`
+	});
 
 	app = new Vue({
 		el: "#app",

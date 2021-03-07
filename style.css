@@ -148,6 +148,7 @@ h1, h2, h3, b, input {
 	color: var(--color);
 	font-size: 40px;
 	cursor: pointer;
+    line-height: 40px;
 }
 
 .other-back {
@@ -1033,4 +1034,14 @@ b, h3 {
 
 .battery #glow feDropShadow {
   flood-color: #b7daff;
+}
+
+.sticky {
+	position: sticky;
+	top: 0;
+	width: 100%;
+	background: var(--background);
+	padding: 10px;
+	box-sizing: border-box;
+	z-index: 10;
 }

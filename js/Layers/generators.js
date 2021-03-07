@@ -157,7 +157,7 @@ addLayer("generators", {
 				"main-display",
 				["display-text", "Each battery effects a job's output.<br/>Every power of 10 joules increases that job's gain by 1x.<br/>Batteries slowly lose charge over time.<br/>"],
 				"blank",
-				["row", [
+				["sticky", ["50px", ["row", [
 					["clickable", "perc1"],
 					"blank",
 					["clickable", "perc10"],
@@ -165,7 +165,7 @@ addLayer("generators", {
 					["clickable", "perc50"],
 					"blank",
 					["clickable", "perc100"]
-				]],
+				]]]],
 				"blank",
 				["row", [["battery", "flowers"], ["battery", "distill"]]],
 				["row", [["battery", "study"], ["battery", "sands"]]],

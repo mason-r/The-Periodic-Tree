@@ -172,12 +172,11 @@ addLayer("distill", {
 			}
 			return "";
 		})()],
-		"blank",
-		["row", [
+		["sticky", ["50px", ["row", [
 			["display-text", "Animations"],
 			"blank",
 			["toggle", ["distill", "anims"]]
-		]],
+		]]]],
 		"blank",
 		["instrument", "retort"],
 		"blank",
