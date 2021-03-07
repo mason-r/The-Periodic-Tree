@@ -53,7 +53,7 @@ function getBatteryCapBuyable(id, title) {
 			height: "150px"
 		},
 		display() {
-			return `Mutliply battery cap by 10x.<br/><br/>Currently: ${formatWhole(this.effect())}<br/><br/>Cost: ${formatWhole(this.cost())} charge`;
+			return `Mutliply battery cap by ${formatWhole(buyableEffect(this.layer, 13))}x.<br/><br/>Currently: ${formatWhole(this.effect())}<br/><br/>Cost: ${formatWhole(this.cost())} charge`;
 		},
 		cost(x) {
 			const amount = x || getBuyableAmount(this.layer, this.id);
@@ -67,7 +67,7 @@ function getBatteryCapBuyable(id, title) {
 			setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
 		},
 		effect() {
-			return Decimal.pow(10, getBuyableAmount(this.layer, this.id).add(1));
+			return Decimal.pow(buyableEffect(this.layer, 13), getBuyableAmount(this.layer, this.id).add(1));
 		},
 		unlocked: () => hasMilestone("generators", 1)
 	};
@@ -123,6 +123,7 @@ addLayer("generators", {
 		if (player.generators.sandsActive && (player.tab === "sands" || player.sands.timeLoopActive)) {
 			gain = gain.add(layers.generators.clickables.sandsGenerator.effect());
 		}
+		gain = gain.times(buyableEffect(this.layer, 11));
 		gain = gain.times(new Decimal(1.1).pow(getJobLevel(this.layer)));
 		gain = gain.times(layers.generators.clickables[this.layer].effect());
 		if (hasUpgrade(this.layer, 11)) {
@@ -161,6 +162,7 @@ addLayer("generators", {
 				"blank",
 				"blank",
 				"upgrades",
+				"buyables",
 				"blank",
 				["milestones-filtered", [2, 5, 6]]
 			]
@@ -190,7 +192,7 @@ addLayer("generators", {
 	update(diff) {
 		if (player.tab === this.layer || player[this.layer].timeLoopActive) {
 			Object.keys(player[this.layer].batteries).forEach(key => {
-				player[this.layer].batteries[key] = player[this.layer].batteries[key].times(Decimal.pow(Math.E, Decimal.times(diff, -0.1))).clamp(0, layers[this.layer].buyables[key].effect());
+				player[this.layer].batteries[key] = player[this.layer].batteries[key].times(Decimal.pow(Math.E, Decimal.times(diff, buyableEffect(this.layer, 12)))).clamp(0, layers[this.layer].buyables[key].effect());
 				if (player[this.layer].batteries[key].lt(0.01)) {
 					player[this.layer].batteries[key] = new Decimal(0);
 				}
@@ -420,18 +422,69 @@ addLayer("generators", {
 	},
 	buyables: {
 		rows: 1,
-		cols: 4,
+		cols: 3,
 		11: {
-			title: "1.21 Gigawatts!?!<br/>"
+			title: "1.21 Gigawatts!?!<br/>",
+			display() {
+				return `Improve generator efficiency by 10%<br/><br/>Currently: x${format(this.effect())}<br/><br/>Cost: ${format(this.cost())} joules`;
+			},
+			cost(x) {
+				const amount = x || getBuyableAmount(this.layer, this.id);
+				return new Decimal(1e6).times(new Decimal(5).pow(amount));
+			},
+			effect() {
+				return new Decimal(1.1).pow(getBuyableAmount(this.layer, this.id));
+			},
+			canAfford() {
+				return player[this.layer].points.gte(this.cost());
+			},
+			buy() {
+				player[this.layer].points = player[this.layer].points.sub(this.cost());
+				setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
+			},
+			unlocked: () => hasMilestone("generators", 4)
 		},
 		12: {
-			title: "88 Miles Per Hour<br/>"
+			title: "88 Miles Per Hour<br/>",
+			display() {
+				return `Decrease battery discharge by 10%/sec<br/><br/>Currently: ${format(this.effect().times(100))}%/sec<br/><br/>Cost: ${format(this.cost())} joules`;
+			},
+			cost(x) {
+				const amount = x || getBuyableAmount(this.layer, this.id);
+				return new Decimal(1e7).times(new Decimal(10).pow(amount));
+			},
+			effect() {
+				return new Decimal(-.1).div(Decimal.pow(1.1, getBuyableAmount(this.layer, this.id)));
+			},
+			canAfford() {
+				return player[this.layer].points.gte(this.cost());
+			},
+			buy() {
+				player[this.layer].points = player[this.layer].points.sub(this.cost());
+				setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
+			},
+			unlocked: () => hasMilestone("generators", 4)
 		},
 		13: {
-			title: "Where We’re Going, We Don’t Need Roads.<br/>"
-		},
-		14: {
-			title: "I finally invent something that works!<br/>"
+			title: "Where We’re Going, We Don’t Need Roads.<br/>",
+			display() {
+				return `Add 1 to the amount each battery cap upgrade multiples the cap by<br/><br/>Currently: x${formatWhole(this.effect())}<br/><br/>Cost: ${format(this.cost())} joules`;
+			},
+			cost(x) {
+				const amount = x || getBuyableAmount(this.layer, this.id);
+				return new Decimal(1e8).times(new Decimal(8).pow(amount));
+			},
+			effect() {
+				return Decimal.add(10, getBuyableAmount(this.layer, this.id));
+			},
+			canAfford() {
+				return player[this.layer].points.gte(this.cost());
+			},
+			buy() {
+				player[this.layer].points = player[this.layer].points.sub(this.cost());
+				setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
+			},
+			unlocked: () => hasMilestone("generators", 4)
 		},
 		flowers: getBatteryCapBuyable("flowers", "It's \"leave\", you idiot!"),
 		distill: getBatteryCapBuyable("distill", "A hundred years ago?"),
