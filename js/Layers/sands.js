@@ -300,6 +300,9 @@ addLayer("sands", {
 	},
 	onAddPoints(gain) {
 		let xpGain = gain;
+		if (hasUpgrade("generators", 13)) {
+			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
+		}
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
 	},
 	milestones: {

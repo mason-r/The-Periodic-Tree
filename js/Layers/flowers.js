@@ -117,6 +117,9 @@ addLayer("flowers", {
 			xpGain = xpGain.times(upgradeEffect(this.layer, 13));
 		}
 		xpGain = xpGain.times(buyableEffect("flowers", 12));
+		if (hasUpgrade("generators", 13)) {
+			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
+		}
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
 	},
 	milestones: {

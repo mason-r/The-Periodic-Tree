@@ -89,6 +89,14 @@ addLayer("generators", {
 			lastLevel: new Decimal(0),
 			timeLoopActive: false,
 			allocPerc: new Decimal(1),
+			flowerActive: false,
+			distillActive: false,
+			studyActive: false,
+			sandsActive: false,
+			flowerDuration: 0,
+			distillDuration: 0,
+			studyDuration: 0,
+			sandsDuration: 0,
 			batteries: {
 				generators: new Decimal(0),
 				flowers: new Decimal(0),
@@ -104,19 +112,22 @@ addLayer("generators", {
 		}
 		let gain = new Decimal(0);
 		if (player.generators.flowerActive && (player.tab === "flowers" || player.flowers.timeLoopActive)) {
-			gain = gain.add(getJobLevel("flowers").div(50));
+			gain = gain.add(layers.generators.clickables.flowersGenerator.effect());
 		}
 		if (player.generators.distillActive && (player.tab === "distill" || player.distill.timeLoopActive)) {
-			gain = gain.add(getJobLevel("distill").div(25));
+			gain = gain.add(layers.generators.clickables.distillGenerator.effect());
 		}
 		if (player.generators.studyActive && (player.tab === "study" || player.study.timeLoopActive)) {
-			gain = gain.add(getJobLevel("study").div(10));
+			gain = gain.add(layers.generators.clickables.studyGenerator.effect());
 		}
 		if (player.generators.sandsActive && (player.tab === "sands" || player.sands.timeLoopActive)) {
-			gain = gain.add(getJobLevel("sands").div(5));
+			gain = gain.add(layers.generators.clickables.sandsGenerator.effect());
 		}
 		gain = gain.times(new Decimal(1.1).pow(getJobLevel(this.layer)));
 		gain = gain.times(layers.generators.clickables[this.layer].effect());
+		if (hasUpgrade(this.layer, 11)) {
+			gain = gain.times(upgradeEffect(this.layer, 11));
+		}
 		return gain;
 	},
 	passiveGeneration: new Decimal(1),
@@ -148,6 +159,8 @@ addLayer("generators", {
 				"blank",
 				["row", [["clickable", "flowersGenerator"], "blank", ["clickable", "distillGenerator"], "blank", ["clickable", "studyGenerator"], "blank", ["clickable", "sandsGenerator"]]],
 				"blank",
+				"blank",
+				"upgrades",
 				"blank",
 				["milestones-filtered", [2, 5, 6]]
 			]
@@ -181,6 +194,9 @@ addLayer("generators", {
 				if (player[this.layer].batteries[key].lt(0.01)) {
 					player[this.layer].batteries[key] = new Decimal(0);
 				}
+				if (player[this.layer][`${key}Active`]) {
+					player[this.layer][`${key}Duration`] += diff;
+				}
 			});
 		}
 		let jobLevel = new Decimal(getJobLevel(this.layer));
@@ -191,6 +207,9 @@ addLayer("generators", {
 	},
 	onAddPoints(gain) {
 		let xpGain = gain;
+		if (hasUpgrade("generators", 13)) {
+			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
+		}
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
 	},
 	milestones: {
@@ -231,10 +250,38 @@ addLayer("generators", {
 			unlocked: () => player.chapter > 3
 		}
 	},
+	upgrades: {
+		rows: 1,
+		cols: 3,
+		11: {
+			title: "Well, good luck.<br>",
+			description: "Multiply joules gain by 2 raised to the number of active generators<br>",
+			cost: new Decimal(1e4),
+			effect: () => Decimal.pow(2, ["flower", "distill", "study", "sands"].filter(g => player.generators[`${g}Active`]).length),
+			unlocked: () => hasMilestone("generators", 3),
+			effectDisplay() {
+				return `x${formatWhole(this.effect())}`;
+			}
+		},
+		12: {
+			title: "For both our sakes.<br>",
+			description: "Increase generator's output by 1% for each second since it was activated<br>",
+			cost: new Decimal(1e5),
+			unlocked: () => hasMilestone("generators", 3)
+		},
+		13: {
+			title: "See you in the future.<br>",
+			description: "Apply batteries' effects to their job's xp as well<br>",
+			cost: new Decimal(1e6),
+			unlocked: () => hasMilestone("generators", 3)
+		}
+	},
 	clickables: {
 		flowersGenerator: {
 			title: "I hate manure!<br/>",
-			display: () => `Generate <b>${format(getJobLevel("flowers").div(50))}</b> joules/s if collecting job is active.<br/>(based on collecting level)<br/><br/>Flowers gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.flowerActive ? "ACTIVE" : "INACTIVE"}</b>`,
+			display() {
+				return `Generate <b>${format(this.effect())}</b> joules/s if collecting job is active.<br/>(based on collecting level)<br/><br/>Flowers gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.flowerActive ? "ACTIVE" : "INACTIVE"}</b>`;
+			},
 			class: () => ({ "gradient-border": player.generators.flowerActive }),
 			style: {
 				width: "200px",
@@ -242,11 +289,21 @@ addLayer("generators", {
 			},
 			onClick() {
 				player.generators.flowerActive = !player.generators.flowerActive;
+				player.generators.flowerDuration = 0;
+			},
+			effect() {
+				let effect = getJobLevel("flowers").div(16);
+				if (hasUpgrade("generators", 12)) {
+					effect = effect.times(Decimal.times(0.01, player.generators.flowerDuration).add(1));
+				}
+				return effect;
 			}
 		},
 		distillGenerator: {
 			title: "Wait A Minute, Doc.<br/>",
-			display: () => `Generate <b>${format(getJobLevel("distill").div(25))}</b> joules/s if distilling job is active.<br/>(based on distilling level)<br/><br/>Essentia gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.distillActive ? "ACTIVE" : "INACTIVE"}</b>`,
+			display() {
+				return `Generate <b>${format(this.effect())}</b> joules/s if distilling job is active.<br/>(based on distilling level)<br/><br/>Essentia gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.distillActive ? "ACTIVE" : "INACTIVE"}</b>`;
+			},
 			class: () => ({ "gradient-border": player.generators.distillActive }),
 			style: {
 				width: "200px",
@@ -254,11 +311,21 @@ addLayer("generators", {
 			},
 			onClick() {
 				player.generators.distillActive = !player.generators.distillActive;
+				player.generators.distillDuration = 0;
+			},
+			effect() {
+				let effect = getJobLevel("distill").div(8);
+				if (hasUpgrade("generators", 12)) {
+					effect = effect.times(Decimal.times(0.01, player.generators.distillDuration).add(1));
+				}
+				return effect;
 			}
 		},
 		studyGenerator: {
 			title: "Great Scott!<br/>",
-			display: () => `Generate <b>${format(getJobLevel("study").div(10))}</b> joules/s if studying job is active.<br/>(based on studying level)<br/><br/>Properties gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.studyActive ? "ACTIVE" : "INACTIVE"}</b>`,
+			display() {
+				return `Generate <b>${format(this.effect())}</b> joules/s if studying job is active.<br/>(based on studying level)<br/><br/>Properties gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.studyActive ? "ACTIVE" : "INACTIVE"}</b>`;
+			},
 			class: () => ({ "gradient-border": player.generators.studyActive }),
 			style: {
 				width: "200px",
@@ -266,11 +333,21 @@ addLayer("generators", {
 			},
 			onClick() {
 				player.generators.studyActive = !player.generators.studyActive;
+				player.generators.studyDuration = 0;
+			},
+			effect() {
+				let effect = getJobLevel("study").div(4);
+				if (hasUpgrade("generators", 12)) {
+					effect = effect.times(Decimal.times(0.01, player.generators.studyDuration).add(1));
+				}
+				return effect;
 			}
 		},
 		sandsGenerator: {
 			title: "This is heavy!<br/>",
-			display: () => `Generate <b>${format(getJobLevel("sands").div(5))}</b> joules/s if experiments job is active.<br/>(based on experimenting level)<br/><br/>Potentia gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.sandsActive ? "ACTIVE" : "INACTIVE"}</b>`,
+			display() {
+				return `Generate <b>${format(this.effect())}</b> joules/s if experiments job is active.<br/>(based on experimenting level)<br/><br/>Potentia gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.sandsActive ? "ACTIVE" : "INACTIVE"}</b>`;
+			},
 			class: () => ({ "gradient-border": player.generators.sandsActive }),
 			style: {
 				width: "200px",
@@ -278,6 +355,14 @@ addLayer("generators", {
 			},
 			onClick() {
 				player.generators.sandsActive = !player.generators.sandsActive;
+				player.generators.sandsDuration = 0;
+			},
+			effect() {
+				let effect = getJobLevel("sands").div(2);
+				if (hasUpgrade("generators", 12)) {
+					effect = effect.times(Decimal.times(0.01, player.generators.sandsDuration).add(1));
+				}
+				return effect;
 			}
 		},
 		// TODO ritual generator

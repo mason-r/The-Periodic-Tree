@@ -192,7 +192,7 @@ addLayer("study", {
 		gain = gain.times(new Decimal(1.02).pow(softcap(player.study.multiplyPointsGain, new Decimal(100).times(cardLevel("multiplyPointsGain").div(4).add(1)), .2)));
 		gain = gain.times(layers.generators.clickables[this.layer].effect());
 		if (player.generators.studyActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
-			gain = gain.sqrt().div(10);
+			gain = gain.sqrt();
 		}
 		return gain;
 	},
@@ -283,6 +283,9 @@ addLayer("study", {
 	},
 	update(diff) {
 		if (player.tab === this.layer || player[this.layer].timeLoopActive) {
+			if (player.generators.studyActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
+				diff = diff / 10;
+			}
 			player[this.layer].drawProgress += diff;
 			// TODO draws/sec
 			if (player[this.layer].drawProgress > getDrawDuration()) {
@@ -324,6 +327,9 @@ addLayer("study", {
 	},
 	onAddPoints(gain) {
 		let xpGain = gain;
+		if (hasUpgrade("generators", 13)) {
+			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
+		}
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
 	},
 	milestones: {
