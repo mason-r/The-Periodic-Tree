@@ -348,11 +348,11 @@ addLayer("generators", {
 		14: {
 			title: "I finally invent something that works!<br/>"
 		},
-		flowers: getBatteryCapBuyable("flowers", "History is gonna change."),
-		distill: getBatteryCapBuyable("distill", "History is gonna change."),
-		study: getBatteryCapBuyable("study", "History is gonna change."),
-		sands: getBatteryCapBuyable("sands", "History is gonna change."),
-		generators: getBatteryCapBuyable("generators", "History is gonna change."),
+		flowers: getBatteryCapBuyable("flowers", "It's \"leave\", you idiot!"),
+		distill: getBatteryCapBuyable("distill", "A hundred years ago?"),
+		study: getBatteryCapBuyable("study", "I'm back <i>from</i> the future."),
+		sands: getBatteryCapBuyable("sands", "Alright, boys, buckle up."),
+		generators: getBatteryCapBuyable("generators", "Unless you've got power!"),
 	}
 });
 
