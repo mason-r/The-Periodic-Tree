@@ -16,6 +16,9 @@ addLayer("flowers", {
 			timeLoopActive: false
 		};
 	},
+	shouldNotify() {
+		return Object.values(tmp[this.layer].buyables).some(buyable => buyable.unlocked && buyable.canAfford);
+	},
 	getResetGain() {
 		if (!tmp[this.layer].layerShown || (player.tab !== this.layer && !player[this.layer].timeLoopActive)) {
 			return new Decimal(0);

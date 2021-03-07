@@ -153,6 +153,9 @@ addLayer("distill", {
 			vapoursCompletions: new Decimal(0)
 		};
 	},
+	shouldNotify() {
+		return Object.values(tmp[this.layer].buyables).some(buyable => buyable.unlocked && buyable.canAfford);
+	},
 	tabFormat: () => player.tab !== "distill" ? null : [
 		"main-display",
 		["display-text", `You are getting ${format(getEssentiaMult())} essentia every time an instrument finishes.`],

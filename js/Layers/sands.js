@@ -134,6 +134,9 @@ addLayer("sands", {
 			flipTime: new Decimal(0)
 		};
 	},
+	shouldNotify() {
+		return Object.values(tmp[this.layer].buyables).some(buyable => buyable.unlocked && buyable.canAfford);
+	},
 	tabFormat: {
 		"Main": {
 			content: () => {

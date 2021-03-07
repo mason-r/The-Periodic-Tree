@@ -114,7 +114,7 @@ function getCardUpgradeBuyable(id) {
 			player.study.insights = player.study.insights.sub(cost());
 			setBuyableAmount("study", id, getBuyableAmount("study", id).add(1));
 		},
-		unlocked: true
+		unlocked: () => player.study.cards.includes(id)
 	};
 }
 
@@ -182,6 +182,9 @@ addLayer("study", {
 			selected: -1,
 			deep: new Decimal(0)
 		};
+	},
+	shouldNotify() {
+		return Object.values(tmp[this.layer].buyables).some(buyable => buyable.unlocked && buyable.canAfford);
 	},
 	getResetGain() {
 		if (!tmp[this.layer].layerShown || (player.tab !== this.layer && !player[this.layer].timeLoopActive)) {
