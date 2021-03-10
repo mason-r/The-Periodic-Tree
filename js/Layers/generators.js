@@ -294,7 +294,6 @@ addLayer("generators", {
 			},
 			onClick() {
 				player.generators.flowersActive = !player.generators.flowersActive;
-				player.generators.flowersDuration = 0;
 			},
 			effect() {
 				let effect = getJobLevel("flowers").div(16);
@@ -316,7 +315,6 @@ addLayer("generators", {
 			},
 			onClick() {
 				player.generators.distillActive = !player.generators.distillActive;
-				player.generators.distillDuration = 0;
 			},
 			effect() {
 				let effect = getJobLevel("distill").div(8);
@@ -338,7 +336,6 @@ addLayer("generators", {
 			},
 			onClick() {
 				player.generators.studyActive = !player.generators.studyActive;
-				player.generators.studyDuration = 0;
 			},
 			effect() {
 				let effect = getJobLevel("study").div(4);
@@ -360,7 +357,6 @@ addLayer("generators", {
 			},
 			onClick() {
 				player.generators.sandsActive = !player.generators.sandsActive;
-				player.generators.sandsDuration = 0;
 			},
 			effect() {
 				let effect = getJobLevel("sands").div(2);
