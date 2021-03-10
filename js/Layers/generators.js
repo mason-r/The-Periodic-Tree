@@ -89,11 +89,11 @@ addLayer("generators", {
 			lastLevel: new Decimal(0),
 			timeLoopActive: false,
 			allocPerc: new Decimal(1),
-			flowerActive: false,
+			flowersActive: false,
 			distillActive: false,
 			studyActive: false,
 			sandsActive: false,
-			flowerDuration: 0,
+			flowersDuration: 0,
 			distillDuration: 0,
 			studyDuration: 0,
 			sandsDuration: 0,
@@ -114,7 +114,7 @@ addLayer("generators", {
 			return new Decimal(0);
 		}
 		let gain = new Decimal(0);
-		if (player.generators.flowerActive && (player.tab === "flowers" || player.flowers.timeLoopActive)) {
+		if (player.generators.flowersActive && (player.tab === "flowers" || player.flowers.timeLoopActive)) {
 			gain = gain.add(layers.generators.clickables.flowersGenerator.effect());
 		}
 		if (player.generators.distillActive && (player.tab === "distill" || player.distill.timeLoopActive)) {
@@ -285,21 +285,21 @@ addLayer("generators", {
 		flowersGenerator: {
 			title: "I hate manure!<br/>",
 			display() {
-				return `Generate <b>${format(this.effect())}</b> joules/s if collecting job is active.<br/>(based on collecting level)<br/><br/>Flowers gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.flowerActive ? "ACTIVE" : "INACTIVE"}</b>`;
+				return `Generate <b>${format(this.effect())}</b> joules/s if collecting job is active.<br/>(based on collecting level)<br/><br/>Flowers gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.flowersActive ? "ACTIVE" : "INACTIVE"}</b>`;
 			},
-			class: () => ({ "gradient-border": player.generators.flowerActive }),
+			class: () => ({ "gradient-border": player.generators.flowersActive }),
 			style: {
 				width: "200px",
 				height: "200px"
 			},
 			onClick() {
-				player.generators.flowerActive = !player.generators.flowerActive;
-				player.generators.flowerDuration = 0;
+				player.generators.flowersActive = !player.generators.flowersActive;
+				player.generators.flowersDuration = 0;
 			},
 			effect() {
 				let effect = getJobLevel("flowers").div(16);
 				if (hasUpgrade("generators", 12)) {
-					effect = effect.times(Decimal.times(0.01, player.generators.flowerDuration).add(1));
+					effect = effect.times(Decimal.times(0.01, player.generators.flowersDuration).add(1));
 				}
 				return effect;
 			}

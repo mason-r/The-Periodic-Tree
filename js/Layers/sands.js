@@ -81,7 +81,8 @@ function getTotalGrains() {
 	let grains = new Decimal(player.sands.stonesChipped);
 	grains = grains.times(buyableEffect("sands", 14));
 	grains = grains.times(buyableEffect("sands", 24));
-	return grains;
+	grains = grains.sub(player.sands.spentGrains);
+	return grains.max(0);
 }
 
 function getFallMult() {
@@ -104,6 +105,9 @@ function getPotentiaMult() {
 		}
 	}
 	gain = gain.times(layers.generators.clickables.sands.effect());
+	if (player.sands.selectedLens === "potentia") {
+		gain = gain.times(buyableEffect("sands", "glass"));
+	}
 	if (player.generators.sandsActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 		gain = gain.sqrt();
 	}
@@ -131,7 +135,10 @@ addLayer("sands", {
 			flipping: false,
 			stonesChipped: new Decimal(0),
 			fallTime: new Decimal(0),
-			flipTime: new Decimal(0)
+			flipTime: new Decimal(0),
+			lensLevel: new Decimal(0),
+			selectedLens: "chip",
+			spentGrains: new Decimal(0)
 		};
 	},
 	shouldNotify() {
@@ -222,6 +229,22 @@ addLayer("sands", {
 				"upgrades"
 			],
 			unlocked: () => hasMilestone("sands", 0)
+		},
+		"Glass": {
+			content: () => player.tab !== "sands" ? null : [
+				"main-display",
+				"blank",
+				["buyable", "glass"],
+				"blank",
+				["row", [
+					["clickable", "redLens"],
+					"blank",
+					["clickable", "greenLens"],
+					"blank",
+					["clickable", "blueLens"]
+				]]
+			],
+			unlocked: () => hasMilestone("generators", 2)
 		}
 	},
 	update(diff) {
@@ -251,6 +274,9 @@ addLayer("sands", {
 				shrinkGain = shrinkGain.times(new Decimal(1.1).pow(getJobLevel(this.layer)));
 				shrinkGain = shrinkGain.times(buyableEffect("sands", 11));
 				shrinkGain = shrinkGain.times(buyableEffect("sands", 21));
+				if (player.sands.selectedLens === "chip") {
+					shrinkGain = shrinkGain.times(buyableEffect("sands", "glass"));
+				}
 				if (player.generators.sandsActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 					shrinkGain = shrinkGain.div(10);
 				}
@@ -305,6 +331,9 @@ addLayer("sands", {
 		let xpGain = gain;
 		if (hasUpgrade("generators", 13)) {
 			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
+		}
+		if (player.sands.selectedLens === "xp") {
+			xpGain = xpGain.times(Decimal.pow(buyableEffect("sands", "glass"), 2));
 		}
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
 	},
@@ -367,11 +396,67 @@ addLayer("sands", {
 			onClick: () => {
 				player.sands.flipping = true;
 			}
+		},
+		redLens: {
+			title: "Red Lens<br/>",
+			display() {
+				return `Focus on chipping speed to improve it by x${formatWhole(layers.sands.buyables.glass.effect())}`;
+			},
+			style: {
+				borderColor: "red"
+			},
+			canClick: () => player.sands.selectedLens !== "chip",
+			onClick: () => player.sands.selectedLens = "chip"
+		},
+		greenLens: {
+			title: "Green Lens<br/>",
+			display() {
+				return `Focus on potentia gain to improve it by x${formatWhole(layers.sands.buyables.glass.effect())}`;
+			},
+			style: {
+				borderColor: "green"
+			},
+			canClick: () => player.sands.selectedLens !== "potentia",
+			onClick: () => player.sands.selectedLens = "potentia"
+		},
+		blueLens: {
+			title: "Blue Lens<br/>",
+			display() {
+				return `Focus on xp gain to improve it by x${formatWhole(Decimal.pow(layers.sands.buyables.glass.effect(), 2))}`;
+			},
+			style: {
+				borderColor: "blue"
+			},
+			canClick: () => player.sands.selectedLens !== "xp",
+			onClick: () => player.sands.selectedLens = "xp"
 		}
 	},
 	buyables: {
 		rows: 2,
 		cols: 4,
+		glass: {
+			title: "His insurance won't pay for contacts.<br/>",
+			layer: "sands",
+			id: "glass",
+			display() {
+				return `Melt sand into glass. Doubles the effectiveness of lenses. Requires 110% of the cost to buy.<br/><br/>Currently: ${formatWhole(this.effect())}<br/><br/>Cost: ${format(this.cost())} grains of sand`;
+			},
+			cost(x) {
+				const amount = x || getBuyableAmount(this.layer, this.id);
+				return new Decimal(1e6).times(Decimal.pow(10, amount));
+			},
+			effect() {
+				return Decimal.pow(2, getBuyableAmount(this.layer, this.id).add(1));
+			},
+			canAfford() {
+				return getTotalGrains().gte(this.cost().times(1.1));
+			},
+			buy() {
+				player.sands.spentGrains = new Decimal("1".repeat(getBuyableAmount("sands", "glass").toNumber()) + "000000");
+				setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
+			},
+			unlocked: true
+		},
 		11: {
 			title: "It's my dad's motto.<br/>",
 			display() {
