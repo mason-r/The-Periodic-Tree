@@ -620,17 +620,17 @@ button > * {
 	border-width: 0 4px;
 }
 
-div:first-child > .story .story-title {
+.story:first-child .story-title {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
 
-div:last-child > .story:not(.closed) .story-text {
+.story:not(.closed):last-child .story-text {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
 
-div:last-child > .story.closed .story-title {
+.story.closed:last-child .story-title {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
