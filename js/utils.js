@@ -471,14 +471,13 @@ function isPlainObject(obj) {
 document.title = modInfo.name;
 
 
-
 // Variables that must be defined to display popups
 const activePopups = [];
 let popupID = 0;
 
 // Function to show popups
 function doPopup(type = "none", text = "This is a test popup.", title = "", timer = 3, color = "") {
-	let popupTitle, popupType
+	let popupTitle, popupType;
 	switch (type) {
 	case "achievement":
 		popupTitle = "Achievement Unlocked!";
@@ -496,7 +495,14 @@ function doPopup(type = "none", text = "This is a test popup.", title = "", time
 	if (title !== "") {
 		popupTitle = title;
 	}
-	activePopups.push({ "time": timer, "type": popupType, "title": popupTitle, "message": (text + "\n"), "id": popupID, "color": color });
+	activePopups.push({
+		"time": timer,
+		"type": popupType,
+		"title": popupTitle,
+		"message": (text + "\n"),
+		"id": popupID,
+		"color": color
+	});
 	popupID++;
 }
 

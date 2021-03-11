@@ -29,22 +29,26 @@ const instrumentData = {
 Vue.component("instrument", {
 	props: ["layer", "data"],
 	template: `
-		<div v-if="completions.gt(0) || getJobLevel('distill').gte(instrumentData[data].minLevel)" class="upgTable instant">
-			<div class="upgRow">
-				<div class="upgTable instant">
-					<div class="upgCol">
-						<buyable :layer="layer" :data="data"></buyable>
-						<button v-bind:class="{ smallUpg: true, can: canAfford, locked: !canAfford }" v-bind:style="{ width: '175px', background: canAfford ? distillColor : '' }" v-on:click="layers.distill.buyables[data].buyMax">Buy Max</button>
-					</div>
-				</div>
-				<blank />
-				<div class="instrument" v-bind:style="{ '--instrument-progress': progress + '%' }">
-					<span>{{ instrumentData[data].label }}</span>
-					<span class="instrumentLogo">{{ instrumentData[data].logo }}</span>
-					<span>x{{ format(completions.div(100).add(1)) }}</span>
-				</div>
-			</div>
-		</div>
+      <div v-if="completions.gt(0) || getJobLevel('distill').gte(instrumentData[data].minLevel)"
+           class="upgTable instant">
+      <div class="upgRow">
+        <div class="upgTable instant">
+          <div class="upgCol">
+            <buyable :layer="layer" :data="data"></buyable>
+            <button v-bind:class="{ smallUpg: true, can: canAfford, locked: !canAfford }"
+                    v-bind:style="{ width: '175px', background: canAfford ? distillColor : '' }"
+                    v-on:click="layers.distill.buyables[data].buyMax">Buy Max
+            </button>
+          </div>
+        </div>
+        <blank/>
+        <div class="instrument" v-bind:style="{ '--instrument-progress': progress + '%' }">
+          <span>{{ instrumentData[data].label }}</span>
+          <span class="instrumentLogo">{{ instrumentData[data].logo }}</span>
+          <span>x{{ format(completions.div(100).add(1)) }}</span>
+        </div>
+      </div>
+      </div>
 	`,
 	computed: {
 		completions() {

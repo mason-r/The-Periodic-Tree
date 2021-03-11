@@ -1,20 +1,24 @@
 Vue.component("battery", {
 	props: ["layer", "data"],
-	template: `<div style="margin: 20px" v-if="player[data].unlocked">
-		<h2>{{ layers.generators.clickables[data].name || data[0].toUpperCase() + data.slice(1) }} battery</h2>
-		<div>x{{ format(layers.generators.clickables[data].effect()) }}<br>{{ layers[data].resource }} gain</div><br>
-		<div class="battery" v-bind:style="{ borderColor: layers[data].color }">
-			<svg v-bind:style="{ height: (player[layer].batteries[data] || new Decimal(0)).div(layers[layer].buyables[data].effect()).toNumber() * maxHeight + margin * 2 + 'px', borderColor: layers[data].color }">
-				<defs>
-					<filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
-			      		<feDropShadow dx="0" dy="0" stdDeviation="3"></feDropShadow>
-			    	</filter>
-			  	</defs>
-			  	<path style="filter:url(#glow)" d="M10,0 L100,0"/>
-			</svg>
-		</div><br>
-		<row :layer="layer" :data="[['clickable', data], ['buyable', data]]" />
-	</div>`
+	template: `
+      <div style="margin: 20px" v-if="player[data].unlocked">
+      <h2>{{ layers.generators.clickables[data].name || data[0].toUpperCase() + data.slice(1) }} battery</h2>
+      <div>x{{ format(layers.generators.clickables[data].effect()) }}<br>{{ layers[data].resource }} gain</div>
+      <br>
+      <div class="battery" v-bind:style="{ borderColor: layers[data].color }">
+        <svg
+            v-bind:style="{ height: (player[layer].batteries[data] || new Decimal(0)).div(layers[layer].buyables[data].effect()).toNumber() * maxHeight + margin * 2 + 'px', borderColor: layers[data].color }">
+          <defs>
+            <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+              <feDropShadow dx="0" dy="0" stdDeviation="3"></feDropShadow>
+            </filter>
+          </defs>
+          <path style="filter:url(#glow)" d="M10,0 L100,0"/>
+        </svg>
+      </div>
+      <br>
+      <row :layer="layer" :data="[['clickable', data], ['buyable', data]]"/>
+      </div>`
 });
 
 function getBatteryCharger(id, title, name) {
@@ -283,7 +287,7 @@ addLayer("generators", {
 			display() {
 				return `Generate <b>${format(this.effect())}</b> joules/s if collecting job is active.<br/>(based on collecting level)<br/><br/>Flowers gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.flowersActive ? "ACTIVE" : "INACTIVE"}</b>`;
 			},
-			class: () => ({ "gradient-border": player.generators.flowersActive }),
+			class: () => ({"gradient-border": player.generators.flowersActive}),
 			style: {
 				width: "200px",
 				height: "200px"
@@ -304,7 +308,7 @@ addLayer("generators", {
 			display() {
 				return `Generate <b>${format(this.effect())}</b> joules/s if distilling job is active.<br/>(based on distilling level)<br/><br/>Essentia gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.distillActive ? "ACTIVE" : "INACTIVE"}</b>`;
 			},
-			class: () => ({ "gradient-border": player.generators.distillActive }),
+			class: () => ({"gradient-border": player.generators.distillActive}),
 			style: {
 				width: "200px",
 				height: "200px"
@@ -325,7 +329,7 @@ addLayer("generators", {
 			display() {
 				return `Generate <b>${format(this.effect())}</b> joules/s if studying job is active.<br/>(based on studying level)<br/><br/>Properties gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.studyActive ? "ACTIVE" : "INACTIVE"}</b>`;
 			},
-			class: () => ({ "gradient-border": player.generators.studyActive }),
+			class: () => ({"gradient-border": player.generators.studyActive}),
 			style: {
 				width: "200px",
 				height: "200px"
@@ -346,7 +350,7 @@ addLayer("generators", {
 			display() {
 				return `Generate <b>${format(this.effect())}</b> joules/s if experiments job is active.<br/>(based on experimenting level)<br/><br/>Potentia gain is softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.sandsActive ? "ACTIVE" : "INACTIVE"}</b>`;
 			},
-			class: () => ({ "gradient-border": player.generators.sandsActive }),
+			class: () => ({"gradient-border": player.generators.sandsActive}),
 			style: {
 				width: "200px",
 				height: "200px"
@@ -512,13 +516,13 @@ let animateElectricity = () => {
 		}
 
 		const numPoints = Math.max(3, Math.floor(numberOfPoints * height / maxHeight));
-		let coords = new Array(numPoints).fill(1).map((_,i) => {
+		let coords = new Array(numPoints).fill(1).map((_, i) => {
 			let first = i === 0;
 			let last = i === numPoints - 1;
 			let y = (height - margin * 2) / (numPoints - 1) * i + margin;
 			let x = (first || last) ? width / 2 : (width - amplitude) / 2 + Math.random() * amplitude;
 
-			return { x, y };
+			return {x, y};
 		});
 
 		// Draw path

@@ -7,16 +7,21 @@ const layoutInfo = {
 Vue.component("job", {
 	props: ["layer", "data"],
 	template: `
-	<span class="upgRow" v-bind:style="{ opacity: 0, animation: 'showJob .5s ' + layers[data].showJobDelay + 's forwards', marginBottom: '20px' }" v-if="tmp[data].layerShown">
-		<tree-node :layer='data' :abb='tmp[data].symbol' style="background-size: cover; background-position: center;" v-bind:class="data === 'flowers' && player[data].xp.lte(1) && player[data].resetTime > 20 ? 'tutorial' : ''"></tree-node>
-		<!--suppress HtmlUnknownTag -->
-		<div class="job-details" v-bind:style="[player.tab === data ? { '--shadowColor': layers[data].color } : {}, player[data].timeLoopActive ? { '--innerShadowColor': layers[data].color } : {}, {'textAlign': 'left'}]">
-			<h2>{{layers[data].jobName}}</h2>
-			<span>Lv. {{formatWhole(getJobLevel(data))}}</span>
+      <span class="upgRow"
+            v-bind:style="{ opacity: 0, animation: 'showJob .5s ' + layers[data].showJobDelay + 's forwards', marginBottom: '20px' }"
+            v-if="tmp[data].layerShown">
+		<tree-node :layer='data' :abb='tmp[data].symbol' style="background-size: cover; background-position: center;"
+                   v-bind:class="data === 'flowers' && player[data].xp.lte(1) && player[data].resetTime > 20 ? 'tutorial' : ''"></tree-node>
+        <!--suppress HtmlUnknownTag -->
+		<div class="job-details"
+             v-bind:style="[player.tab === data ? { '--shadowColor': layers[data].color } : {}, player[data].timeLoopActive ? { '--innerShadowColor': layers[data].color } : {}, {'textAlign': 'left'}]">
+			<h2>{{ layers[data].jobName }}</h2>
+			<span>Lv. {{ formatWhole(getJobLevel(data)) }}</span>
 			<bar :layer='layer' :data='data' style="margin-top: 5px;"></bar>
 			<span v-if="player.chapter > 1">
 				Time Loop
-				<button class="smallUpg can" v-bind:style="{'background-color': tmp[data].color,margin: '10px'}" v-on:click="toggleTimeLoop(data)">{{player[data].timeLoopActive?"ON":"OFF"}}</button>
+				<button class="smallUpg can" v-bind:style="{'background-color': tmp[data].color,margin: '10px'}"
+                        v-on:click="toggleTimeLoop(data)">{{ player[data].timeLoopActive ? "ON" : "OFF" }}</button>
 			</span>
 		</div>
 	</span>`
@@ -55,8 +60,8 @@ function getJobProgressBar(job) {
 			let progress = currentXp.sub(previousLevelRequirement).div(nextLevelRequirement.sub(previousLevelRequirement));
 			return progress;
 		},
-		fillStyle: { backgroundColor: layers[job].color },
-		borderStyle: { borderColor: layers[job].color }
+		fillStyle: {backgroundColor: layers[job].color},
+		borderStyle: {borderColor: layers[job].color}
 	};
 }
 
@@ -82,8 +87,8 @@ addLayer("tree-tab", {
 		[
 			// TODO babble buds stage?
 			["column", [
-				["infobox", "genesis", { "--lore-color": "white" }],
-				player.chapter === 2 ? ["infobox", "discovery", { "--lore-color": "orange" }] : null,
+				["infobox", "genesis", {"--lore-color": "white"}],
+				player.chapter === 2 ? ["infobox", "discovery", {"--lore-color": "orange"}] : null,
 			]],
 			"blank",
 			"blank",
@@ -101,8 +106,8 @@ addLayer("tree-tab", {
 				content: [
 					// TODO babble buds stage?
 					["column", [
-						["infobox", "genesis", { "--lore-color": "white" }],
-						["infobox", "discovery", { "--lore-color": "orange" }],
+						["infobox", "genesis", {"--lore-color": "white"}],
+						["infobox", "discovery", {"--lore-color": "orange"}],
 					]],
 					"blank",
 					"blank",

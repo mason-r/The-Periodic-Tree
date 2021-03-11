@@ -1,5 +1,5 @@
 function createCard(title, description = "", onDraw = null, modifyNextCard = null) {
-	return { title, description, onDraw, modifyNextCard };
+	return {title, description, onDraw, modifyNextCard};
 }
 
 const cardLevel = (card) => {
@@ -67,19 +67,19 @@ const cards = {
 };
 
 const shopCards = [
-	{ card: "gainPoints", price: 1 },
-	{ card: "gainInsight", price: 2 },
-	{ card: "gainBigPoints", price: 8 },
-	{ card: "gainBigInsight", price: 13 },
-	{ card: "playTwice", price: 16 },
-	{ card: "increasePointsGain", price: 6 },
-	{ card: "multiplyPointsGain", price: 18 },
-	{ card: "sellDiscount", price: 14 },
-	{ card: "gainXp", price: 25 },
+	{card: "gainPoints", price: 1},
+	{card: "gainInsight", price: 2},
+	{card: "gainBigPoints", price: 8},
+	{card: "gainBigInsight", price: 13},
+	{card: "playTwice", price: 16},
+	{card: "increasePointsGain", price: 6},
+	{card: "multiplyPointsGain", price: 18},
+	{card: "sellDiscount", price: 14},
+	{card: "gainXp", price: 25},
 ];
 
 const baseCards = () => {
-	return [ "nothing", "nothing", "nothing", "nothing", "gainPoints", "gainPoints", "gainPoints", "gainPoints", "gainInsight", "gainInsight" ];
+	return ["nothing", "nothing", "nothing", "nothing", "gainPoints", "gainPoints", "gainPoints", "gainPoints", "gainInsight", "gainInsight"];
 };
 
 const getShop = (numCards = 3) => {
@@ -126,10 +126,10 @@ function getCardUpgradeBuyable(id) {
 
 // noinspection JSUnusedGlobalSymbols
 function purchaseCard(index) {
-	const { card, price } = player.study.shop[index];
+	const {card, price} = player.study.shop[index];
 	if (card && player.study.insights.gte(price)) {
 		player.study.insights = player.study.insights.sub(price);
-		player.study.shop[index] = { card: null, price: "" };
+		player.study.shop[index] = {card: null, price: ""};
 		player.study.cards.push(card);
 	}
 }
@@ -246,12 +246,16 @@ addLayer("study", {
 				"blank",
 				["display-text", `Cards refresh in ${new Decimal(getRefreshPeriod() - player.study.refreshProgress).clampMax(getRefreshPeriod() - 0.01).toFixed(2)} seconds`],
 				"blank",
-				["row", player.study.shop.map(({ card, price }, i) =>
+				["row", player.study.shop.map(({card, price}, i) =>
 					["column", [
 						card == null ? cardFormat("soldOut") : cardFormat(card, "", "shopCard flipCard", `purchaseCard(${i})`),
 						"blank",
 						["display-text", `<h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${price ? formatWhole(price) : "​" /*zero width space*/}</h2>`]
-					], { margin: "auto 10px 20px", cursor: "pointer", opacity: card != null && player.study.insights.gte(price) ? 1 : 0.5 }]), { width: "100%" }]
+					], {
+						margin: "auto 10px 20px",
+						cursor: "pointer",
+						opacity: card != null && player.study.insights.gte(price) ? 1 : 0.5
+					}]), {width: "100%"}]
 			],
 			unlocked: () => hasMilestone("study", 0)
 		},
@@ -262,7 +266,7 @@ addLayer("study", {
 				"blank",
 				["sticky", ["50px", ["clickable", "sell"]]],
 				"blank",
-				["row", player.study.cards.map((card, i) => cardFormat(card, "", player.study.selected === i ? "selectedCard cursor" : "cursor", `toggleSelectCard(${i})`)), { width: "100%" }]
+				["row", player.study.cards.map((card, i) => cardFormat(card, "", player.study.selected === i ? "selectedCard cursor" : "cursor", `toggleSelectCard(${i})`)), {width: "100%"}]
 			],
 			unlocked: () => hasMilestone("study", 1)
 		},
@@ -287,9 +291,9 @@ addLayer("study", {
 				]] : null,
 				["column", Object.keys(cards).filter(card => player.study.cards.includes(card) && card in layers.study.buyables).map(card => ["row", [
 					cardFormat(card),
-					["display-text", "〉〉", { fontSize: "36px", margin: "10px" }],
+					["display-text", "〉〉", {fontSize: "36px", margin: "10px"}],
 					["buyable", card],
-					["display-text", "〉〉", { fontSize: "36px", margin: "10px" }],
+					["display-text", "〉〉", {fontSize: "36px", margin: "10px"}],
 					cardFormat(card, "", "", "", cardLevel(card).add(1))
 				]])]
 			],
