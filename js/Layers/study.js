@@ -21,13 +21,13 @@ const cards = {
 	gainInsight: createCard("And it shall be called... the Earth.", level => level === 0 ? "Gain a key insight." : `Gain ${formatWhole(level.add(1))} key insights.`, level => {
 		player.study.insights = player.study.insights.add(level).add(1);
 		player.study.xp = player.study.xp.add(level.add(1).times(10));
-		checkJobXP(this.layer);
+		checkJobXP("study");
 	}),
 	gainBigInsight: createCard("Yes! I shall design this computer for you.", level => `Gain ${new Decimal(player.study.cards.length).times(level.add(1)).sqrt().floor()} key insights.<br/>(based on number of cards in the deck)`, level => {
 		const amount = new Decimal(player.study.cards.length).times(level.add(1)).sqrt().floor();
 		player.study.insights = player.study.insights.add(amount);
 		player.study.xp = player.study.xp.add(amount.times(10));
-		checkJobXP(this.layer);
+		checkJobXP("study");
 	}),
 	playTwice: createCard("Oh no, not again.", level => level === 0 ? "Play the next card twice." : `Play the next card twice, with the effect boosted by ${level.div(4)} levels.`, null, (nextCard, level) => {
 		if (nextCard in cards && cards[nextCard].onDraw) {
@@ -62,7 +62,7 @@ const cards = {
 	soldOut: createCard("Out of Stock!"),
 	gainXp: createCard("A billion times over ... and no one learns anything.", level => `Gain xp equal to ${level === 0 ? "" : `${format(level.div(4).add(1))}x times `}your number of properties.`, level => {
 		player.study.xp = player.study.xp.add(player.study.points.times(level.div(4).add(1)));
-		checkJobXP(this.layer);
+		checkJobXP("study");
 	})
 };
 
