@@ -256,7 +256,7 @@ addLayer("distill", {
 		}
 	},
 	buyables: {
-		retort: getInstrumentBuyable("retort", "retort", "Be excellent to each other.", new Decimal(0.06), new Decimal(10), new Decimal(1.05)),
+		retort: getInstrumentBuyable("retort", "retort", "Be excellent to each other.", new Decimal(0.06), new Decimal(1), new Decimal(1.05)),
 		alembic: getInstrumentBuyable("alembic", "alembic", "EXCELLENT!", new Decimal(0.03), new Decimal(100), new Decimal(1.1)),
 		crucible: getInstrumentBuyable("crucible", "crucible", "Party on dudes!", new Decimal(0.02), new Decimal(1000), new Decimal(1.15)),
 		bainMarie: getInstrumentBuyable("bainMarie", "bain-marie", "Greetings, my excellent friends.", new Decimal(0.015), new Decimal(10000), new Decimal(1.2)),
