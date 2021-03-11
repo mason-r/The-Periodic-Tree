@@ -54,6 +54,7 @@ td {
 	vertical-align: 0
 }
 
+/*noinspection CssUnusedSymbol*/
 .bigUpgAlign {
 	vertical-align: 0
 }
@@ -63,7 +64,7 @@ h1, h2, h3, b, input {
 }
 
 
-
+/*noinspection CssUnresolvedCustomProperty,CssUnresolvedCustomProperty,CssUnresolvedCustomProperty,CssUnresolvedCustomProperty*/
 .treeNode {
 	height: 100px;
 	width: 100px;
@@ -78,6 +79,7 @@ h1, h2, h3, b, input {
 }
 
 
+/*noinspection CssUnresolvedCustomProperty,CssUnresolvedCustomProperty,CssUnresolvedCustomProperty,CssUnresolvedCustomProperty,CssUnusedSymbol*/
 .treeButton {
 	height: 100px;
 	width: 100px;
@@ -93,6 +95,7 @@ h1, h2, h3, b, input {
 }
 
 
+/*noinspection CssUnusedSymbol*/
 .smallNode {
 	height: 60px;
 	width: 60px;
@@ -100,6 +103,7 @@ h1, h2, h3, b, input {
 }
 
 
+/*noinspection CssUnusedSymbol*/
 .locked {
 	background-color: #3a3e45;
 	color: white;
@@ -116,17 +120,20 @@ h1, h2, h3, b, input {
 }
 
 
+/*noinspection CssUnresolvedCustomProperty,CssUnusedSymbol*/
 .resetNotify {
 	box-shadow: var(--hqProperty2a), 0 0 8px #ffffff;
 	z-index: 3
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
 .treeNode.can:hover {
 	transform: scale(1.15, 1.15);
 	box-shadow: var(--hqProperty2a), 0 0 20px var(--points);
 	z-index: 4
 }
 
+/*noinspection CssUnresolvedCustomProperty,CssUnusedSymbol*/
 .notify {
 	transform: scale(1.05, 1.05);
 	border-color: rgba(0, 0, 0, 0.125);
@@ -134,11 +141,13 @@ h1, h2, h3, b, input {
 	z-index: 3
 }
 
+/*noinspection CssUnusedSymbol*/
 .bought {
 	background-color: #5C8A58;
 	cursor: default;
 }
 
+/*noinspection CssUnusedSymbol*/
 .back {
 	position: absolute;
 	top: 0;
@@ -167,11 +176,13 @@ h1, h2, h3, b, input {
 	padding-bottom: 20px;
 }
 
+/*noinspection CssUnusedSymbol*/
 .back:hover {
 	transform: scale(1.1, 1.1);
 	text-shadow: 0 0 7px var(--color);
 }
 
+/*noinspection CssUnusedSymbol*/
 .barBase {
 	overflow: hidden;
 	-webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC);
@@ -193,7 +204,6 @@ h1, h2, h3, b, input {
 	vertical-align: middle;
 	display: flex;
 	justify-content: center;
-	align-items: left;
 	position: absolute;
 }
 
@@ -203,13 +213,14 @@ h1, h2, h3, b, input {
     position: absolute;
 	overflow: hidden;
 	margin-left: -0.5px;
-	transition-property: : clip-path;
+	transition-property: clip-path;
 }
 
 .overlayText {
 	z-index: 6;
 }
 
+/*noinspection CssUnusedSymbol*/
 .tabButton {
 	background-color: transparent;
 	color: var(--color);
@@ -219,10 +230,10 @@ h1, h2, h3, b, input {
 	margin: 5px;
 	border-radius: 10px;
 	border: 2px solid;
-	color: var(--color);
 
 }
 
+/*noinspection CssUnusedSymbol*/
 .tabButton:hover {
 	transform: scale(1.1, 1.1);
 	text-shadow: 0 0 7px var(--color);
@@ -232,30 +243,31 @@ h1, h2, h3, b, input {
 	height: 120px;
 	width: 180px;
 	border-radius: 25%;
-	border: 4px solid;
-	border-color: rgba(0, 0, 0, 0.125);
+	border: 4px solid rgba(0, 0, 0, 0.125);
 }
 
+/*noinspection CssUnusedSymbol*/
 .upg {
 	height: 150px;
 	width: 150px;
 	border-radius: 5px;
-	border: 2px solid;
-	border-color: rgba(0, 0, 0, 0.125);
+	border: 2px solid rgba(0, 0, 0, 0.125);
 	font-size: 10px;
 	margin: 5px;
 }
 
+/*noinspection CssUnusedSymbol*/
 .achievement {
 	height: 90px;
 	width: 90px;
 	border-radius: 25%;
-	border: 2px solid;
-	border-color: rgba(0, 0, 0, 0.125);
+	border: 2px solid rgba(0, 0, 0, 0.125);
 	font-size: 10px;
 	color: white;
 	text-shadow: 0 0 2px #000000;
 }
+
+/*noinspection CssUnusedSymbol*/
 .achievement:hover {
 	box-shadow: 0 0 10px var(--points);
 	z-index: 7;
@@ -265,17 +277,16 @@ h1, h2, h3, b, input {
 	height: 200px;
 	width: 200px;
 	border-radius: 5px;
-	border: 2px solid;
-	border-color: rgba(0, 0, 0, 0.125);
+	border: 2px solid rgba(0, 0, 0, 0.125);
 	font-size: 10px;
 }
 
+/*noinspection CssUnusedSymbol*/
 .upgBig {
 	height: 200px;
 	width: 200px;
 	border-radius: 25%;
-	border: 2px solid;
-	border-color: rgba(0, 0, 0, 0.125);
+	border: 2px solid rgba(0, 0, 0, 0.125);
 }
 
 .longUpg {
@@ -283,8 +294,7 @@ h1, h2, h3, b, input {
 	width: 120px;
 	background: var(--points);
 	border-radius: 50%;
-	border: 2px solid;
-	border-color: rgba(0, 0, 0, 0.125);
+	border: 2px solid rgba(0, 0, 0, 0.125);
 	font-size: 10px;
 }
 
@@ -292,8 +302,7 @@ h1, h2, h3, b, input {
 	height: 40px;
 	width: 40px;
 	border-radius: 5px;
-	border: 2px solid;
-	border-color: rgba(0, 0, 0, 0.125);
+	border: 2px solid rgba(0, 0, 0, 0.125);
 	margin-top: 4px;
 }
 
@@ -328,9 +337,8 @@ a {
 	height: 100px;
 	width: 100px;
 	border-radius: 25%;
-	border: 4px solid;
 	background-color: var(--color);
-	border-color: rgba(0, 0, 0, 0.125);
+	border: 4px solid rgba(0, 0, 0, 0.125);
 	color: rgba(0, 0, 0, 0.5);
 	cursor: pointer;
 }
@@ -351,6 +359,7 @@ a {
 	z-index: -999;
 }
 
+/*noinspection CssUnusedSymbol*/
 .milestone {
 	width: 100%;
 	min-width: 120px;
@@ -358,12 +367,12 @@ a {
 	padding-right: 5px;
 	height: 75px;
 	background-color: #3a3e45;
-	border: 4px solid;
 	border-radius: 4px;
-	border-color: rgba(0, 0, 0, 0.125);
+	border: 4px solid rgba(0, 0, 0, 0.125);
 	color: rgba(0, 0, 0, 0.5);
 }
 
+/*noinspection CssUnusedSymbol*/
 .milestoneDone {
 	width: 100%;
 	min-width: 120px;
@@ -372,9 +381,8 @@ a {
 
 	height: 75px;
 	background-color: #5C8A58;
-	border: 4px solid;
 	border-radius: 4px;
-	border-color: rgba(0, 0, 0, 0.125);
+	border: 4px solid rgba(0, 0, 0, 0.125);
 	color: rgba(0, 0, 0, 0.5);
 }
 
@@ -383,16 +391,19 @@ a {
 	left: 0;
 }
 
+/*noinspection CssUnusedSymbol*/
 .remove {
 	height: 24px;
 	width: 24px;
 	cursor: pointer;
 }
 
+/*noinspection CssUnusedSymbol*/
 .remove:hover {
 	transform: scale(1.1, 1.1);
 }
 
+/*noinspection CssUnusedSymbol*/
 .col {
 	min-width: 49.5%;
 	max-width: 49.5%;
@@ -412,10 +423,12 @@ a {
 	transition-duration: 0s !important
 }
 
+/*noinspection CssUnusedSymbol*/
 .fast {
-	transition:color none
+	transition:color 0s;
 }
 
+/*noinspection CssUnusedSymbol*/
 .col.right {
 	top: 50px;
 	right: 0;
@@ -424,9 +437,12 @@ a {
 
 #app {
 	column-count: 2;
-	column-width: 50%;
 	min-height: calc(100% - 50px);
 	margin-top: 50px;
+}
+
+#app {
+	column-width: 50%;
 }
 
 .vl {
@@ -451,10 +467,10 @@ ul {
 	list-style-type: none;
 }
 
+/*noinspection CssUnusedSymbol*/
 .hChallenge {
 	background-color: #bf8f8f;
-	border: 4px solid;
-	border-color: rgba(0, 0, 0, 0.125);
+	border: 4px solid rgba(0, 0, 0, 0.125);
 	color: rgba(0, 0, 0, 0.5);
 	width: 300px;
 	height: 300px;
@@ -462,10 +478,12 @@ ul {
 	border-radius: 33.33%;
 }
 
+/*noinspection CssUnusedSymbol*/
 .hChallenge.done {
 	background-color: #77bf5f;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .hChallenge.canComplete {
 	background-color: #ffbf00;
 }
@@ -496,6 +514,7 @@ ul {
 	-webkit-transform:translate3d(0,0,0);
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
 [tooltip]:before {
 	position: absolute;
 	bottom: 100%;
@@ -517,6 +536,7 @@ ul {
 	white-space: pre-wrap;
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
 [tooltip]:after {
 	position: absolute;
 	bottom: 100%;
@@ -574,10 +594,12 @@ button > * {
 	pointer-events:none;
 }
 
+/*noinspection CssUnusedSymbol*/
 .ghost {
 	visibility: hidden
 }
 
+/*noinspection CssUnresolvedCustomProperty,CssUnusedSymbol*/
 .story {
     width: 600px;
     max-width: 95%;
@@ -585,6 +607,7 @@ button > * {
     color: var(--lore-color);
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
 .story-title {
     text-align: left;
     font-size: 24px;
@@ -607,9 +630,8 @@ button > * {
 
 .story-text {
 	padding: 8px;
-    border: solid 4px;
-    border-color: inherit;
-    max-height: 100%;
+	border: 4px solid;
+	max-height: 100%;
     overflow-y: hidden;
 	transition-duration: 0s;
 }
@@ -681,8 +703,8 @@ button > * {
 
 #info:hover {
 	transform: scale(1.2, 1.2);
-	text-shadow: 5px 0px 10px #02f2f2,
-              -3px 0px 12px #02f2f2;
+	text-shadow: 5px 0 10px #02f2f2,
+              -3px 0 12px #02f2f2;
 }
 
 #discord {
@@ -699,8 +721,7 @@ button > * {
 #discord-links {
 	position: fixed;
 	top: 0;
-	padding: 30px;
-	padding-top: 80px;
+	padding: 80px 30px 30px;
 	right: -280px;
 	width: 200px;
 	transition: right .25s ease;
@@ -722,10 +743,11 @@ button > * {
 
 #version:hover {
 	transform: scale(1.2, 1.2);
-	text-shadow: 5px 0px 10px var(--points),
-              -3px 0px 12px var(--points);
+	text-shadow: 5px 0 10px var(--points),
+              -3px 0 12px var(--points);
 }
 
+/*noinspection CssUnusedSymbol*/
 .tutorial {
 	animation: shockwave 2s infinite;
 }
@@ -760,6 +782,7 @@ button > * {
 }
 
 @media only screen and (max-width: 1200px) {
+	/*noinspection CssUnusedSymbol*/
 	.col.right {
 		min-width: 100%;
 		background: var(--background);
@@ -772,7 +795,7 @@ button > * {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-evenly;
-	box-shadow: black 4px 4px 8px 0px;
+	box-shadow: black 4px 4px 8px 0;
 	border-radius: 10px;
 	position: relative;
     margin: 10px auto;
@@ -803,12 +826,14 @@ button > * {
 	max-height: 100%;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .selectedCard, .selectedCard:hover {
 	transform: scale(1.2);
 	box-shadow: black 0 0 16px 8px;
 	z-index: 2;
 }
 
+/*noinspection CssUnusedSymbol*/
 .flipCard {
 	animation: flip 1s;
 }
@@ -823,6 +848,7 @@ button > * {
 	}
 }
 
+/*noinspection CssUnusedSymbol*/
 .cursor {
 	cursor: pointer;
 }
@@ -845,6 +871,7 @@ button > * {
     background: white;
 }
 
+/*noinspection CssUnresolvedCustomProperty,CssUnresolvedCustomProperty*/
 .hourglass {
 	--polygonH: polygon(0% 0%,100% 0%,100% 5.55%,95% 5.55%,95% 28%,60% 46%,60% 54%,95% 72%,95% 94.45%,100% 94.45%,100% 100%,0% 100%,0% 94.45%,5% 94.45%,5% 72%,40% 54%,40% 46%,5% 28%,5% 5.55%,0% 5.55%);
 	animation-name: flipHourglass;
@@ -867,6 +894,8 @@ button > * {
 	display: block;
 	position: absolute;
 }
+
+/*noinspection CssUnresolvedCustomProperty,CssUnresolvedCustomProperty,CssUnresolvedCustomProperty*/
 .hourglass:before {
 	--polygonB1: polygon(0% 0%,100% 0%,100% 24%,50% 47%,50% 47%,50% 47%,50% 47%,50% 47%,50% 47%,50% 47%,50% 47%,0% 24%);
 	--polygonB2: polygon(0% 4%,100% 4%,100% 24%,55% 45%,55% 100%,55% 100%,55% 100%,45% 100%,45% 100%,45% 100%,45% 45%,0% 24%);
@@ -887,16 +916,14 @@ button > * {
 	height: 8em;
 	z-index: 1;
 }
+
+/*noinspection CssUnresolvedCustomProperty,CssUnresolvedCustomProperty*/
 .hourglass:after {
 	animation-name: glare;
 	animation-duration: var(--flip-duration);
 	animation-delay: 0s;
 	animation-play-state: var(--flip-state);
-	background:
-		linear-gradient(90deg,#0000 0.5em,#0003 0.5em 1.5em,#0000 1.5em 3.5em,#fff3 3.5em 4.5em,#fff0 4.5em 6.5em,#0003 6.5em 7.5em,#0000 7.5em) 0 0 / 100% 0.5em,
-		linear-gradient(90deg,#0000 0.75em,#0003 0.75em 1.25em,#0000 1.25em 3.75em,#fff3 3.75em 4.25em,#fff0 4.25em 6.75em,#0003 6.75em 7.25em,#0000 7.25em) 0 0.5em / 100% 8em,
-		linear-gradient(90deg,#0000 0.5em,#0003 0.5em 1.5em,#0000 1.5em 3.5em,#fff3 3.5em 4.5em,#fff0 4.5em 6.5em,#0003 6.5em 7.5em,#0000 7.5em) 0 100% / 100% 0.5em;
-	background-repeat: repeat-x;
+	background: linear-gradient(90deg, #0000 0.5em, #0003 0.5em 1.5em, #0000 1.5em 3.5em, #fff3 3.5em 4.5em, #fff0 4.5em 6.5em, #0003 6.5em 7.5em, #0000 7.5em) linear-gradient(90deg, #0000 0.75em, #0003 0.75em 1.25em, #0000 1.25em 3.75em, #fff3 3.75em 4.25em, #fff0 4.25em 6.75em, #0003 6.75em 7.25em, #0000 7.25em) linear-gradient(90deg, #0000 0.5em, #0003 0.5em 1.5em, #0000 1.5em 3.5em, #fff3 3.5em 4.5em, #fff0 4.5em 6.5em, #0003 6.5em 7.5em, #0000 7.5em) repeat-x 0 0 0 0.5em 0 100%;
 	top: 0;
 	left: -3em;
 	width: 200%;
@@ -946,11 +973,14 @@ b, h3 {
 	text-shadow: 0 0 black;
 }
 
+/*noinspection CssUnusedSymbol*/
 .gradient-border {
 	--border-width: 4px;
 	position: relative;
     background-clip: content-box;
 }
+
+/*noinspection CssUnusedSymbol*/
 .gradient-border::before {
     position: absolute;
     content: "";
@@ -962,6 +992,8 @@ b, h3 {
     bottom: 0;
     border-radius: 5px;
 }
+
+/*noinspection CssUnusedSymbol*/
 .gradient-border::after {
 	position: absolute;
 	content: "";
@@ -970,9 +1002,8 @@ b, h3 {
 	z-index: -2;
 	width: calc(100% + var(--border-width) * 2);
 	height: calc(100% + var(--border-width) * 2);
-	background: linear-gradient(60deg, rgba(14,0,255,1) 0%, rgba(4,194,118,1) 16%, rgba(9,9,121,1) 35%, rgba(6,139,170,1) 59%, rgba(113,3,216,1) 81%, rgba(0,212,255,1) 100%);
 	background-size: 300% 300%;
-	background-position: 0 50%;
+	background: linear-gradient(60deg, rgba(14, 0, 255, 1) 0%, rgba(4, 194, 118, 1) 16%, rgba(9, 9, 121, 1) 35%, rgba(6, 139, 170, 1) 59%, rgba(113, 3, 216, 1) 81%, rgba(0, 212, 255, 1) 100%) 0 50%;
 	border-radius: 5px;
 	animation: moveGradient 8s alternate infinite;
 }
@@ -993,6 +1024,7 @@ b, h3 {
     flex-flow: column;
 }
 
+/*noinspection CssUnresolvedCustomProperty*/
 .instrument::before {
 	content: "";
 	position: absolute;
@@ -1022,7 +1054,7 @@ b, h3 {
   width: 100px;
   border-bottom: solid 2px;
   border-radius: 20px;
-  background: rgb(1, 1, 1, .25);
+  background: rgba(1, 1, 1, .25);
 }
 
 .battery path {

@@ -53,7 +53,7 @@ function getBatteryCapBuyable(id, title) {
 			height: "150px"
 		},
 		display() {
-			return `Mutliply battery cap by ${formatWhole(buyableEffect(this.layer, 13))}x.<br/><br/>Currently: ${formatWhole(this.effect())}<br/><br/>Cost: ${formatWhole(this.cost())} charge`;
+			return `Multiply battery cap by ${formatWhole(buyableEffect(this.layer, 13))}x.<br/><br/>Currently: ${formatWhole(this.effect())}<br/><br/>Cost: ${formatWhole(this.cost())} charge`;
 		},
 		cost(x) {
 			const amount = x || getBuyableAmount(this.layer, this.id);
@@ -204,11 +204,6 @@ addLayer("generators", {
 				}
 			});
 		}
-		let jobLevel = new Decimal(getJobLevel(this.layer));
-		if (jobLevel.neq(player[this.layer].lastLevel) && player[this.layer].lastLevel.lte(100)) {
-			doPopup("none", `Level ${formatWhole(jobLevel)}`, "Level Up!", 3, layers[this.layer].color);
-			player[this.layer].lastLevel = jobLevel;
-		}
 	},
 	onAddPoints(gain) {
 		let xpGain = gain;
@@ -216,6 +211,7 @@ addLayer("generators", {
 			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
 		}
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
+		checkJobXP(this.layer);
 	},
 	milestones: {
 		0: {
@@ -517,8 +513,8 @@ let animateElectricity = () => {
 
 		const numPoints = Math.max(3, Math.floor(numberOfPoints * height / maxHeight));
 		let coords = new Array(numPoints).fill(1).map((_,i) => {
-			let first = i == 0;
-			let last = i == numPoints - 1;
+			let first = i === 0;
+			let last = i === numPoints - 1;
 			let y = (height - margin * 2) / (numPoints - 1) * i + margin;
 			let x = (first || last) ? width / 2 : (width - amplitude) / 2 + Math.random() * amplitude;
 

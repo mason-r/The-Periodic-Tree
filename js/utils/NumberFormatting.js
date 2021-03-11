@@ -2,7 +2,7 @@
 function exponentialFormat(num, precision, mantissa = true) {
 	let e = num.log10().floor();
 	let m = num.div(Decimal.pow(10, e));
-	if(m.toStringWithDecimalPlaces(precision) == 10) {
+	if(m.toStringWithDecimalPlaces(precision) === 10) {
 		m = new Decimal(1);
 		e = e.add(1);
 	}
@@ -23,9 +23,9 @@ function commaFormat(num, precision) {
 	}
 	if (precision === null || precision === undefined) {
 		if (num.layer > 1) {
-			firstPart = new Decimal(num);
+			let firstPart = new Decimal(num);
 			firstPart.mag = Math.floor(num.mag);
-			secondPart = new Decimal(num);
+			let secondPart = new Decimal(num);
 			secondPart.layer = 0;
 			secondPart.mag = num.mag - firstPart.mag;
 			return firstPart.floor().toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") + secondPart.toStringWithDecimalPlaces(2).substr(1);
@@ -48,18 +48,6 @@ function regularFormat(num, precision) {
 	return num.toStringWithDecimalPlaces(precision);
 }
 
-function fixValue(x, y = 0) {
-	return x || new Decimal(y);
-}
-
-function sumValues(x) {
-	x = Object.values(x);
-	if (!x[0]) {
-		return new Decimal(0);
-	}
-	return x.reduce((a, b) => Decimal.add(a, b));
-}
-
 function format(decimal, precision=2,) {
 	decimal = new Decimal(decimal);
 	if (isNaN(decimal.sign)||isNaN(decimal.layer)||isNaN(decimal.mag)) {
@@ -69,11 +57,11 @@ function format(decimal, precision=2,) {
 	if (decimal.sign<0) {
 		return "-"+format(decimal.neg(), precision);
 	}
-	if (decimal.mag == Number.POSITIVE_INFINITY) {
+	if (decimal.mag === Number.POSITIVE_INFINITY) {
 		return "Infinity";
 	}
 	if (decimal.gte("eeee1000")) {
-		var slog = decimal.slog();
+		const slog = decimal.slog();
 		if (slog.gte(1e6)) {
 			return "F" + format(slog.floor());
 		} else {
@@ -117,11 +105,3 @@ function formatTime(s) {
 	}
 }
 
-function toPlaces(x, precision, maxAccepted) {
-	x = new Decimal(x);
-	let result = x.toStringWithDecimalPlaces(precision);
-	if (new Decimal(result).gte(maxAccepted)) {
-		result = new Decimal(maxAccepted-Math.pow(0.1, precision)).toStringWithDecimalPlaces(precision);
-	}
-	return result;
-}

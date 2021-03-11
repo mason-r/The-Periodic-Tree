@@ -155,7 +155,7 @@ function buyUpg(layer, id) {
 		}
 	}
 	player[layer].upgrades.push(id);
-	if (upg.onPurchase != undefined) {
+	if (upg.onPurchase !== undefined) {
 		run(upg.onPurchase, upg);
 	}
 }
@@ -215,7 +215,7 @@ function inChallenge(layer, id) {
 		return false;
 	}
 	id = toNumber(id);
-	if (challenge == id) {
+	if (challenge === id) {
 		return true;
 	}
 
@@ -226,7 +226,8 @@ function inChallenge(layer, id) {
 
 // ************ Misc ************
 
-var onTreeTab = true;
+const onTreeTab = true;
+
 function showTab(name) {
 	if (LAYERS.includes(name) && !layerunlocked(name)) {
 		return;
@@ -234,9 +235,9 @@ function showTab(name) {
 	if (player.tab === name && isPlainObject(tmp[name].tabFormat)) {
 		player.subtabs[name].mainTabs = Object.keys(layers[name].tabFormat)[0];
 	}
-	var toTreeTab = name == "none";
+
 	player.tab = name;
-	if (player.navTab == "none" && (tmp[name].row !== "side") && (tmp[name].row !== "otherside")) {
+	if (player.navTab === "none" && (tmp[name].row !== "side") && (tmp[name].row !== "otherside")) {
 		player.lastSafeTab = name;
 	}
 	delete player.notify[name];
@@ -249,7 +250,7 @@ function showNavTab(name) {
 		return;
 	}
 
-	var toTreeTab = name == "tree";
+
 	player.navTab = name;
 	player.notify[name] = false;
 	needCanvasUpdate = true;
@@ -281,9 +282,9 @@ function prestigeNotify(layer) {
 		return layers[layer].prestigeNotify();
 	} else if (tmp[layer].autoPrestige || tmp[layer].passiveGeneration) {
 		return false;
-	} else if (tmp[layer].type == "static") {
+	} else if (tmp[layer].type === "static") {
 		return tmp[layer].canReset;
-	} else if (tmp[layer].type == "normal") {
+	} else if (tmp[layer].type === "normal") {
 		return (tmp[layer].canReset && (tmp[layer].resetGain.gte(player[layer].points.div(10))));
 	} else {
 		return false;
@@ -291,15 +292,15 @@ function prestigeNotify(layer) {
 }
 
 function notifyLayer(name) {
-	if (player.tab == name || !layerunlocked(name)) {
+	if (player.tab === name || !layerunlocked(name)) {
 		return;
 	}
 	player.notify[name] = 1;
 }
 
 function subtabShouldNotify(layer, family, id) {
-	let subtab = {};
-	if (family == "mainTabs") {
+	let subtab;
+	if (family === "mainTabs") {
 		subtab = tmp[layer].tabFormat[id];
 	} else {
 		subtab = tmp[layer].microtabs[family][id];
@@ -313,8 +314,8 @@ function subtabShouldNotify(layer, family, id) {
 }
 
 function subtabResetNotify(layer, family, id) {
-	let subtab = {};
-	if (family == "mainTabs") {
+	let subtab;
+	if (family === "mainTabs") {
 		subtab = tmp[layer].tabFormat[id];
 	} else {
 		subtab = tmp[layer].microtabs[family][id];
@@ -327,19 +328,13 @@ function subtabResetNotify(layer, family, id) {
 }
 
 function nodeShown(layer) {
-	if (layerShown(layer)) {
-		return true;
-	}
-	switch (layer) {
-	case "idk":
-		return player.idk.unlocked;
-		break;
-	}
-	return false;
+	return layerShown(layer);
+
 }
 
+// noinspection SpellCheckingInspection
 function layerunlocked(layer) {
-	if (tmp[layer] && tmp[layer].type == "none") {
+	if (tmp[layer] && tmp[layer].type === "none") {
 		return (player[layer].unlocked);
 	}
 	return LAYERS.includes(layer) && (player[layer].unlocked || (tmp[layer].canReset && tmp[layer].layerShown));
@@ -361,7 +356,7 @@ function toNumber(x) {
 }
 
 function updateMilestones(layer) {
-	for (id in layers[layer].milestones) {
+	for (let id in layers[layer].milestones) {
 		if (!(hasMilestone(layer, id)) && layers[layer].milestones[id].done()) {
 			player[layer].milestones.push(id);
 			if (isFunction(layers[layer].milestones[id].onComplete)) {
@@ -375,7 +370,7 @@ function updateMilestones(layer) {
 }
 
 function updateAchievements(layer) {
-	for (id in layers[layer].achievements) {
+	for (let id in layers[layer].achievements) {
 		if (isPlainObject(layers[layer].achievements[id]) && !(hasAchievement(layer, id)) && layers[layer].achievements[id].done()) {
 			player[layer].achievements.push(id);
 			if (layers[layer].achievements[id].onComplete) {
@@ -400,7 +395,7 @@ function addTime(diff, layer) {
 	if (time + 0 !== time) {
 		console.log("Memory leak detected. Trying to fix...");
 		time = toNumber(time);
-		if (isNaN(time) || time == 0) {
+		if (isNaN(time) || time === 0) {
 			console.log("Couldn't fix! Resetting...");
 			time = layer ? player.timePlayed : 0;
 			if (!layer) {
@@ -417,6 +412,7 @@ function addTime(diff, layer) {
 	}
 }
 
+let onFocused;
 document.onkeydown = function (e) {
 	if (player === undefined) {
 		return;
@@ -424,7 +420,7 @@ document.onkeydown = function (e) {
 	if (gameEnded && !player.keepGoing) {
 		return;
 	}
-	let shiftDown = e.shiftKey;
+
 	let ctrlDown = e.ctrlKey;
 	let key = e.key;
 	if (ctrlDown) {
@@ -443,7 +439,8 @@ document.onkeydown = function (e) {
 	}
 };
 
-var onFocused = false;
+onFocused = false;
+
 function focused(x) {
 	onFocused = x;
 }
@@ -451,12 +448,12 @@ function focused(x) {
 function prestigeButtonText(layer) {
 	if (layers[layer].prestigeButtonText !== undefined) {
 		return layers[layer].prestigeButtonText();
-	} else if (tmp[layer].type == "normal") {
+	} else if (tmp[layer].type === "normal") {
 		return `${player[layer].points.lt(1e3) ? (tmp[layer].resetDescription !== undefined ? tmp[layer].resetDescription : "Reset for ") : ""}+<b>${formatWhole(tmp[layer].resetGain)}</b> ${tmp[layer].resource} ${tmp[layer].resetGain.lt(100) && player[layer].points.lt(1e3) ? `<br><br>Next at ${(tmp[layer].roundUpCost ? formatWhole(tmp[layer].nextAt) : format(tmp[layer].nextAt))} ${tmp[layer].baseResource}` : ""}`;
-	} else if (tmp[layer].type == "static") {
+	} else if (tmp[layer].type === "static") {
 		return `${tmp[layer].resetDescription !== undefined ? tmp[layer].resetDescription : "Reset for "}+<b>${formatWhole(tmp[layer].resetGain)}</b> ${tmp[layer].resource}<br><br>${player[layer].points.lt(30) ? (tmp[layer].baseAmount.gte(tmp[layer].nextAt) && (tmp[layer].canBuyMax !== undefined) && tmp[layer].canBuyMax ? "Next:" : "Req:") : ""} ${formatWhole(tmp[layer].baseAmount)} / ${(tmp[layer].roundUpCost ? formatWhole(tmp[layer].nextAtDisp) : format(tmp[layer].nextAtDisp))} ${tmp[layer].baseResource}
 		`;
-	} else if (tmp[layer].type == "none") {
+	} else if (tmp[layer].type === "none") {
 		return "";
 	} else {
 		return "You need prestige button text";
@@ -476,11 +473,12 @@ document.title = modInfo.name;
 
 
 // Variables that must be defined to display popups
-var activePopups = [];
-var popupID = 0;
+const activePopups = [];
+let popupID = 0;
 
 // Function to show popups
 function doPopup(type = "none", text = "This is a test popup.", title = "", timer = 3, color = "") {
+	let popupTitle, popupType
 	switch (type) {
 	case "achievement":
 		popupTitle = "Achievement Unlocked!";
@@ -495,20 +493,17 @@ function doPopup(type = "none", text = "This is a test popup.", title = "", time
 		popupType = "default-popup";
 		break;
 	}
-	if (title != "") {
+	if (title !== "") {
 		popupTitle = title;
 	}
-	popupMessage = text;
-	popupTimer = timer;
-
-	activePopups.push({ "time": popupTimer, "type": popupType, "title": popupTitle, "message": (popupMessage + "\n"), "id": popupID, "color": color });
+	activePopups.push({ "time": timer, "type": popupType, "title": popupTitle, "message": (text + "\n"), "id": popupID, "color": color });
 	popupID++;
 }
 
 
 //Function to reduce time on active popups
 function adjustPopupTime(diff) {
-	for (popup in activePopups) {
+	for (let popup in activePopups) {
 		activePopups[popup].time -= diff;
 		if (activePopups[popup]["time"] < 0) {
 			activePopups.splice(popup, 1); // Remove popup when time hits 0

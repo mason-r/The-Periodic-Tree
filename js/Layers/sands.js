@@ -147,7 +147,7 @@ addLayer("sands", {
 	tabFormat: {
 		"Main": {
 			content: () => {
-				const percentChipped = new Decimal(1).sub(player.sands.shrunkAmount.div(nextStoneCost())).times(10000);
+				new Decimal(1).sub(player.sands.shrunkAmount.div(nextStoneCost())).times(10000);
 				return player.tab !== "sands" ? null : [
 					"main-display",
 					"blank",
@@ -321,11 +321,6 @@ addLayer("sands", {
 				}
 			}
 		}
-		let jobLevel = new Decimal(getJobLevel(this.layer));
-		if (jobLevel.neq(player[this.layer].lastLevel) && player[this.layer].lastLevel.lte(100)) {
-			doPopup("none", `Level ${formatWhole(jobLevel)}`, "Level Up!", 3, layers[this.layer].color);
-			player[this.layer].lastLevel = jobLevel;
-		}
 	},
 	onAddPoints(gain) {
 		let xpGain = gain;
@@ -336,6 +331,7 @@ addLayer("sands", {
 			xpGain = xpGain.times(Decimal.pow(buyableEffect("sands", "glass"), 2));
 		}
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
+		checkJobXP(this.layer);
 	},
 	milestones: {
 		0: {

@@ -18,16 +18,18 @@ const cards = {
 			}
 		}
 	}),
-	gainInsight: createCard("And it shall be called... the Earth.", level => level == 0 ? "Gain a key insight." : `Gain ${formatWhole(level.add(1))} key insights.`, level => {
+	gainInsight: createCard("And it shall be called... the Earth.", level => level === 0 ? "Gain a key insight." : `Gain ${formatWhole(level.add(1))} key insights.`, level => {
 		player.study.insights = player.study.insights.add(level).add(1);
 		player.study.xp = player.study.xp.add(level.add(1).times(10));
+		checkJobXP(this.layer);
 	}),
 	gainBigInsight: createCard("Yes! I shall design this computer for you.", level => `Gain ${new Decimal(player.study.cards.length).times(level.add(1)).sqrt().floor()} key insights.<br/>(based on number of cards in the deck)`, level => {
 		const amount = new Decimal(player.study.cards.length).times(level.add(1)).sqrt().floor();
 		player.study.insights = player.study.insights.add(amount);
 		player.study.xp = player.study.xp.add(amount.times(10));
+		checkJobXP(this.layer);
 	}),
-	playTwice: createCard("Oh no, not again.", level => level == 0 ? "Play the next card twice." : `Play the next card twice, with the effect boosted by ${level.div(4)} levels.`, null, (nextCard, level) => {
+	playTwice: createCard("Oh no, not again.", level => level === 0 ? "Play the next card twice." : `Play the next card twice, with the effect boosted by ${level.div(4)} levels.`, null, (nextCard, level) => {
 		if (nextCard in cards && cards[nextCard].onDraw) {
 			cards[nextCard].onDraw(cardLevel(nextCard).add(level.div(4)));
 			cards[nextCard].onDraw(cardLevel(nextCard).add(level.div(4)), false);
@@ -58,7 +60,10 @@ const cards = {
 		return text;
 	}, () => player.study.sellDiscount = player.study.sellDiscount.add(1)),
 	soldOut: createCard("Out of Stock!"),
-	gainXp: createCard("A billion times over ... and no one learns anything.", level => `Gain xp equal to ${level == 0 ? "" : `${format(level.div(4).add(1))}x times `}your number of properties.`, level => player.study.xp = player.study.xp.add(player.study.points.times(level.div(4).add(1))))
+	gainXp: createCard("A billion times over ... and no one learns anything.", level => `Gain xp equal to ${level === 0 ? "" : `${format(level.div(4).add(1))}x times `}your number of properties.`, level => {
+		player.study.xp = player.study.xp.add(player.study.points.times(level.div(4).add(1)));
+		checkJobXP(this.layer);
+	})
 };
 
 const shopCards = [
@@ -85,11 +90,12 @@ const cardFormat = (card, id = "", className = "", onclick = "", overrideLevel =
 	return card == null ? null : ["display-text", `
 		<div id="${id}" class="card ${className}" style="width: ${width}; height: ${height};" onclick="${onclick}">
 			<span style="border-bottom: 1px solid white; margin: 0; max-height: calc(50% - 30px); padding-bottom: 10px;">
+				<!--suppress HtmlUnknownTag -->
 				<h3>${isFunction(cards[card].title) ? cards[card].title(overrideLevel || cardLevel(card)) : cards[card].title}</h3>
 			</span>
-			<span style="flex-basis: 0%;"><span>${isFunction(cards[card].description) ? cards[card].description(overrideLevel || cardLevel(card)) : cards[card].description}</span></span>
+			<span style="flex-basis: 0;"><span>${isFunction(cards[card].description) ? cards[card].description(overrideLevel || cardLevel(card)) : cards[card].description}</span></span>
 			<span style="flex-shrink: 1"></span>
-			<img src="images/Time2wait.svg"/>
+			<img src="images/Time2wait.svg" alt="hourglass"/>
 		</div>`];
 };
 
@@ -118,6 +124,7 @@ function getCardUpgradeBuyable(id) {
 	};
 }
 
+// noinspection JSUnusedGlobalSymbols
 function purchaseCard(index) {
 	const { card, price } = player.study.shop[index];
 	if (card && player.study.insights.gte(price)) {
@@ -127,6 +134,7 @@ function purchaseCard(index) {
 	}
 }
 
+// noinspection JSUnusedGlobalSymbols
 function toggleSelectCard(index) {
 	if (player.study.selected === index) {
 		player.study.selected = -1;
@@ -202,6 +210,7 @@ addLayer("study", {
 	tabFormat: {
 		"Main": {
 			content: () => player.tab !== "study" ? null : [
+				<!--suppress HtmlUnknownTag -->
 				["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied,<br/>and <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`],
 				"blank",
 				["display-text", (() => {
@@ -232,6 +241,7 @@ addLayer("study", {
 		},
 		"Buy Cards": {
 			content: () => player.tab !== "study" ? null : [
+				<!--suppress HtmlUnknownTag -->
 				["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`],
 				"blank",
 				["display-text", `Cards refresh in ${new Decimal(getRefreshPeriod() - player.study.refreshProgress).clampMax(getRefreshPeriod() - 0.01).toFixed(2)} seconds`],
@@ -247,6 +257,7 @@ addLayer("study", {
 		},
 		"Destroy Cards": {
 			content: () => player.tab !== "study" ? null : [
+				<!--suppress HtmlUnknownTag -->
 				["sticky", [0, ["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied`]]],
 				"blank",
 				["sticky", ["50px", ["clickable", "sell"]]],
@@ -257,6 +268,7 @@ addLayer("study", {
 		},
 		"Upgrade Cards": {
 			content: () => player.tab !== "study" ? null : [
+				<!--suppress HtmlUnknownTag -->
 				["sticky", [0, ["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights`]]],
 				"blank",
 				hasMilestone("study", 4) ? ["column", [
@@ -322,11 +334,6 @@ addLayer("study", {
 				}
 			}
 		}
-		let jobLevel = new Decimal(getJobLevel(this.layer));
-		if (jobLevel.neq(player[this.layer].lastLevel)) {
-			doPopup("none", `Level ${jobLevel}`, "Level Up!", 3, layers[this.layer].color);
-			player[this.layer].lastLevel = jobLevel;
-		}
 	},
 	onAddPoints(gain) {
 		let xpGain = gain;
@@ -334,6 +341,7 @@ addLayer("study", {
 			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
 		}
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
+		checkJobXP(this.layer);
 	},
 	milestones: {
 		0: {

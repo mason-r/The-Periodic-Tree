@@ -1,4 +1,4 @@
-var layoutInfo = {
+const layoutInfo = {
 	startTab: "none",
 	showTree: true,
 	treeLayout: ""
@@ -9,6 +9,7 @@ Vue.component("job", {
 	template: `
 	<span class="upgRow" v-bind:style="{ opacity: 0, animation: 'showJob .5s ' + layers[data].showJobDelay + 's forwards', marginBottom: '20px' }" v-if="tmp[data].layerShown">
 		<tree-node :layer='data' :abb='tmp[data].symbol' style="background-size: cover; background-position: center;" v-bind:class="data === 'flowers' && player[data].xp.lte(1) && player[data].resetTime > 20 ? 'tutorial' : ''"></tree-node>
+		<!--suppress HtmlUnknownTag -->
 		<div class="job-details" v-bind:style="[player.tab === data ? { '--shadowColor': layers[data].color } : {}, player[data].timeLoopActive ? { '--innerShadowColor': layers[data].color } : {}, {'textAlign': 'left'}]">
 			<h2>{{layers[data].jobName}}</h2>
 			<span>Lv. {{formatWhole(getJobLevel(data))}}</span>
@@ -26,6 +27,14 @@ function getJobLevel(job) {
 		return new Decimal(0);
 	}
 	return softcap(player[job].xp.clampMin(1).log10().floor().add(1), new Decimal(25)).floor();
+}
+
+function checkJobXP(job) {
+	let jobLevel = new Decimal(getJobLevel(job));
+	if (jobLevel.neq(player[job].lastLevel)) {
+		doPopup("none", `Level ${jobLevel}`, "Level Up!", 3, layers[job].color);
+		player[job].lastLevel = jobLevel;
+	}
 }
 
 function getJobProgressBar(job) {

@@ -25,17 +25,17 @@ function startPlayerBase() {
 	};
 }
 function getStartPlayer() {
-	playerdata = startPlayerBase();
+	let playerdata = startPlayerBase();
 
 	if (addedPlayerData) {
-		extradata = addedPlayerData();
-		for (thing in extradata) {
+		let extradata = addedPlayerData();
+		for (let thing in extradata) {
 			playerdata[thing] = extradata[thing];
 		}
 	}
 
 	playerdata.infoboxes = {};
-	for (layer in layers) {
+	for (let layer in layers) {
 		playerdata[layer] = getStartLayerData(layer);
 
 		if (layers[layer].tabFormat && !Array.isArray(layers[layer].tabFormat)) {
@@ -43,7 +43,7 @@ function getStartPlayer() {
 			playerdata.subtabs[layer].mainTabs = Object.keys(layers[layer].tabFormat)[0];
 		}
 		if (layers[layer].microtabs) {
-			if (playerdata.subtabs[layer] == undefined) {
+			if (playerdata.subtabs[layer] === undefined) {
 				playerdata.subtabs[layer] = {};
 			}
 			for (item in layers[layer].microtabs) {
@@ -51,7 +51,7 @@ function getStartPlayer() {
 			}
 		}
 		if (layers[layer].infoboxes) {
-			if (playerdata.infoboxes[layer] == undefined) {
+			if (playerdata.infoboxes[layer] === undefined) {
 				playerdata.infoboxes[layer] = {};
 			}
 			for (item in layers[layer].infoboxes) {
@@ -63,7 +63,7 @@ function getStartPlayer() {
 	return playerdata;
 }
 function getStartLayerData(layer) {
-	layerdata = {};
+	let layerdata = {};
 	if (layers[layer].startData) {
 		layerdata = layers[layer].startData();
 	}
@@ -82,7 +82,7 @@ function getStartLayerData(layer) {
 	}
 
 	layerdata.buyables = getStartBuyables(layer);
-	if (layerdata.clickables == undefined) {
+	if (layerdata.clickables === undefined) {
 		layerdata.clickables = getStartClickables(layer);
 	}
 	layerdata.spentOnBuyables = new Decimal(0);
@@ -95,7 +95,7 @@ function getStartLayerData(layer) {
 function getStartBuyables(layer) {
 	let data = {};
 	if (layers[layer].buyables) {
-		for (id in layers[layer].buyables) {
+		for (let id in layers[layer].buyables) {
 			if (isPlainObject(layers[layer].buyables[id])) {
 				data[id] = new Decimal(0);
 			}
@@ -106,7 +106,7 @@ function getStartBuyables(layer) {
 function getStartClickables(layer) {
 	let data = {};
 	if (layers[layer].clickables) {
-		for (id in layers[layer].clickables) {
+		for (let id in layers[layer].clickables) {
 			if (isPlainObject(layers[layer].clickables[id])) {
 				data[id] = "";
 			}
@@ -117,7 +117,7 @@ function getStartClickables(layer) {
 function getStartChallenges(layer) {
 	let data = {};
 	if (layers[layer].challenges) {
-		for (id in layers[layer].challenges) {
+		for (let id in layers[layer].challenges) {
 			if (isPlainObject(layers[layer].challenges[id])) {
 				data[id] = 0;
 			}
@@ -126,12 +126,12 @@ function getStartChallenges(layer) {
 	return data;
 }
 function fixSave() {
-	defaultData = getStartPlayer();
+	let defaultData = getStartPlayer();
 	fixData(defaultData, player);
 	setBuyableAmount("distill", "retort", (getBuyableAmount("distill", "retort") || new Decimal(0)).max(5));
 	player.sands.chipping = false;
 
-	for (layer in layers) {
+	for (let layer in layers) {
 		if (player[layer].best !== undefined) {
 			player[layer].best = new Decimal(player[layer].best);
 		}
@@ -146,7 +146,7 @@ function fixSave() {
 			}
 		}
 		if (layers[layer].microtabs) {
-			for (item in layers[layer].microtabs) {
+			for (let item in layers[layer].microtabs) {
 				if (!Object.keys(layers[layer].microtabs[item]).includes(player.subtabs[layer][item])) {
 					player.subtabs[layer][item] = Object.keys(layers[layer].microtabs[item])[0];
 				}
@@ -155,7 +155,7 @@ function fixSave() {
 	}
 }
 function fixData(defaultData, newData) {
-	for (item in defaultData) {
+	for (let item in defaultData) {
 		if (defaultData[item] == null) {
 			if (newData[item] === undefined) {
 				newData[item] = null;
@@ -220,8 +220,9 @@ function setupModInfo() {
 function fixNaNs() {
 	NaNcheck(player);
 }
+// noinspection SpellCheckingInspection
 function NaNcheck(data) {
-	for (item in data) {
+	for (let item in data) {
 		if (data[item] == null) {
 		} else if (Array.isArray(data[item])) {
 			NaNcheck(data[item]);
@@ -256,8 +257,8 @@ function importSave(imported = undefined, forced = false) {
 		imported = prompt("Paste your save here");
 	}
 	try {
-		tempPlr = Object.assign(getStartPlayer(), JSON.parse(atob(imported)));
-		if (tempPlr.versionType != modInfo.id && !forced && !confirm("This save appears to be for a different mod! Are you sure you want to import?")) // Wrong save (use "Forced" to force it to accept.)
+		let tempPlr = Object.assign(getStartPlayer(), JSON.parse(atob(imported)));
+		if (tempPlr.versionType !== modInfo.id && !forced && !confirm("This save appears to be for a different mod! Are you sure you want to import?")) // Wrong save (use "Forced" to force it to accept.)
 		{
 			return;
 		}
@@ -268,7 +269,7 @@ function importSave(imported = undefined, forced = false) {
 		save();
 		window.location.reload();
 	} catch (e) {
-		return;
+
 	}
 }
 function versionCheck() {
@@ -280,7 +281,7 @@ function versionCheck() {
 	}
 
 	if (setVersion) {
-		if (player.versionType == modInfo.id && VERSION.num > player.version) {
+		if (player.versionType === modInfo.id && VERSION.num > player.version) {
 			player.keepGoing = false;
 			if (fixOldSave) {
 				fixOldSave(player.version);
@@ -291,7 +292,9 @@ function versionCheck() {
 		player.beta = VERSION.beta;
 	}
 }
-var saveInterval = setInterval(function () {
+
+// noinspection JSUnusedGlobalSymbols
+const saveInterval = setInterval(function () {
 	if (player === undefined) {
 		return;
 	}

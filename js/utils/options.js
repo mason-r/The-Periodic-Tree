@@ -1,15 +1,17 @@
+let styleCooldown = 0;
+
 // ************ Options ************
 function toggleOpt(name) {
-	if (name == "oldStyle" && styleCooldown > 0)
+	if (name === "oldStyle" && styleCooldown > 0)
 		return;
 
 	player[name] = !player[name];
-	if (name == "hqTree")
+	if (name === "hqTree")
 		changeTreeQuality();
-	if (name == "oldStyle")
+	if (name === "oldStyle")
 		updateStyle();
 }
-var styleCooldown = 0;
+
 function updateStyle() {
 	styleCooldown = 1;
 	let css = document.getElementById("styleStuff");
@@ -17,7 +19,7 @@ function updateStyle() {
 	needCanvasUpdate = true;
 }
 function changeTreeQuality() {
-	var on = player.hqTree;
+	const on = player.hqTree;
 	document.body.style.setProperty('--hqProperty1', on ? "2px solid" : "4px solid");
 	document.body.style.setProperty('--hqProperty2a', on ? "-4px -4px 4px rgba(0, 0, 0, 0.25) inset" : "-4px -4px 4px rgba(0, 0, 0, 0) inset");
 	document.body.style.setProperty('--hqProperty2b', on ? "0px 0px 20px var(--background)" : "");
@@ -31,22 +33,18 @@ function adjustMSDisp() {
 	player.msDisplay = displays[(displays.indexOf(player.msDisplay) + 1) % 4];
 }
 function milestoneShown(layer, id) {
-	complete = player[layer].milestones.includes(id);
-	auto = layers[layer].milestones[id].toggles;
+	let complete = player[layer].milestones.includes(id);
+	let auto = layers[layer].milestones[id].toggles;
 
 	switch (player.msDisplay) {
 		case "always":
 			return true;
-			break;
 		case "automation":
 			return (auto) || !complete;
-			break;
 		case "incomplete":
 			return !complete;
-			break;
 		case "never":
 			return false;
-			break;
 	}
 	return false;
 }

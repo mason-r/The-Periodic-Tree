@@ -204,11 +204,6 @@ addLayer("distill", {
 			updateInstrument("bainMarie", 6, diff);
 			updateInstrument("vapours", 8, diff);
 		}
-		let jobLevel = new Decimal(getJobLevel(this.layer));
-		if (jobLevel.neq(player[this.layer].lastLevel)) {
-			doPopup("none", `Level ${jobLevel}`, "Level Up!", 3, layers[this.layer].color);
-			player[this.layer].lastLevel = jobLevel;
-		}
 	},
 	onAddPoints(gain) {
 		let xpGain = gain;
@@ -216,6 +211,7 @@ addLayer("distill", {
 			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
 		}
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
+		checkJobXP(this.layer);
 	},
 	milestones: {
 		0: {

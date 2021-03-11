@@ -108,11 +108,6 @@ addLayer("flowers", {
 			}
 			player[this.layer].realTime += diff;
 		}
-		let jobLevel = new Decimal(getJobLevel(this.layer));
-		if (jobLevel.neq(player[this.layer].lastLevel) && player[this.layer].lastLevel.lte(100)) {
-			doPopup("none", `Level ${formatWhole(jobLevel)}`, "Level Up!", 3, layers[this.layer].color);
-			player[this.layer].lastLevel = jobLevel;
-		}
 	},
 	onAddPoints(gain) {
 		let xpGain = gain;
@@ -124,6 +119,7 @@ addLayer("flowers", {
 			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
 		}
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
+		checkJobXP(this.layer);
 	},
 	milestones: {
 		0: {

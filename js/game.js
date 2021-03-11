@@ -1,7 +1,7 @@
-var player;
-var needCanvasUpdate = true;
-var gameEnded = false;
-var scrolled = false;
+let player;
+let needCanvasUpdate = true;
+let gameEnded = false;
+
 
 // Don't change this
 const TMT_VERSION = {
@@ -17,19 +17,19 @@ function getResetGain(layer, useType = null) {
 			return layers[layer].getResetGain();
 		}
 	}
-	if(tmp[layer].type == "none") {
+	if(tmp[layer].type === "none") {
 		return new Decimal (0);
 	}
 	if (tmp[layer].gainExp.eq(0)) {
 		return new Decimal(0);
 	}
-	if (type=="static") {
+	if (type==="static") {
 		if ((!tmp[layer].canBuyMax) || tmp[layer].baseAmount.lt(tmp[layer].requires)) {
 			return new Decimal(1);
 		}
 		let gain = tmp[layer].baseAmount.div(tmp[layer].requires).div(tmp[layer].gainMult).max(1).log(tmp[layer].base).times(tmp[layer].gainExp).pow(Decimal.pow(tmp[layer].exponent, -1));
 		return gain.floor().sub(player[layer].points).add(1).max(1);
-	} else if (type=="normal"){
+	} else if (type==="normal"){
 		if (tmp[layer].baseAmount.lt(tmp[layer].requires)) {
 			return new Decimal(0);
 		}
@@ -38,7 +38,7 @@ function getResetGain(layer, useType = null) {
 			gain = gain.pow(tmp[layer].softcapPower).times(tmp[layer].softcap.pow(decimalOne.sub(tmp[layer].softcapPower)));
 		}
 		return gain.floor().max(0);
-	} else if (type=="custom"){
+	} else if (type==="custom"){
 		return layers[layer].getResetGain();
 	} else {
 		return new Decimal(0);
@@ -54,7 +54,7 @@ function getNextAt(layer, canMax=false, useType = null) {
 		}
 
 	}
-	if(tmp[layer].type == "none") {
+	if(tmp[layer].type === "none") {
 		return new Decimal (Infinity);
 	}
 
@@ -65,7 +65,7 @@ function getNextAt(layer, canMax=false, useType = null) {
 		return new Decimal(Infinity);
 	}
 
-	if (type=="static") {
+	if (type==="static") {
 		if (!tmp[layer].canBuyMax) {
 			canMax = false;
 		}
@@ -76,7 +76,7 @@ function getNextAt(layer, canMax=false, useType = null) {
 			cost = cost.ceil();
 		}
 		return cost;
-	} else if (type=="normal"){
+	} else if (type==="normal"){
 		let next = tmp[layer].resetGain.add(1);
 		if (next.gte(tmp[layer].softcap)) {
 			next = next.div(tmp[layer].softcap.pow(decimalOne.sub(tmp[layer].softcapPower))).pow(decimalOne.div(tmp[layer].softcapPower));
@@ -86,7 +86,7 @@ function getNextAt(layer, canMax=false, useType = null) {
 			next = next.ceil();
 		}
 		return next;
-	} else if (type=="custom"){
+	} else if (type==="custom"){
 		return layers[layer].getNextAt(canMax);
 	} else {
 		return new Decimal(0);
@@ -103,10 +103,10 @@ function softcap(value, cap, power = 0.5) {
 
 // Return true if the layer should be highlighted. By default checks for upgrades only.
 function shouldNotify(layer){
-	if (player.tab == layer || player.navTab == layer) {
+	if (player.tab === layer || player.navTab === layer) {
 		return false;
 	}
-	for (id in tmp[layer].upgrades){
+	for (let id in tmp[layer].upgrades){
 		if (!isNaN(id)){
 			if (canAffordUpgrade(layer, id) && !hasUpgrade(layer, id) && tmp[layer].upgrades[id].unlocked){
 				return true;
@@ -118,15 +118,15 @@ function shouldNotify(layer){
 	}
 
 	if (isPlainObject(tmp[layer].tabFormat)) {
-		for (subtab in tmp[layer].tabFormat){
+		for (let subtab in tmp[layer].tabFormat){
 			if (subtabShouldNotify(layer, "mainTabs", subtab)) {
 				return true;
 			}
 		}
 	}
 
-	for (family in tmp[layer].microtabs) {
-		for (subtab in tmp[layer].microtabs[family]){
+	for (let family in tmp[layer].microtabs) {
+		for (let subtab in tmp[layer].microtabs[family]){
 			if (subtabShouldNotify(layer, family, subtab)) {
 				return true;
 			}
@@ -140,9 +140,9 @@ function shouldNotify(layer){
 function canReset(layer) {
 	if (layers[layer].canReset!== undefined) {
 		return run(layers[layer].canReset, layers[layer]);
-	} else if(tmp[layer].type == "normal") {
+	} else if(tmp[layer].type === "normal") {
 		return tmp[layer].baseAmount.gte(tmp[layer].requires);
-	} else if(tmp[layer].type== "static") {
+	} else if(tmp[layer].type=== "static") {
 		return tmp[layer].baseAmount.gte(tmp[layer].nextAt);
 	} else {
 		return false;
@@ -150,7 +150,7 @@ function canReset(layer) {
 }
 
 function rowReset(row, layer) {
-	for (lr in ROW_LAYERS[row]){
+	for (let lr in ROW_LAYERS[row]){
 		if(layers[lr].doReset) {
 
 			player[lr].activeChallenge = null; // Exit challenges on any row reset on an equal or higher row
@@ -165,7 +165,7 @@ function rowReset(row, layer) {
 function layerDataReset(layer, keep = []) {
 	let storedData = {unlocked: player[layer].unlocked}; // Always keep unlocked
 
-	for (thing in keep) {
+	for (let thing in keep) {
 		if (player[layer][keep[thing]] !== undefined) {
 			storedData[keep[thing]] = player[layer][keep[thing]];
 		}
@@ -184,7 +184,7 @@ function layerDataReset(layer, keep = []) {
 	if (layers[layer].clickables && !player[layer].clickables) {
 		player[layer].clickables = getStartClickables(layer);
 	}
-	for (thing in storedData) {
+	for (let thing in storedData) {
 		player[layer][thing] =storedData[thing];
 	}
 }
@@ -214,10 +214,10 @@ function generatePoints(layer, diff) {
 	addPoints(layer, tmp[layer].resetGain.times(diff));
 }
 
-var prevOnReset;
+let prevOnReset;
 
 function doReset(layer, force=false) {
-	if (tmp[layer].type == "none") {
+	if (tmp[layer].type === "none") {
 		return;
 	}
 	let row = tmp[layer].row;
@@ -226,13 +226,13 @@ function doReset(layer, force=false) {
 			return;
 		}
 		let gain = tmp[layer].resetGain;
-		if (tmp[layer].type=="static") {
+		if (tmp[layer].type==="static") {
 			if (tmp[layer].baseAmount.lt(tmp[layer].nextAt)) {
 				return;
 			}
 			gain =(tmp[layer].canBuyMax ? gain : 1);
 		}
-		if (tmp[layer].type=="custom") {
+		if (tmp[layer].type==="custom") {
 			if (!tmp[layer].canReset) {
 				return;
 			}
@@ -251,8 +251,8 @@ function doReset(layer, force=false) {
 			needCanvasUpdate = true;
 
 			if (tmp[layer].increaseUnlockOrder){
-				lrs = tmp[layer].increaseUnlockOrder;
-				for (lr in lrs) {
+				let lrs = tmp[layer].increaseUnlockOrder;
+				for (let lr in lrs) {
 					if (!player[lrs[lr]].unlocked) {
 						player[lrs[lr]].unlockOrder++;
 					}
@@ -268,14 +268,14 @@ function doReset(layer, force=false) {
 	}
 
 
-	for (layerResetting in layers) {
-		if (row >= layers[layerResetting].row && (!force || layerResetting != layer)) {
+	for (let layerResetting in layers) {
+		if (row >= layers[layerResetting].row && (!force || layerResetting !== layer)) {
 			completeChallenge(layerResetting);
 		}
 	}
 
 	prevOnReset = {...player}; //Deep Copy
-	player.points = (row == 0 ? new Decimal(0) : getStartPoints());
+	player.points = (row === 0 ? new Decimal(0) : getStartPoints());
 
 	for (let x = row; x >= 0; x--) {
 		rowReset(x, layer);
@@ -289,32 +289,12 @@ function doReset(layer, force=false) {
 	updateTemp();
 }
 
-function resetRow(row) {
-	if (prompt("Are you sure you want to reset this row? It is highly recommended that you wait until the end of your current run before doing this! Type \"I WANT TO RESET THIS\" to confirm")!="I WANT TO RESET THIS") {
-		return;
-	}
-	let pre_layers = ROW_LAYERS[row-1];
-	let layers = ROW_LAYERS[row];
-	let post_layers = ROW_LAYERS[row+1];
-	rowReset(row+1, post_layers[0]);
-	doReset(pre_layers[0], true);
-	for (let layer in layers) {
-		player[layer].unlocked = false;
-		if (player[layer].unlockOrder) {
-			player[layer].unlockOrder = 0;
-		}
-	}
-	player.points = getStartPoints();
-	updateTemp();
-	resizeCanvas();
-}
-
 function startChallenge(layer, x) {
 	let enter = false;
 	if (!player[layer].unlocked) {
 		return;
 	}
-	if (player[layer].activeChallenge == x) {
+	if (player[layer].activeChallenge === x) {
 		completeChallenge(layer, x);
 		player[layer].activeChallenge = null;
 	} else {
@@ -329,7 +309,7 @@ function startChallenge(layer, x) {
 }
 
 function canCompleteChallenge(layer, x) {
-	if (x != player[layer].activeChallenge) {
+	if (x !== player[layer].activeChallenge) {
 		return;
 	}
 	let challenge = tmp[layer].challenges[x];
@@ -353,8 +333,8 @@ function canCompleteChallenge(layer, x) {
 
 }
 
-function completeChallenge(layer, x) {
-	var x = player[layer].activeChallenge;
+function completeChallenge(layer) {
+	let x = player[layer].activeChallenge;
 	if (!x) {
 		return;
 	}
@@ -384,7 +364,7 @@ function autobuyUpgrades(layer){
 	if (!tmp[layer].upgrades) {
 		return;
 	}
-	for (id in tmp[layer].upgrades) {
+	for (let id in tmp[layer].upgrades) {
 		if (isPlainObject(tmp[layer].upgrades[id]) && (layers[layer].upgrades[id].canAfford === undefined || layers[layer].upgrades[id].canAfford() === true)) {
 			buyUpg(layer, id);
 		}
@@ -413,8 +393,8 @@ function gameLoop(diff) {
 	addTime(diff);
 	player.points = player.points.add(tmp.pointGen.times(diff)).max(0);
 
-	for (x = 0; x <= maxRow; x++){
-		for (item in TREE_LAYERS[x]) {
+	for (let x = 0; x <= maxRow; x++){
+		for (let item in TREE_LAYERS[x]) {
 			let layer = TREE_LAYERS[x][item];
 			player[layer].resetTime += diff;
 			if (tmp[layer].passiveGeneration) {
@@ -426,8 +406,8 @@ function gameLoop(diff) {
 		}
 	}
 
-	for (row in OTHER_LAYERS){
-		for (item in OTHER_LAYERS[row]) {
+	for (let row in OTHER_LAYERS){
+		for (let item in OTHER_LAYERS[row]) {
 			let layer = OTHER_LAYERS[row][item];
 			player[layer].resetTime += diff;
 			if (tmp[layer].passiveGeneration) {
@@ -439,8 +419,8 @@ function gameLoop(diff) {
 		}
 	}
 
-	for (x = maxRow; x >= 0; x--){
-		for (item in TREE_LAYERS[x]) {
+	for (let x = maxRow; x >= 0; x--){
+		for (let item in TREE_LAYERS[x]) {
 			let layer = TREE_LAYERS[x][item];
 			if (tmp[layer].autoPrestige && tmp[layer].canReset) {
 				doReset(layer);
@@ -454,8 +434,8 @@ function gameLoop(diff) {
 		}
 	}
 
-	for (row in OTHER_LAYERS){
-		for (item in OTHER_LAYERS[row]) {
+	for (let row in OTHER_LAYERS){
+		for (let item in OTHER_LAYERS[row]) {
 			let layer = OTHER_LAYERS[row][item];
 			if (tmp[layer].autoPrestige && tmp[layer].canReset) {
 				doReset(layer);
@@ -470,7 +450,7 @@ function gameLoop(diff) {
 		}
 	}
 
-	for (layer in layers){
+	for (let layer in layers){
 		if (layers[layer].milestones) {
 			updateMilestones(layer);
 		}
@@ -490,16 +470,16 @@ function hardReset() {
 	window.location.reload();
 }
 
-var ticking = false;
+let ticking = false;
 
-var interval = setInterval(function() {
-	if (player===undefined||tmp===undefined) {
+const interval = setInterval(function () {
+	if (player === undefined || tmp === undefined) {
 		return;
 	}
 	if (ticking) {
 		return;
 	}
-	if (gameEnded&&!player.keepGoing) {
+	if (gameEnded && !player.keepGoing) {
 		return;
 	}
 	ticking = true;
@@ -522,7 +502,7 @@ var interval = setInterval(function() {
 		diff *= player.devSpeed;
 	}
 	player.time = now;
-	if (needCanvasUpdate){
+	if (needCanvasUpdate) {
 		resizeCanvas();
 		needCanvasUpdate = false;
 	}

@@ -1,22 +1,23 @@
-var tmp = {}
-var temp = tmp // Proxy for tmp
-var funcs = {}
-var NaNalert = false;
+let tmp = {};
+let temp = tmp; // Proxy for tmp
+let funcs = {};
+// noinspection SpellCheckingInspection
+let NaNalert = false;
 
 // Tmp will not call these
-var activeFunctions = [
+const activeFunctions = [
 	"startData", "onPrestige", "doReset", "update", "automate",
 	"buy", "buyMax", "respec", "onComplete", "onPurchase", "onPress", "onClick", "masterButtonPress",
 	"sellOne", "sellAll", "pay",
-]
+];
 
-var noCall = doNotCallTheseFunctionsEveryTick
-for (item in noCall) {
+const noCall = doNotCallTheseFunctionsEveryTick;
+for (let item in noCall) {
 	activeFunctions.push(noCall[item])
 }
 
 // Add the names of classes to traverse
-var traversableClasses = []
+const traversableClasses = [];
 
 function setupTemp() {
 	tmp = {}
@@ -26,7 +27,7 @@ function setupTemp() {
 	funcs = {}
 	
 	setupTempData(layers, tmp, funcs)
-	for (layer in layers){
+	for (let layer in layers){
 		tmp[layer].resetGain = {}
 		tmp[layer].nextAt = {}
 		tmp[layer].nextAtDisp = {}
@@ -41,7 +42,7 @@ function setupTemp() {
 }
 
 function setupTempData(layerData, tmpData, funcsData) {
-	for (item in layerData){
+	for (let item in layerData){
 		if (layerData[item] == null) {
 			tmpData[item] = null
 		}
@@ -61,11 +62,13 @@ function setupTempData(layerData, tmpData, funcsData) {
 			tmpData[item] = new layerData[item].constructor()
 			funcsData[item] = new layerData[item].constructor()
 		}
-		else if (isFunction(layerData[item]) && !activeFunctions.includes(item)){
-			funcsData[item] = layerData[item]
-			tmpData[item] = new Decimal(1) // The safest thing to put probably?
-		} else {
-			tmpData[item] = layerData[item]
+		else { // noinspection JSUnfilteredForInLoop
+			if (isFunction(layerData[item]) && !activeFunctions.includes(item)){
+						funcsData[item] = layerData[item]
+						tmpData[item] = new Decimal(1) // The safest thing to put probably?
+					} else {
+						tmpData[item] = layerData[item]
+					}
 		}
 	}	
 }
@@ -76,7 +79,7 @@ function updateTemp() {
 
 	updateTempData(layers, tmp, funcs)
 
-	for (layer in layers){
+	for (let layer in layers){
 		tmp[layer].resetGain = getResetGain(layer)
 		tmp[layer].nextAt = getNextAt(layer)
 		tmp[layer].nextAtDisp = getNextAt(layer, true)
@@ -93,7 +96,7 @@ function updateTemp() {
 
 	tmp.pointGen = getPointGen()
 	tmp.displayThings = []
-	for (thing in displayThings){
+	for (let thing in displayThings){
 		let text = displayThings[thing]
 		if (isFunction(text)) text = text()
 		tmp.displayThings.push(text) 
@@ -103,7 +106,7 @@ function updateTemp() {
 
 function updateTempData(layerData, tmpData, funcsData) {
 	
-	for (item in funcsData){
+	for (let item in funcsData){
 		if (Array.isArray(layerData[item])) {
 			updateTempData(layerData[item], tmpData[item], funcsData[item])
 		}
@@ -137,13 +140,13 @@ function updateChallengeTemp(layer)
 }
 
 function updateChallengeDisplay(layer) {
-	for (id in player[layer].challenges) {
+	for (let id in player[layer].challenges) {
 		let style = "locked"
-		if (player[layer].activeChallenge == id && canCompleteChallenge(layer, id)) style = "canComplete"
+		if (player[layer].activeChallenge === id && canCompleteChallenge(layer, id)) style = "canComplete"
 		else if (hasChallenge(layer, id)) style = "done"
 		tmp[layer].challenges[id].defaultStyle = style
 
-		tmp[layer].challenges[id].buttonText = (player[layer].activeChallenge==(id)?(canCompleteChallenge(layer, id)?"Finish":"Exit Early"):(hasChallenge(layer, id)?"Completed":"Start"))
+		tmp[layer].challenges[id].buttonText = (player[layer].activeChallenge===(id)?(canCompleteChallenge(layer, id)?"Finish":"Exit Early"):(hasChallenge(layer, id)?"Completed":"Start"))
 	}
 
 }
@@ -172,8 +175,8 @@ function constructNodeStyle(layer){
 
 
 function constructAchievementStyles(layer){
-	for (id in tmp[layer].achievements) {
-		ach = tmp[layer].achievements[id]
+	for (let id in tmp[layer].achievements) {
+		let ach = tmp[layer].achievements[id]
 		if (isPlainObject(ach)) {
 			let style = []
 			if (ach.image){ 
@@ -189,7 +192,7 @@ function constructAchievementStyles(layer){
 function constructBarStyles(layer){
 	if (layers[layer].bars === undefined)
 		return
-	for (id in layers[layer].bars){
+	for (let id in layers[layer].bars){
 		if (id !== "layer") {
 			let bar = tmp[layer].bars[id]
 			if (bar.progress instanceof Decimal)
@@ -202,16 +205,16 @@ function constructBarStyles(layer){
 			if (dir !== undefined)
 			{
 				bar.fillDims['clip-path'] = 'inset(0% 50% 0% 0%)'
-				if(dir == UP){
+				if(dir === UP){
 					bar.fillDims['clip-path'] = 'inset(' + bar.progress + '% 0% 0% 0%)'
 				}
-				else if(dir == DOWN){
+				else if(dir === DOWN){
 					bar.fillDims['clip-path'] = 'inset(0% 0% ' + bar.progress + '% 0%)'
 				}
-				else if(dir == RIGHT){
+				else if(dir === RIGHT){
 					bar.fillDims['clip-path'] = 'inset(0% ' + bar.progress + '% 0% 0%)'
 				}
-				else if(dir == LEFT){
+				else if(dir === LEFT){
 					bar.fillDims['clip-path'] = 'inset(0% 0% 0% ' + bar.progress + '%)'
 				}
 
@@ -224,7 +227,7 @@ function constructBarStyles(layer){
 function setupBarStyles(layer){
 	if (layers[layer].bars === undefined)
 		return
-	for (id in layers[layer].bars){
+	for (let id in layers[layer].bars){
 		let bar = tmp[layer].bars[id]
 		bar.dims = {}
 		bar.fillDims = {}

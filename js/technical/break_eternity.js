@@ -1054,7 +1054,7 @@
       if (newparts.length === 2)
       {
         this.sign = 1;
-        if (newparts[0].charAt(0) == "-")
+        if (newparts[0].charAt(0) === "-")
         {
           this.sign = -1;
         }
@@ -1467,7 +1467,7 @@
       var b;
       
       //Which number is bigger in terms of its multiplicative distance from 1?
-      if ((this.layer > decimal.layer) || (this.layer == decimal.layer && Math.abs(this.mag) > Math.abs(decimal.mag)))
+      if ((this.layer > decimal.layer) || (this.layer === decimal.layer && Math.abs(this.mag) > Math.abs(decimal.mag)))
       {
         a = this;
         b = decimal;
@@ -2400,7 +2400,7 @@
     //Other sroots are possible to calculate probably through guess and check methods, this one is easy though.
     // https://en.wikipedia.org/wiki/Tetration#Super-root
     Decimal.prototype.ssqrt = function() {
-      if (this.sign == 1 && this.layer >= 3)
+      if (this.sign === 1 && this.layer >= 3)
       {
           return FC_NN(this.sign, this.layer-1, this.mag)
       }
