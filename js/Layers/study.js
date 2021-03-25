@@ -257,6 +257,7 @@ addLayer("study", {
 				"blank",
 				["row", player.study.shop.map(({card, price}, i) =>
 					["column", [
+						player.study.cards.includes(card) ? null : ["display-text", "<div class='new'>New!</div>"],
 						card == null ? cardFormat("soldOut") : cardFormat(card, "", "shopCard flipCard", `purchaseCard(${i})`),
 						"blank",
 						["display-text", `<h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${price ? formatWhole(price) : "​" /*zero width space*/}</h2>`]

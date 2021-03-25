@@ -804,6 +804,7 @@ button > * {
     margin: 10px auto;
 }
 
+.upgCol:hover > .instant > .card,
 .card:hover {
     transform: scale(1.1);
 }
@@ -1084,4 +1085,18 @@ b, h3 {
     padding: 10px;
     box-sizing: border-box;
     z-index: 10;
+}
+
+.new {
+    background: darkred;
+    display: inline-block;
+    padding: 8px;
+    transform: translateX(70px) rotate(15deg);
+    border-radius: 10px;
+    position: absolute;
+    z-index: 10;
+}
+
+.upgCol:hover > .instant > .new {
+    transform: translateX(80px) translateY(-10px) rotate(15deg) scale(1.3);
 }
