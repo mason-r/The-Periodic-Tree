@@ -116,4 +116,7 @@ function fixOldSave(oldVersion) {
 		setBuyableAmount("flowers", 12, (getBuyableAmount("flowers", 12) || new Decimal(0)).clampMax(3));
 		setBuyableAmount("flowers", 13, (getBuyableAmount("flowers", 13) || new Decimal(0)).clampMax(0));
 	}
+	if (["0.0", "0.1", "0.11", "0.12", "0.13", "0.14", "0.15", "0.20", "0.21", "0.22"].includes(oldVersion)) {
+		player.chapterTime[player.chapter] = player.timePlayed;
+	}
 }

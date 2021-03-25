@@ -23,6 +23,7 @@ body {
     --points: #ffffff;
     --shadowColor: transparent;
     --innerShadowColor: transparent;
+    min-width: 640px;
 }
 
 html, body {
@@ -49,7 +50,7 @@ td {
     justify-content: center;
     align-items: center;
     max-width: 100%;
-    margin: 0 auto;
+    margin: 0 10px;
 }
 
 .upgAlign {
@@ -783,7 +784,7 @@ button > * {
     }
 }
 
-@media only screen and (max-width: 1200px) {
+@media only screen and (max-width: 1280px) {
     /*noinspection CssUnusedSymbol*/
     .col.right {
         min-width: 100%;
@@ -1021,7 +1022,7 @@ b, h3 {
 }
 
 .instrument {
-    width: 400px;
+    width: 390px;
     padding: 10px;
     border-radius: 10px;
     border: 2px solid rgb(138, 255, 193);

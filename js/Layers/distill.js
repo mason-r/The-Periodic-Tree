@@ -179,7 +179,7 @@ addLayer("distill", {
 			}
 			return "";
 		})()],
-		["sticky", ["50px", ["row", [
+		["sticky", ["80px", ["row", [
 			["display-text", "Animations"],
 			"blank",
 			["toggle", ["distill", "anims"]]
@@ -261,5 +261,8 @@ addLayer("distill", {
 		crucible: getInstrumentBuyable("crucible", "crucible", "Party on dudes!", new Decimal(0.02), new Decimal(1000), new Decimal(1.15)),
 		bainMarie: getInstrumentBuyable("bainMarie", "bain-marie", "Greetings, my excellent friends.", new Decimal(0.015), new Decimal(10000), new Decimal(1.2)),
 		vapours: getInstrumentBuyable("vapours", "bath of vapours", "Most outstanding, Rufus! Let's jam!", new Decimal(0.012), new Decimal(100000), new Decimal(1.25))
+	},
+	bars: {
+		job: getJobProgressBar("distill", distillColor)
 	}
 });

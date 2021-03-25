@@ -169,15 +169,17 @@ addLayer("sands", {
 						return "";
 					})()],
 					"blank",
-					["display-text", formatWhole(getTotalGrains().sub(player.sands.grainsFallen))],
-					["display-text", `<div style="
-							--fill-duration: ${player.sands.flipping || player.sands.grainsFallen.eq(getTotalGrains()) ? 1 : getTotalGrains().div(getFallMult()).ceil().times(4).div(player.devSpeed || 1).div(getFallSpeed()).toNumber() + 0.05}s;
-							--fill-delay: -${player.sands.flipping || player.sands.grainsFallen.eq(getTotalGrains()) ? .999 : player.sands.grainsFallen.div(getFallMult()).floor().times(4).div(player.devSpeed || 1).div(getFallSpeed()).toNumber()}s;
-							--fill-state: ${player.sands.grainsFallen.eq(getTotalGrains()) || player.sands.flipping ? "paused" : "running"};
-							--flip-duration: ${new Decimal(5).div(player.devSpeed || 1).div(getFlipSpeed()).toNumber() + 0.05}s;
-							--flip-state: ${player.sands.flipping ? "running" : "paused"};
-						"><div class="hourglass"></div></div>`],
-					["display-text", formatWhole(player.sands.grainsFallen)],
+					["sticky", ["80px", ["column", [
+						["display-text", formatWhole(getTotalGrains().sub(player.sands.grainsFallen))],
+						["display-text", `<div style="
+								--fill-duration: ${player.sands.flipping || player.sands.grainsFallen.eq(getTotalGrains()) ? 1 : getTotalGrains().div(getFallMult()).ceil().times(4).div(player.devSpeed || 1).div(getFallSpeed()).toNumber() + 0.05}s;
+								--fill-delay: -${player.sands.flipping || player.sands.grainsFallen.eq(getTotalGrains()) ? .999 : player.sands.grainsFallen.div(getFallMult()).floor().times(4).div(player.devSpeed || 1).div(getFallSpeed()).toNumber()}s;
+								--fill-state: ${player.sands.grainsFallen.eq(getTotalGrains()) || player.sands.flipping ? "paused" : "running"};
+								--flip-duration: ${new Decimal(5).div(player.devSpeed || 1).div(getFlipSpeed()).toNumber() + 0.05}s;
+								--flip-state: ${player.sands.flipping ? "running" : "paused"};
+							"><div class="hourglass"></div></div>`],
+						["display-text", formatWhole(player.sands.grainsFallen)]
+					]]]],
 					"blank",
 					["clickable", "flip"],
 					"blank",
@@ -213,15 +215,17 @@ addLayer("sands", {
 					return "";
 				})()],
 				"blank",
-				["display-text", formatWhole(getTotalGrains().sub(player.sands.grainsFallen))],
-				["display-text", `<div style="
-						--fill-duration: ${player.sands.flipping || player.sands.grainsFallen.eq(getTotalGrains()) ? 1 : getTotalGrains().div(getFallMult()).ceil().times(4).div(player.devSpeed || 1).div(getFallSpeed()).toNumber() + 0.05}s;
-						--fill-delay: -${player.sands.flipping || player.sands.grainsFallen.eq(getTotalGrains()) ? .999 : player.sands.grainsFallen.div(getFallMult()).floor().times(4).div(player.devSpeed || 1).div(getFallSpeed()).toNumber()}s;
-						--fill-state: ${player.sands.grainsFallen.eq(getTotalGrains()) || player.sands.flipping ? "paused" : "running"};
-						--flip-duration: ${new Decimal(5).div(player.devSpeed || 1).div(getFlipSpeed()).toNumber() + 0.05}s;
-						--flip-state: ${player.sands.flipping ? "running" : "paused"};
-					"><div class="hourglass"></div></div>`],
-				["display-text", formatWhole(player.sands.grainsFallen)],
+				["sticky", ["80px", ["column", [
+					["display-text", formatWhole(getTotalGrains().sub(player.sands.grainsFallen))],
+					["display-text", `<div style="
+							--fill-duration: ${player.sands.flipping || player.sands.grainsFallen.eq(getTotalGrains()) ? 1 : getTotalGrains().div(getFallMult()).ceil().times(4).div(player.devSpeed || 1).div(getFallSpeed()).toNumber() + 0.05}s;
+							--fill-delay: -${player.sands.flipping || player.sands.grainsFallen.eq(getTotalGrains()) ? .999 : player.sands.grainsFallen.div(getFallMult()).floor().times(4).div(player.devSpeed || 1).div(getFallSpeed()).toNumber()}s;
+							--fill-state: ${player.sands.grainsFallen.eq(getTotalGrains()) || player.sands.flipping ? "paused" : "running"};
+							--flip-duration: ${new Decimal(5).div(player.devSpeed || 1).div(getFlipSpeed()).toNumber() + 0.05}s;
+							--flip-state: ${player.sands.flipping ? "running" : "paused"};
+						"><div class="hourglass"></div></div>`],
+					["display-text", formatWhole(player.sands.grainsFallen)]
+				]]]],
 				"blank",
 				["clickable", "flip"],
 				"blank",
@@ -702,5 +706,8 @@ addLayer("sands", {
 			cost: new Decimal(1e8),
 			unlocked: () => hasMilestone("sands", 4)
 		}
+	},
+	bars: {
+		job: getJobProgressBar("sands", sandsColor)
 	}
 });

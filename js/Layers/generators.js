@@ -165,7 +165,7 @@ addLayer("generators", {
 				})()],
 				"blank",
 				"blank",
-				["row", [["clickable", "flowersGenerator"], "blank", ["clickable", "distillGenerator"], "blank", ["clickable", "studyGenerator"], "blank", ["clickable", "sandsGenerator"]]],
+				["row", [["clickable", "flowersGenerator"], ["clickable", "distillGenerator"], ["clickable", "studyGenerator"], ["clickable", "sandsGenerator"]]],
 				"blank",
 				"blank",
 				"upgrades",
@@ -179,7 +179,7 @@ addLayer("generators", {
 				"main-display",
 				["display-text", "Each battery effects a job's output.<br/>Every power of 10 joules increases that job's gain by 1x.<br/>Batteries slowly lose charge over time.<br/>"],
 				"blank",
-				["sticky", ["50px", ["row", [
+				["sticky", ["80px", ["row", [
 					["clickable", "perc1"],
 					"blank",
 					["clickable", "perc10"],
@@ -490,6 +490,9 @@ addLayer("generators", {
 		study: getBatteryCapBuyable("study", "I'm back <i>from</i> the future."),
 		sands: getBatteryCapBuyable("sands", "Alright, boys, buckle up."),
 		generators: getBatteryCapBuyable("generators", "Unless you've got power!"),
+	},
+	bars: {
+		job: getJobProgressBar("generators", electricColor)
 	}
 });
 

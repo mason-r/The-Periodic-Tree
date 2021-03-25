@@ -215,8 +215,8 @@ function loadVue() {
 	Vue.component("milestones", {
 		props: ["layer"],
 		template: `
-          <div v-if="tmp[layer].milestones">
-          <table>
+          <div v-if="tmp[layer].milestones" style="display: flex; justify-content: center;">
+          <table style="margin: 10px;">
             <tr v-for="id in Object.keys(tmp[layer].milestones)"
                 v-if="tmp[layer].milestones[id]!== undefined && tmp[layer].milestones[id].unlocked && milestoneShown(layer, id)">
               <milestone :layer="layer" :data="id" v-bind:style="tmp[layer].componentStyles.milestone"></milestone>
@@ -230,8 +230,8 @@ function loadVue() {
 	Vue.component("milestones-filtered", {
 		props: ["layer", "data"],
 		template: `
-          <div v-if="tmp[layer].milestones">
-          <table>
+          <div v-if="tmp[layer].milestones" style="display: flex; justify-content: center;">
+          <table style="margin: 10px;">
             <tr v-for="id in data"
                 v-if="tmp[layer].milestones[id]!== undefined && tmp[layer].milestones[id].unlocked && milestoneShown(layer, id)">
               <milestone :layer="layer" :data="id" v-bind:style="tmp[layer].componentStyles.milestone"></milestone>
@@ -284,11 +284,19 @@ function loadVue() {
 	// Displays the main resource for the layer
 	Vue.component("main-display", {
 		props: ["layer"],
-		template: `
-          <div class="sticky"><span v-if="player[layer].points.lt('1e1000')">You have </span>
+		template: `<div class="sticky">
+          <div class="upgTable instant">
+            <div class="upgRow">
+              <bar :layer="layer" :data="'job'"></bar>
+              <span style="margin-left: 20px;">Lv. {{ getJobLevel(layer) }}</span>
+            </div>
+          </div>
+          <div class="instant" style="width: 8px; height: 17px;"></div>
+          <span v-if="player[layer].points.lt('1e1000')">You have </span>
           <h2 v-bind:style="{'color': tmp[layer].color, 'text-shadow': '0px 0px 10px ' + tmp[layer].color}">
             {{ formatWhole(player[layer].points) }}</h2> {{ tmp[layer].resource }}<span
-              v-if="tmp[layer].effectDescription">, <span v-html="tmp[layer].effectDescription"></span></span></div>
+              v-if="tmp[layer].effectDescription">, <span v-html="tmp[layer].effectDescription"></span></span>
+        </div>
 		`
 	});
 
@@ -322,7 +330,7 @@ function loadVue() {
             <div v-for="col in tmp[layer].buyables.cols">
               <div v-if="tmp[layer].buyables[row*10+col]!== undefined && tmp[layer].buyables[row*10+col].unlocked"
                    class="upgAlign"
-                   v-bind:style="{'margin-left': '7px', 'margin-right': '7px',  'height': (data ? data : 'inherit'),}">
+                   v-bind:style="{'margin': '7px',  'height': (data ? data : 'inherit'),}">
                 <buyable :layer="layer" :data="row*10+col" :size="data"></buyable>
               </div>
             </div>
@@ -382,7 +390,7 @@ function loadVue() {
             <div v-for="col in tmp[layer].clickables.cols">
               <div v-if="tmp[layer].clickables[row*10+col]!== undefined && tmp[layer].clickables[row*10+col].unlocked"
                    class="upgAlign"
-                   v-bind:style="{'margin-left': '7px', 'margin-right': '7px',  'height': (data ? data : 'inherit'),}">
+                   v-bind:style="{'margin': '7px', 'height': (data ? data : 'inherit'),}">
                 <clickable :layer="layer" :data="row*10+col" :size="data"
                            v-bind:style="tmp[layer].componentStyles.clickable"></clickable>
               </div>

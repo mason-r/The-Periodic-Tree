@@ -105,13 +105,14 @@ function getCardUpgradeBuyable(id) {
 		return new Decimal(100).pow(amount.add(1));
 	};
 	return {
-		title: "Upgrade card<br/>",
+		title: "Upgrade<br/>",
 		style: {
-			width: "150px",
-			height: "150px"
+			width: "100px",
+			height: "100px",
+			marginLeft: "10px"
 		},
 		display() {
-			return `Currently: Level ${formatWhole(cardLevel(id))}<br/><br/>Cost: ${format(cost())} insights`;
+			return `Level ${formatWhole(cardLevel(id))}<br/><br/>${format(cost())} insights`;
 		},
 		canAfford() {
 			return player.study.insights.gte(cost());
@@ -210,8 +211,10 @@ addLayer("study", {
 	tabFormat: {
 		"Main": {
 			content: () => player.tab !== "study" ? null : [
+				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
+				"blank",
 				<!--suppress HtmlUnknownTag -->
-				["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied,<br/>and <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`],
+				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied,<br/>and <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`]]],
 				"blank",
 				["display-text", (() => {
 					if (!hasMilestone("study", 0)) {
@@ -237,12 +240,18 @@ addLayer("study", {
 			]
 		},
 		"Deck": {
-			content: () => player.tab !== "study" ? null : [["row", player.study.cards.map(cardFormat)]]
+			content: () => player.tab !== "study" ? null : [
+				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
+				"blank",
+				["row", player.study.cards.map(cardFormat)]
+			]
 		},
 		"Buy Cards": {
 			content: () => player.tab !== "study" ? null : [
+				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
+				"blank",
 				<!--suppress HtmlUnknownTag -->
-				["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`],
+				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`]]],
 				"blank",
 				["display-text", `Cards refresh in ${new Decimal(getRefreshPeriod() - player.study.refreshProgress).clampMax(getRefreshPeriod() - 0.01).toFixed(2)} seconds`],
 				"blank",
@@ -261,10 +270,12 @@ addLayer("study", {
 		},
 		"Destroy Cards": {
 			content: () => player.tab !== "study" ? null : [
-				<!--suppress HtmlUnknownTag -->
-				["sticky", [0, ["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied`]]],
+				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
 				"blank",
-				["sticky", ["50px", ["clickable", "sell"]]],
+				<!--suppress HtmlUnknownTag -->
+				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied`]]],
+				"blank",
+				["sticky", ["86px", ["clickable", "sell"]]],
 				"blank",
 				["row", player.study.cards.map((card, i) => cardFormat(card, "", player.study.selected === i ? "selectedCard cursor" : "cursor", `toggleSelectCard(${i})`)), {width: "100%"}]
 			],
@@ -272,8 +283,10 @@ addLayer("study", {
 		},
 		"Upgrade Cards": {
 			content: () => player.tab !== "study" ? null : [
+				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
+				"blank",
 				<!--suppress HtmlUnknownTag -->
-				["sticky", [0, ["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights`]]],
+				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights`]]],
 				"blank",
 				hasMilestone("study", 4) ? ["column", [
 					["display-text", `Deep Thought is currently giving <span style="text-shadow: white 0 0 10px">${formatWhole(player.study.deep)}</span> bonus levels to every card,<br/>but makes each draw take <span style="text-shadow: white 0 0 10px">${formatWhole(new Decimal(2).pow(player.study.deep))}x</span> longer due to processing time.<br/><br/>You cannot add more bonus levels than your level at this job.`],
@@ -292,9 +305,8 @@ addLayer("study", {
 				["column", Object.keys(cards).filter(card => player.study.cards.includes(card) && card in layers.study.buyables).map(card => ["row", [
 					cardFormat(card),
 					["display-text", "〉〉", {fontSize: "36px", margin: "10px"}],
-					["buyable", card],
-					["display-text", "〉〉", {fontSize: "36px", margin: "10px"}],
-					cardFormat(card, "", "", "", cardLevel(card).add(1))
+					cardFormat(card, "", "", "", cardLevel(card).add(1)),
+					["buyable", card]
 				]])]
 			],
 			unlocked: () => hasMilestone("study", 3)
@@ -476,6 +488,9 @@ addLayer("study", {
 		multiplyPointsGain: getCardUpgradeBuyable("multiplyPointsGain"),
 		sellDiscount: getCardUpgradeBuyable("sellDiscount"),
 		gainXp: getCardUpgradeBuyable("gainXp")
+	},
+	bars: {
+		job: getJobProgressBar("study", studyColor)
 	}
 });
 

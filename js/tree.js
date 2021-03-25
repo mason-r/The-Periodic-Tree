@@ -27,42 +27,12 @@ Vue.component("job", {
 	</span>`
 });
 
-function getJobLevel(job) {
-	if (player[job].xp.eq(0)) {
-		return new Decimal(0);
-	}
-	return softcap(player[job].xp.clampMin(1).log10().floor().add(1), new Decimal(25)).floor();
-}
-
 function checkJobXP(job) {
 	let jobLevel = new Decimal(getJobLevel(job));
 	if (jobLevel.neq(player[job].lastLevel)) {
 		doPopup("none", `Level ${jobLevel}`, "Level Up!", 3, layers[job].color);
 		player[job].lastLevel = jobLevel;
 	}
-}
-
-function getJobProgressBar(job) {
-	return {
-		direction: RIGHT,
-		width: 400,
-		height: 20,
-		progress: () => {
-			let level = getJobLevel(job);
-			if (level.eq(0)) {
-				return 0;
-			}
-			let previousLevelRequirement = level.lt(25) ? level.sub(1).pow10() :
-				level.div(new Decimal(25).sqrt()).pow(2).floor();
-			let nextLevelRequirement = level.lt(25) ? level.pow10() :
-				level.add(1).div(new Decimal(25).sqrt()).pow(2).floor();
-			let currentXp = level.lt(25) ? player[job].xp.clampMin() : player[job].xp.log10();
-			let progress = currentXp.sub(previousLevelRequirement).div(nextLevelRequirement.sub(previousLevelRequirement));
-			return progress;
-		},
-		fillStyle: {backgroundColor: layers[job].color},
-		borderStyle: {borderColor: layers[job].color}
-	};
 }
 
 function toggleTimeLoop(layer) {

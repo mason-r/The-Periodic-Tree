@@ -276,6 +276,9 @@ addLayer("flowers", {
 				return `x${format(this.effect())}`;
 			}
 		}
+	},
+	bars: {
+		job: getJobProgressBar("flowers", flowersColor)
 	}
 });
 
