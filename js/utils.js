@@ -409,6 +409,8 @@ function addTime(diff, layer) {
 		data.time = time;
 	} else {
 		data.timePlayed = time;
+		// TODO what's the leak mentioned above? Do I need to worry about it?
+		player.chapterTime[player.chapter] += toNumber(diff);
 	}
 }
 

@@ -146,7 +146,12 @@ const systemComponents = {
         <a class="link" href="https://discord.gg/F3xveHV" target="_blank" v-bind:style="modInfo.discordLink ? {'font-size': '16px'} : {}">The Modding Tree Discord</a><br>
         <a class="link" href="http://discord.gg/wwQfgPa" target="_blank" v-bind:style="{'font-size': '16px'}">Main Prestige Tree server</a><br>
 		<br><br>
-        Time Played: {{ formatTime(player.timePlayed) }}<br><br>
+        Time Played: {{ formatTime(player.timePlayed) }}<br>
+        <span v-if="player.chapterTime[1] > 0">Chapter 1 Time: {{ formatTime(player.chapterTime[1]) }}</span><br>
+        <span v-if="player.chapterTime[2] > 0">Chapter 2 Time: {{ formatTime(player.chapterTime[2]) }}</span><br>
+        <span v-if="player.chapterTime[3] > 0">Chapter 3 Time: {{ formatTime(player.chapterTime[3]) }}</span><br>
+        <span v-if="player.chapterTime[4] > 0">Chapter 4 Time: {{ formatTime(player.chapterTime[4]) }}</span><br>
+        <span v-if="player.chapterTime[5] > 0">Chapter 5 Time: {{ formatTime(player.chapterTime[5]) }}</span><br><br>
         <h3>Hotkeys</h3><br>
         <span v-for="key in hotkeys" v-if="player[key.layer].unlocked && tmp[key.layer].hotkeys[key.id].unlocked"><br>{{key.description}}</span></div>
     `

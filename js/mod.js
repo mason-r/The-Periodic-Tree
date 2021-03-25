@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.22",
-	name: "Chapter 2 (Polishing)",
+	num: "0.23",
+	name: "Chapter 2 (Generators)",
 };
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -80,7 +80,8 @@ function addedPlayerData() {
 		hqTree: true,
 		chapter: 1,
 		timeSlots: new Decimal(0),
-		usedTimeSlots: new Decimal(0)
+		usedTimeSlots: new Decimal(0),
+		chapterTime: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
 	};
 }
 
