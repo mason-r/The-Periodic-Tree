@@ -118,5 +118,9 @@ function fixOldSave(oldVersion) {
 	}
 	if (["0.0", "0.1", "0.11", "0.12", "0.13", "0.14", "0.15", "0.20", "0.21", "0.22"].includes(oldVersion)) {
 		player.chapterTime[player.chapter] = player.timePlayed;
+		player.study.cards = player.study.cards.reduce((acc, card) => {
+			acc[card] = (acc[card] || 0) + 1;
+			return acc;
+		}, {});
 	}
 }

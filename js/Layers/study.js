@@ -79,7 +79,7 @@ const shopCards = [
 ];
 
 const baseCards = () => {
-	return ["nothing", "nothing", "nothing", "nothing", "gainPoints", "gainPoints", "gainPoints", "gainPoints", "gainInsight", "gainInsight"];
+	return { nothing: 4, gainPoints: 4, gainInsight: 2 };
 };
 
 const getShop = (numCards = 3) => {
@@ -97,6 +97,21 @@ const cardFormat = (card, id = "", className = "", onclick = "", overrideLevel =
 			<span style="flex-shrink: 1"></span>
 			<img src="images/Time2wait.svg" alt="hourglass"/>
 		</div>`];
+};
+
+const cardFormatWithNote = (card, note, id = "", className = "", onclick = "", overrideLevel = "", width = "200px", height = "300px") => {
+	return card == null ? null : ["display-text", `<div class="upgCol">
+		<div id="${id}" class="card ${className}" style="width: ${width}; height: ${height};" onclick="${onclick}">
+			<span style="border-bottom: 1px solid white; margin: 0; max-height: calc(50% - 30px); padding-bottom: 10px;">
+				<!--suppress HtmlUnknownTag -->
+				<h3>${isFunction(cards[card].title) ? cards[card].title(overrideLevel || cardLevel(card)) : cards[card].title}</h3>
+			</span>
+			<span style="flex-basis: 0;"><span>${isFunction(cards[card].description) ? cards[card].description(overrideLevel || cardLevel(card)) : cards[card].description}</span></span>
+			<span style="flex-shrink: 1"></span>
+			<img src="images/Time2wait.svg" alt="hourglass"/>
+		</div>
+		<div class="card-note">${note}</div>
+	</div>`];
 };
 
 function getCardUpgradeBuyable(id) {
@@ -121,7 +136,7 @@ function getCardUpgradeBuyable(id) {
 			player.study.insights = player.study.insights.sub(cost());
 			setBuyableAmount("study", id, getBuyableAmount("study", id).add(1));
 		},
-		unlocked: () => player.study.cards.includes(id)
+		unlocked: () => id in player.study.cards
 	};
 }
 
@@ -131,7 +146,7 @@ function purchaseCard(index) {
 	if (card && player.study.insights.gte(price)) {
 		player.study.insights = player.study.insights.sub(price);
 		player.study.shop[index] = {card: null, price: ""};
-		player.study.cards.push(card);
+		player.study.cards[card] = (player.study.cards[card] || 0) + 1;
 	}
 }
 
@@ -243,7 +258,7 @@ addLayer("study", {
 			content: () => player.tab !== "study" ? null : [
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
 				"blank",
-				["row", player.study.cards.map(cardFormat)]
+				["row", Object.entries(player.study.cards).map(([card, amount]) => cardFormatWithNote(card, amount))]
 			]
 		},
 		"Buy Cards": {
@@ -257,8 +272,8 @@ addLayer("study", {
 				"blank",
 				["row", player.study.shop.map(({card, price}, i) =>
 					["column", [
-						player.study.cards.includes(card) ? null : ["display-text", "<div class='new'>New!</div>"],
 						card == null ? cardFormat("soldOut") : cardFormat(card, "", "shopCard flipCard", `purchaseCard(${i})`),
+						["display-text", `<div class='card-note'>${card in player.study.cards ? player.study.cards[card] : 'New!'}</div>`],
 						"blank",
 						["display-text", `<h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${price ? formatWhole(price) : "​" /*zero width space*/}</h2>`]
 					], {
@@ -278,7 +293,7 @@ addLayer("study", {
 				"blank",
 				["sticky", ["86px", ["clickable", "sell"]]],
 				"blank",
-				["row", player.study.cards.map((card, i) => cardFormat(card, "", player.study.selected === i ? "selectedCard cursor" : "cursor", `toggleSelectCard(${i})`)), {width: "100%"}]
+				["row", Object.entries(player.study.cards).map(([card, amount]) => cardFormatWithNote(card, amount, "", player.study.selected === card ? "selectedCard cursor" : "cursor", `toggleSelectCard('${card}')`)), {width: "100%"}]
 			],
 			unlocked: () => hasMilestone("study", 1)
 		},
@@ -303,7 +318,7 @@ addLayer("study", {
 					]],
 					"blank"
 				]] : null,
-				["column", Object.keys(cards).filter(card => player.study.cards.includes(card) && card in layers.study.buyables).map(card => ["row", [
+				["column", Object.keys(player.study.cards).filter(card => card in layers.study.buyables).map(card => ["row", [
 					cardFormat(card),
 					["display-text", "〉〉", {fontSize: "36px", margin: "10px"}],
 					cardFormat(card, "", "", "", cardLevel(card).add(1)),
@@ -322,18 +337,29 @@ addLayer("study", {
 			// TODO draws/sec
 			if (player[this.layer].drawProgress > getDrawDuration()) {
 				player[this.layer].drawProgress = 0;
-				const newCard = player[this.layer].cards[Math.floor(Math.random() * player.study.cards.length)];
-				if (player[this.layer].lastCard && player[this.layer].lastCard in cards && cards[player[this.layer].lastCard].modifyNextCard) {
-					cards[player[this.layer].lastCard].modifyNextCard(newCard, cardLevel(newCard));
-				} else if (cards[newCard].onDraw) {
-					cards[newCard].onDraw(cardLevel(newCard));
+				let random = Math.random() * Object.values(player.study.cards).reduce((acc, curr) => acc + curr);
+				const ownedCards = Object.keys(player.study.cards);
+				let newCard = null;
+				for (let i = 0; i < ownedCards.length; i++) {
+					if (random < player.study.cards[ownedCards[i]]) {
+						newCard = ownedCards[i];
+						break;
+					}
+					random -= player.study.cards[ownedCards[i]];
 				}
-				player[this.layer].lastCard = newCard;
-				const card = document.getElementById("mainCard");
-				if (card != null) {
-					card.classList.remove("flipCard");
-					void card.offsetWidth;
-					card.classList.add("flipCard");
+				if (newCard) {
+					if (player[this.layer].lastCard && player[this.layer].lastCard in cards && cards[player[this.layer].lastCard].modifyNextCard) {
+						cards[player[this.layer].lastCard].modifyNextCard(newCard, cardLevel(newCard));
+					} else if (cards[newCard].onDraw) {
+						cards[newCard].onDraw(cardLevel(newCard));
+					}
+					player[this.layer].lastCard = newCard;
+					const card = document.getElementById("mainCard");
+					if (card != null) {
+						card.classList.remove("flipCard");
+						void card.offsetWidth;
+						card.classList.add("flipCard");
+					}
 				}
 			}
 			if (hasMilestone("study", 0)) {
@@ -417,10 +443,10 @@ addLayer("study", {
 				return cost;
 			},
 			canClick() {
-				if (player[this.layer].cards.length <= 1) {
+				if (!(player.study.selected in player.study.cards)) {
 					return false;
 				}
-				if (player[this.layer].selected < 0 || player[this.layer].selected >= player[this.layer].cards.length) {
+				if (player.study.cards[player.study.selected] <= 0) {
 					return false;
 				}
 				return player[this.layer].points.gte(this.cost());
@@ -428,8 +454,11 @@ addLayer("study", {
 			onClick() {
 				player[this.layer].points = player[this.layer].points.sub(this.cost());
 				player[this.layer].cardsSold = player[this.layer].cardsSold.add(1);
-				player[this.layer].cards.splice(player[this.layer].selected, 1);
-				player[this.layer].selected = -1;
+				player[this.layer].cards[player[this.layer].selected] = (player[this.layer].cards[player[this.layer].selected] || 0) - 1;
+				if (player[this.layer].cards[player[this.layer].selected] <= 0) {
+					delete player[this.layer].cards[player[this.layer].selected];
+					player[this.layer].selected = -1;
+				}
 			},
 			unlocked: () => hasMilestone("study", 1),
 			layer: "study"
