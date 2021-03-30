@@ -49,7 +49,7 @@ Vue.component("hourglass", {
 */
 
 function nextStoneCost() {
-	return new Decimal(10).times(new Decimal(1.1).pow(player.sands.stonesChipped));
+	return new Decimal(10).times(new Decimal(1.05).pow(player.sands.stonesChipped));
 }
 
 function getFallSpeed() {
@@ -529,7 +529,7 @@ addLayer("sands", {
 			},
 			cost(x) {
 				const amount = x || getBuyableAmount(this.layer, this.id);
-				return new Decimal(25).times(new Decimal(10).pow(amount));
+				return new Decimal(25).times(new Decimal(6).pow(amount));
 			},
 			effect() {
 				return getBuyableAmount(this.layer, this.id).add(1);
@@ -637,19 +637,19 @@ addLayer("sands", {
 		11: {
 			title: "I have a big head,<br>",
 			description: "Automatically chip the stone at +10% efficiency",
-			cost: new Decimal(400),
+			cost: new Decimal(200),
 			unlocked: () => hasMilestone("sands", 1)
 		},
 		12: {
 			title: "and little arms!<br>",
 			description: "Automatically chip the stone at +20% efficiency",
-			cost: new Decimal(800),
+			cost: new Decimal(400),
 			unlocked: () => hasMilestone("sands", 1)
 		},
 		13: {
 			title: "I'm not sure how well<br>",
 			description: "Multiply <b>\"Keep Moving Forward\"</b>'s effect by this job's level<br/>",
-			cost: new Decimal(1600),
+			cost: new Decimal(800),
 			unlocked: () => hasMilestone("sands", 1),
 			effect: () => getJobLevel("sands"),
 			effectDisplay() {
@@ -659,9 +659,9 @@ addLayer("sands", {
 		14: {
 			title: "this plan was thought through.<br>",
 			description: "Potentia gain is increased based on total number of grains<br/>",
-			cost: new Decimal(6400),
+			cost: new Decimal(1600),
 			unlocked: () => hasMilestone("sands", 1),
-			effect: () => getTotalGrains().sqrt().div(10).add(1),
+			effect: () => getTotalGrains().pow(.25).add(1),
 			effectDisplay() {
 				return `x${format(this.effect())}`;
 			}
@@ -669,7 +669,7 @@ addLayer("sands", {
 		15: {
 			title: "Master?<br>",
 			description: "<b>\"Keep Moving Forward\"</b> also speeds up grains falling through the hourglass<br/>",
-			cost: new Decimal(25600),
+			cost: new Decimal(6400),
 			unlocked: () => hasMilestone("sands", 1)
 		},
 		21: {
