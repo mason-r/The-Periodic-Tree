@@ -4,9 +4,9 @@ Vue.component("sand", {
       <div class="chipping-container">
       <div v-for="i in 100" class="chipping">
         <div class="chipping-fill instant"
-             v-bind:style="{ height: percentChipped.sub(i * 100).clamp(0, 100).div(10).floor().times(10).toNumber() + '%' }"></div>
+             v-bind:style="{ height: percentChipped.sub((i - 1) * 100).clamp(0, 100).div(10).floor().times(10).toNumber() + '%' }"></div>
         <div class="chipping-fill instant"
-             v-bind:style="{ float: 'left', height: '10%', width: percentChipped.sub(i * 100).clamp(0, 100).sub(percentChipped.sub(i * 100).clamp(0, 100).div(10).floor().times(10)).times(10).toNumber() + '%' }"></div>
+             v-bind:style="{ float: 'left', height: '10%', width: percentChipped.sub((i - 1) * 100).clamp(0, 100).sub(percentChipped.sub((i - 1) * 100).clamp(0, 100).div(10).floor().times(10)).times(10).toNumber() + '%' }"></div>
       </div>
       </div>
 	`,
