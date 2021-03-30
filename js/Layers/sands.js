@@ -523,7 +523,7 @@ addLayer("sands", {
 			unlocked: () => hasMilestone("sands", 0)
 		},
 		14: {
-			title: "I have a big head, and little arms.<br/>",
+			title: "You want to know what I think about this?<br/>",
 			display() {
 				return `Additively and retroactively increases how many grains of sand you gather from each completely chipped stone by 1<br/><br/>Currently: x${format(this.effect())}<br/><br/>Cost: ${format(this.cost())} potentia`;
 			},
