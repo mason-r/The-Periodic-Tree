@@ -68,7 +68,7 @@ const cards = {
 
 const shopCards = [
 	{card: "gainPoints", price: 1},
-	{card: "gainInsight", price: 2},
+	{card: "gainInsight", price: 0},
 	{card: "gainBigPoints", price: 8},
 	{card: "gainBigInsight", price: 13},
 	{card: "playTwice", price: 16},
@@ -140,10 +140,14 @@ function getCardUpgradeBuyable(id) {
 	};
 }
 
+function getCardAmount() {
+	return Object.values(player.study.cards).reduce((acc, curr) => acc + curr, 0);
+}
+
 // noinspection JSUnusedGlobalSymbols
 function purchaseCard(index) {
 	const {card, price} = player.study.shop[index];
-	if (card && player.study.insights.gte(price)) {
+	if (card && player.study.insights.gte(price) && getCardAmount() < 30) {
 		player.study.insights = player.study.insights.sub(price);
 		player.study.shop[index] = {card: null, price: ""};
 		player.study.cards[card] = (player.study.cards[card] || 0) + 1;
@@ -258,6 +262,8 @@ addLayer("study", {
 			content: () => player.tab !== "study" ? null : [
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
 				"blank",
+				["clickable", "reset"],
+				"blank",
 				["row", Object.entries(player.study.cards).map(([card, amount]) => cardFormatWithNote(card, amount))]
 			]
 		},
@@ -269,6 +275,8 @@ addLayer("study", {
 				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`]]],
 				"blank",
 				["display-text", `Cards refresh in ${new Decimal(getRefreshPeriod() - player.study.refreshProgress).clampMax(getRefreshPeriod() - 0.01).toFixed(2)} seconds`],
+				"blank",
+				["display-text", `Your deck has ${getCardAmount()} out of the 30 card limit.`],
 				"blank",
 				["row", player.study.shop.map(({card, price}, i) =>
 					["column", [
@@ -428,6 +436,20 @@ addLayer("study", {
 		}
 	},
 	clickables: {
+		reset: {
+			title: "RESET DECK",
+			style: {
+				background: "#dc3545"
+			},
+			display: "Reset your deck to the basic starter deck. Resets destroyed cards count. Does not reset the rest of this job.",
+			canClick: true,
+			onClick: () => {
+				if (confirm("Are you sure you want to reset your deck to the starter deck?")) {
+					player.study.cards = baseCards();
+					player[this.layer].cardsSold = new Decimal(0);
+				}
+			}
+		},
 		sell: {
 			title: "They obstinately persisted in their absence.<br/>",
 			style: {
