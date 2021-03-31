@@ -243,7 +243,7 @@ addLayer("generators", {
 		5: {
 			title: "My name is Darth Vader.",
 			requirementDescription: "Level 10",
-			"effectDescription": "Unlock a new feature in ??? job",
+			"effectDescription": "Unlock candypop feature in collecting job",
 			done: () => player.generators.xp.gte(1e9),
 			unlocked: () => hasMilestone("generators", 2)
 		},

@@ -1,6 +1,6 @@
 Vue.component("candypop", {
 	props: ["layer", "data"],
-	template: `<div class="candypop-container" v-if="player[data].unlocked">
+	template: `<div class="candypop-container" v-if="tmp[data].layerShown">
 		<clickable :layer="layer" :data="data" />
 		<div class="candypop" v-bind:style="{ background: layers[data].color }"></div>
 		<span style="font-size: 36px; margin: 10px">〉〉</span>
@@ -142,7 +142,7 @@ addLayer("flowers", {
 				["candypop", "generators"]
 				// TODO rituals
 			],
-			unlocked: () => hasMilestone("sands", 5)
+			unlocked: () => hasMilestone("generators", 5)
 		}
 	},
 	update(diff) {
@@ -327,35 +327,40 @@ addLayer("flowers", {
 			color: flowersColor,
 			style: { height: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "flowers",
-			onClick: () => player.flowers.sacrificeType = "flowers"
+			onClick: () => player.flowers.sacrificeType = "flowers",
+			unlocked: () => player.flowers.layerShown
 		},
 		selectDistill: {
 			title: "Distilling",
 			color: distillColor,
 			style: { height: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "distill",
-			onClick: () => player.flowers.sacrificeType = "distill"
+			onClick: () => player.flowers.sacrificeType = "distill",
+			unlocked: () => player.distill.layerShown
 		},
 		selectStudy: {
 			title: "Studying",
 			color: studyColor,
 			style: { height: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "study",
-			onClick: () => player.flowers.sacrificeType = "study"
+			onClick: () => player.flowers.sacrificeType = "study",
+			unlocked: () => player.study.layerShown
 		},
 		selectSands: {
 			title: "Experimenting",
 			color: sandsColor,
 			style: { height: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "sands",
-			onClick: () => player.flowers.sacrificeType = "sands"
+			onClick: () => player.flowers.sacrificeType = "sands",
+			unlocked: () => player.sands.layerShown
 		},
 		selectGenerators: {
 			title: "Generating",
 			color: electricColor,
 			style: { height: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "generators",
-			onClick: () => player.flowers.sacrificeType = "generators"
+			onClick: () => player.flowers.sacrificeType = "generators",
+			unlocked: () => player.generators.layerShown
 		},
 		flowers: {
 			title: "Subjugation of nature<br/>",
