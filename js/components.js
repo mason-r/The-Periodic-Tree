@@ -408,7 +408,7 @@ function loadVue() {
           <button
               v-if="tmp[layer].clickables && tmp[layer].clickables[data]!== undefined && tmp[layer].clickables[data].unlocked !== false"
               v-bind:class="{ upg: true, can: tmp[layer].clickables[data].canClick !== false, locked: tmp[layer].clickables[data].canClick === false, ...tmp[layer].clickables[data].class}"
-              v-bind:style="[tmp[layer].clickables[data].canClick !== false ? {'background-color': tmp[layer].color} : {}, size ? {'height': size, 'width': size} : {}, tmp[layer].clickables[data].style]"
+              v-bind:style="[tmp[layer].clickables[data].canClick !== false ? {'background-color': tmp[layer].clickables[data].color || tmp[layer].color} : {}, size ? {'height': size, 'width': size} : {}, tmp[layer].clickables[data].style]"
               v-on="handlers">
           <span v-if="tmp[layer].clickables[data].title">
 			  <!--suppress HtmlUnknownTag -->

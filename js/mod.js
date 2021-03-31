@@ -81,7 +81,14 @@ function addedPlayerData() {
 		chapter: 1,
 		timeSlots: new Decimal(0),
 		usedTimeSlots: new Decimal(0),
-		chapterTime: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+		chapterTime: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+		levelModifiers: {
+			flowers: new Decimal(0),
+			distill: new Decimal(0),
+			study: new Decimal(0),
+			sands: new Decimal(0),
+			generators: new Decimal(0)
+		}
 	};
 }
 
@@ -90,7 +97,7 @@ const displayThings = [];
 
 // Determines when the game "ends"
 function isEndgame() {
-	return getJobLevel("generators").gte(2) && getJobLevel("sands").gte(10);
+	return getJobLevel("generators").gte(10) && getJobLevel("sands").gte(10);
 }
 
 

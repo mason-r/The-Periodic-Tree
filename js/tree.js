@@ -27,14 +27,6 @@ Vue.component("job", {
 	</span>`
 });
 
-function checkJobXP(job) {
-	let jobLevel = new Decimal(getJobLevel(job));
-	if (jobLevel.neq(player[job].lastLevel)) {
-		doPopup("none", `Level ${jobLevel}`, "Level Up!", 3, layers[job].color);
-		player[job].lastLevel = jobLevel;
-	}
-}
-
 function toggleTimeLoop(layer) {
 	if (player[layer].timeLoopActive) {
 		player[layer].timeLoopActive = false;

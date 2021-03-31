@@ -9,11 +9,20 @@ const studyColor = "#654321";
 const sandsColor = "#C2B280";
 const electricColor = "#89C6FF";
 
-function getJobLevel(job) {
+function getJobLevel(job, useModifier = true) {
+	const modifier = useModifier ? player.levelModifiers[job] : new Decimal(0);
 	if (player[job].xp.eq(0)) {
-		return new Decimal(0);
+		return modifier;
 	}
-	return softcap(player[job].xp.clampMin(1).log10().floor().add(1), new Decimal(25)).floor();
+	return softcap(player[job].xp.clampMin(1).log10().floor().add(1), new Decimal(25)).add(modifier).floor();
+}
+
+function checkJobXP(job) {
+	let jobLevel = getJobLevel(job, false);
+	if (jobLevel.neq(player[job].lastLevel)) {
+		doPopup("none", `Level ${jobLevel}`, "Level Up!", 3, layers[job].color);
+		player[job].lastLevel = jobLevel;
+	}
 }
 
 function getJobProgressBar(job, color) {
@@ -22,7 +31,7 @@ function getJobProgressBar(job, color) {
 		width: 400,
 		height: 20,
 		progress: () => {
-			let level = getJobLevel(job);
+			let level = getJobLevel(job, false);
 			if (level.eq(0)) {
 				return 0;
 			}

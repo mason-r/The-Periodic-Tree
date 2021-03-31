@@ -82,6 +82,9 @@ function format(decimal, precision=2,) {
 
 function formatWhole(decimal) {
 	decimal = new Decimal(decimal);
+	if (decimal.sign<0) {
+		return "-"+formatWhole(decimal.neg());
+	}
 	if (decimal.gte(1e9)) {
 		return format(decimal, 2);
 	}

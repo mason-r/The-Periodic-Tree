@@ -1,3 +1,18 @@
+Vue.component("candypop", {
+	props: ["layer", "data"],
+	template: `<div class="candypop-container" v-if="player[data].unlocked">
+		<clickable :layer="layer" :data="data" />
+		<div class="candypop" v-bind:style="{ background: layers[data].color }"></div>
+		<span style="font-size: 36px; margin: 10px">〉〉</span>
+		<h3 style="flex: 1">{{ formatWhole(freeLevels) }} free <span v-bind:style="{ color: layers[data].color }">{{ layers[layer].clickables["select" + data.slice(0, 1).toUpperCase() + data.slice(1)].title }}</span> levels</h3>
+	</div>`,
+	computed: {
+		freeLevels() {
+			return player.levelModifiers[this.data];
+		}
+	}
+});
+
 addLayer("flowers", {
 	name: "flowers",
 	resource: "flowers",
@@ -13,7 +28,8 @@ addLayer("flowers", {
 			xp: new Decimal(1),
 			lastLevel: new Decimal(1),
 			realTime: 0,
-			timeLoopActive: false
+			timeLoopActive: false,
+			sacrificeType: ""
 		};
 	},
 	shouldNotify() {
@@ -46,61 +62,89 @@ addLayer("flowers", {
 		return gain;
 	},
 	passiveGeneration: new Decimal(1),
-	tabFormat: [
-		"main-display",
-		["display-text", () => `You are collecting <span style="color: ${flowersColor}; text-shadow: ${flowersColor} 0 0 10px">${format(tmp.flowers.getResetGain)}</span> flowers per second`],
-		"blank",
-		["display-text", () => {
-			if (player.flowers.xp.lte(1e3)) {
-				return "There's a very large field of flowers";
-			}
-			if (player.flowers.xp.lte(1e5)) {
-				return "A small patch is missing from the field of flowers";
-			}
-			if (player.flowers.xp.lte(1e7)) {
-				return "A medium patch is missing from the field of flowers";
-			}
-			if (player.flowers.xp.lte(4e8)) {
-				return "A large patch is missing from the field of flowers";
-			}
-			if (player.flowers.xp.lte(9e8)) {
-				return "The field of flowers looks about half way picked";
-			}
-			if (player.flowers.xp.lte(1e9)) {
-				return "There are very few flowers left";
-			}
-			if (player.flowers.xp.gte(1e9) && player.chapter === 1) {
-				return "The field is barren";
-			}
-			return "";
-		}],
-		"blank",
-		["display-text", () => {
-			if (!hasMilestone("flowers", 0)) {
-				return "Discover new ways to harness the flower's power at level 2";
-			}
-			if (!hasMilestone("flowers", 1)) {
-				return "Discover new ways to harness the flower's power at level 4";
-			}
-			if (!hasMilestone("flowers", 2)) {
-				return "Discover new ways to harness the flower's power at level 6";
-			}
-			if (!hasMilestone("flowers", 3)) {
-				return "Discover new ways to harness the flower's power at level 8";
-			}
-			if (!hasMilestone("flowers", 4)) {
-				return "Discover new ways to harness the flower's power at level 10";
-			}
-			return "";
-		}],
-		() => player.chapter === 1 && hasMilestone("flowers", "4") ? ["upgrade", "nextChapter"] : null,
-		"blank",
-		"buyables",
-		"blank",
-		"upgrades",
-		"blank",
-		["milestones-filtered", [4, 5]]
-	],
+	tabFormat: {
+		"Main": {
+			content: () => player.tab !== "flowers" ? null :[
+				"main-display",
+				["display-text", `You are collecting <span style="color: ${flowersColor}; text-shadow: ${flowersColor} 0 0 10px">${format(tmp.flowers.getResetGain)}</span> flowers per second`],
+				"blank",
+				["display-text", (() => {
+					if (player.flowers.xp.lte(1e3)) {
+						return "There's a very large field of flowers";
+					}
+					if (player.flowers.xp.lte(1e5)) {
+						return "A small patch is missing from the field of flowers";
+					}
+					if (player.flowers.xp.lte(1e7)) {
+						return "A medium patch is missing from the field of flowers";
+					}
+					if (player.flowers.xp.lte(4e8)) {
+						return "A large patch is missing from the field of flowers";
+					}
+					if (player.flowers.xp.lte(9e8)) {
+						return "The field of flowers looks about half way picked";
+					}
+					if (player.flowers.xp.lte(1e9)) {
+						return "There are very few flowers left";
+					}
+					if (player.flowers.xp.gte(1e9) && player.chapter === 1) {
+						return "The field is barren";
+					}
+					return "";
+				})()],
+				"blank",
+				["display-text", (() => {
+					if (!hasMilestone("flowers", 0)) {
+						return "Discover new ways to harness the flower's power at level 2";
+					}
+					if (!hasMilestone("flowers", 1)) {
+						return "Discover new ways to harness the flower's power at level 4";
+					}
+					if (!hasMilestone("flowers", 2)) {
+						return "Discover new ways to harness the flower's power at level 6";
+					}
+					if (!hasMilestone("flowers", 3)) {
+						return "Discover new ways to harness the flower's power at level 8";
+					}
+					if (!hasMilestone("flowers", 4)) {
+						return "Discover new ways to harness the flower's power at level 10";
+					}
+					return "";
+				})()],
+				player.chapter === 1 && hasMilestone("flowers", "4") ? ["upgrade", "nextChapter"] : null,
+				"blank",
+				"buyables",
+				"blank",
+				"upgrades",
+				"blank",
+				["milestones-filtered", [4, 5]]
+			]
+		},
+		"Candypop": {
+			content: () => player.tab !== "flowers" ? null : [
+				["sticky", [0, ["column", [
+					["display-text", "Choose input job:"],
+					["row", [
+						["clickable", "selectFlowers"],
+						["clickable", "selectDistill"],
+						["clickable", "selectStudy"],
+						["clickable", "selectSands"],
+						["clickable", "selectGenerators"]
+					]]
+				]]]],
+				"blank",
+				["display-text", "Note: Free levels do <b>NOT</b> affect xp requirements."],
+				"blank",
+				["candypop", "flowers"],
+				["candypop", "distill"],
+				["candypop", "study"],
+				["candypop", "sands"],
+				["candypop", "generators"]
+				// TODO rituals
+			],
+			unlocked: () => hasMilestone("sands", 5)
+		}
+	},
 	update(diff) {
 		if (player.tab === this.layer || player[this.layer].timeLoopActive) {
 			if (player.generators.flowerActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
@@ -277,6 +321,99 @@ addLayer("flowers", {
 			}
 		}
 	},
+	clickables: {
+		selectFlowers: {
+			title: "Collecting",
+			color: flowersColor,
+			style: { height: "50px" },
+			canClick: () => player.flowers.sacrificeType !== "flowers",
+			onClick: () => player.flowers.sacrificeType = "flowers"
+		},
+		selectDistill: {
+			title: "Distilling",
+			color: distillColor,
+			style: { height: "50px" },
+			canClick: () => player.flowers.sacrificeType !== "distill",
+			onClick: () => player.flowers.sacrificeType = "distill"
+		},
+		selectStudy: {
+			title: "Studying",
+			color: studyColor,
+			style: { height: "50px" },
+			canClick: () => player.flowers.sacrificeType !== "study",
+			onClick: () => player.flowers.sacrificeType = "study"
+		},
+		selectSands: {
+			title: "Experimenting",
+			color: sandsColor,
+			style: { height: "50px" },
+			canClick: () => player.flowers.sacrificeType !== "sands",
+			onClick: () => player.flowers.sacrificeType = "sands"
+		},
+		selectGenerators: {
+			title: "Generating",
+			color: electricColor,
+			style: { height: "50px" },
+			canClick: () => player.flowers.sacrificeType !== "generators",
+			onClick: () => player.flowers.sacrificeType = "generators"
+		},
+		flowers: {
+			title: "Subjugation of nature<br/>",
+			color: "#dc3545",
+			display: "Throw three levels into the vanilla candypop",
+			canClick: () => player.flowers.sacrificeType !== "flowers" && getJobLevel(player.flowers.sacrificeType).gte(13),
+			onClick: () => {
+				player.levelModifiers[player.flowers.sacrificeType] = player.levelModifiers[player.flowers.sacrificeType].sub(3);
+				player.levelModifiers.flowers = player.levelModifiers.flowers.add(1);
+				player.study.deep = player.study.deep.min(getJobLevel("study"));
+			}
+		},
+		distill: {
+			title: "Languor and decay<br/>",
+			color: "#dc3545",
+			display: "Throw three levels into the mint candypop",
+			canClick: () => player.flowers.sacrificeType !== "distill" && getJobLevel(player.flowers.sacrificeType).gte(13),
+			onClick: () => {
+				player.levelModifiers[player.flowers.sacrificeType] = player.levelModifiers[player.flowers.sacrificeType].sub(3);
+				player.levelModifiers.distill = player.levelModifiers.distill.add(1);
+				player.study.deep = player.study.deep.min(getJobLevel("study"));
+			}
+		},
+		study: {
+			title: "Pain and necessity<br/>",
+			color: "#dc3545",
+			display: "Throw three levels into the chocolate candypop",
+			canClick: () => player.flowers.sacrificeType !== "study" && getJobLevel(player.flowers.sacrificeType).gte(13),
+			onClick: () => {
+				player.levelModifiers[player.flowers.sacrificeType] = player.levelModifiers[player.flowers.sacrificeType].sub(3);
+				player.levelModifiers.study = player.levelModifiers.study.add(1);
+				player.study.deep = player.study.deep.min(getJobLevel("study"));
+			}
+		},
+		sands: {
+			title: "Abominable desolation<br/>",
+			color: "#dc3545",
+			display: "Throw three levels into the caramel candypop",
+			canClick: () => player.flowers.sacrificeType !== "sands" && getJobLevel(player.flowers.sacrificeType).gte(13),
+			onClick: () => {
+				player.levelModifiers[player.flowers.sacrificeType] = player.levelModifiers[player.flowers.sacrificeType].sub(3);
+				player.levelModifiers.sands = player.levelModifiers.sands.add(1);
+				player.study.deep = player.study.deep.min(getJobLevel("study"));
+			}
+		},
+		generators: {
+			title: "Futility of all ambition<br/>",
+			color: "#dc3545",
+			display: "Throw three levels into the damson candypop",
+			canClick: () => player.flowers.sacrificeType !== "generators" && getJobLevel(player.flowers.sacrificeType).gte(13),
+			onClick: () => {
+				player.levelModifiers[player.flowers.sacrificeType] = player.levelModifiers[player.flowers.sacrificeType].sub(3);
+				player.levelModifiers.generators = player.levelModifiers.generators.add(1);
+				player.study.deep = player.study.deep.min(getJobLevel("study"));
+			}
+		}
+		// rituals = blackcurrant?
+	},
 	bars: {
 		job: getJobProgressBar("flowers", flowersColor)
 	}
@@ -287,13 +424,7 @@ addLayer("flowers", {
 //
 // - delicate flowers
 // - waste garden
-// - subjugation of nature
 //
 // - common sense of the morning
 //
-// - pain and necessity
-// - languor and decay
-// - abominable desolation
-//
 // - Time is only a kind of Space
-// - Futility of all ambition
