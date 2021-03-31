@@ -10,6 +10,7 @@ const sandsColor = "#C2B280";
 const electricColor = "#89C6FF";
 
 function getJobLevel(job, useModifier = true) {
+	if (job === "") return new Decimal(0);
 	const modifier = useModifier ? player.levelModifiers[job] : new Decimal(0);
 	if (player[job].xp.eq(0)) {
 		return modifier;
