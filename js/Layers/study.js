@@ -12,10 +12,7 @@ const cards = {
 	gainBigPoints: createCard("In his experience the Universe simply didn't work like that.", level => `Successfully study ${format(getResetGain("study").times(level.add(1)).pow(1.2))} properties. Destroy this card.`, (level, canDestroy = true) => {
 		addPoints("study", getResetGain("study").times(level.add(1)).pow(1.2));
 		if (canDestroy) {
-			const index = player.study.cards.indexOf("gainBigPoints");
-			if (index >= 0) {
-				player.study.cards.splice(index, 1);
-			}
+			player.study.cards.gainBigPoints = player.study.cards.gainBigPoints - 1;
 		}
 	}),
 	gainInsight: createCard("And it shall be called... the Earth.", level => level === 0 ? "Gain a key insight." : `Gain ${formatWhole(level.add(1))} key insights.`, level => {
