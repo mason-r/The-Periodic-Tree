@@ -17,6 +17,10 @@ let VERSION = {
 };
 
 let changelog = `<h1>Changelog:</h1><br>
+	<br><h3>v.0.23</h3><br>
+		- Added rest of generators job mechanics<br>
+		- Re-balanced some layers<br>
+		- Added tons of QoL<br>
 	<br><h3>v.0.22</h3><br>
 		- Update generators' looks<br>
 		- Added distill generator<br>
