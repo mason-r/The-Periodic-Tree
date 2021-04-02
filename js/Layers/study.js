@@ -443,7 +443,7 @@ addLayer("study", {
 			onClick: () => {
 				if (confirm("Are you sure you want to reset your deck to the starter deck?")) {
 					player.study.cards = baseCards();
-					player[this.layer].cardsSold = new Decimal(0);
+					player.study.cardsSold = new Decimal(0);
 				}
 			}
 		},
