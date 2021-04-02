@@ -20,8 +20,8 @@ const cards = {
 		player.study.xp = player.study.xp.add(level.add(1).times(10));
 		checkJobXP("study");
 	}),
-	gainBigInsight: createCard("Yes! I shall design this computer for you.", level => `Gain ${new Decimal(player.study.cards.length).times(level.add(1)).sqrt().floor()} key insights.<br/>(based on number of cards in the deck)`, level => {
-		const amount = new Decimal(player.study.cards.length).times(level.add(1)).sqrt().floor();
+	gainBigInsight: createCard("Yes! I shall design this computer for you.", level => `Gain ${new Decimal(getCardAmount()).times(level.add(1)).sqrt().floor()} key insights.<br/>(based on number of cards in the deck)`, level => {
+		const amount = new Decimal(getCardAmount()).times(level.add(1)).sqrt().floor();
 		player.study.insights = player.study.insights.add(amount);
 		player.study.xp = player.study.xp.add(amount.times(10));
 		checkJobXP("study");
