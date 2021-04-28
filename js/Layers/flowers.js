@@ -133,7 +133,7 @@ addLayer("flowers", {
 					]]
 				]]]],
 				"blank",
-				["display-text", "Note: Free levels do <b>NOT</b> affect xp requirements."],
+				["display-text", "Note: Free levels do <b>NOT</b> affect xp requirements.<br/>Note: You cannot throw levels of a specific type if you'd drop below 10."],
 				"blank",
 				["candypop", "flowers"],
 				["candypop", "distill"],
@@ -365,7 +365,7 @@ addLayer("flowers", {
 		flowers: {
 			title: "Subjugation of nature<br/>",
 			color: "#dc3545",
-			display: "Throw three levels into the vanilla candypop",
+			display: () => `Throw (and permanently <b>LOSE</b>) three ${layers.flowers.clickables["select" + player.flowers.sacrificeType.slice(0, 1).toUpperCase() + player.flowers.sacrificeType.slice(1)].title} levels into the vanilla candypop`,
 			canClick: () => player.flowers.sacrificeType !== "flowers" && getJobLevel(player.flowers.sacrificeType).gte(13),
 			onClick: () => {
 				player.levelModifiers[player.flowers.sacrificeType] = player.levelModifiers[player.flowers.sacrificeType].sub(3);
@@ -376,7 +376,7 @@ addLayer("flowers", {
 		distill: {
 			title: "Languor and decay<br/>",
 			color: "#dc3545",
-			display: "Throw three levels into the mint candypop",
+			display: () => `Throw (and permanently <b>LOSE</b>) three ${layers.flowers.clickables["select" + player.flowers.sacrificeType.slice(0, 1).toUpperCase() + player.flowers.sacrificeType.slice(1)].title} levels into the mint candypop`,
 			canClick: () => player.flowers.sacrificeType !== "distill" && getJobLevel(player.flowers.sacrificeType).gte(13),
 			onClick: () => {
 				player.levelModifiers[player.flowers.sacrificeType] = player.levelModifiers[player.flowers.sacrificeType].sub(3);
@@ -387,7 +387,7 @@ addLayer("flowers", {
 		study: {
 			title: "Pain and necessity<br/>",
 			color: "#dc3545",
-			display: "Throw three levels into the chocolate candypop",
+			display: () => `Throw (and permanently <b>LOSE</b>) three ${layers.flowers.clickables["select" + player.flowers.sacrificeType.slice(0, 1).toUpperCase() + player.flowers.sacrificeType.slice(1)].title} levels into the chocolate candypop`,
 			canClick: () => player.flowers.sacrificeType !== "study" && getJobLevel(player.flowers.sacrificeType).gte(13),
 			onClick: () => {
 				player.levelModifiers[player.flowers.sacrificeType] = player.levelModifiers[player.flowers.sacrificeType].sub(3);
@@ -398,7 +398,7 @@ addLayer("flowers", {
 		sands: {
 			title: "Abominable desolation<br/>",
 			color: "#dc3545",
-			display: "Throw three levels into the caramel candypop",
+			display: () => `Throw (and permanently <b>LOSE</b>) three ${layers.flowers.clickables["select" + player.flowers.sacrificeType.slice(0, 1).toUpperCase() + player.flowers.sacrificeType.slice(1)].title} levels into the caramel candypop`,
 			canClick: () => player.flowers.sacrificeType !== "sands" && getJobLevel(player.flowers.sacrificeType).gte(13),
 			onClick: () => {
 				player.levelModifiers[player.flowers.sacrificeType] = player.levelModifiers[player.flowers.sacrificeType].sub(3);
@@ -409,7 +409,7 @@ addLayer("flowers", {
 		generators: {
 			title: "Futility of all ambition<br/>",
 			color: "#dc3545",
-			display: "Throw three levels into the damson candypop",
+			display: () => `Throw (and permanently <b>LOSE</b>) three ${layers.flowers.clickables["select" + player.flowers.sacrificeType.slice(0, 1).toUpperCase() + player.flowers.sacrificeType.slice(1)].title} levels into the damson candypop`,
 			canClick: () => player.flowers.sacrificeType !== "generators" && getJobLevel(player.flowers.sacrificeType).gte(13),
 			onClick: () => {
 				player.levelModifiers[player.flowers.sacrificeType] = player.levelModifiers[player.flowers.sacrificeType].sub(3);
