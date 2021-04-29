@@ -457,7 +457,7 @@ addLayer("study", {
 				height: "200px"
 			},
 			display() {
-				return `Remove a card from your deck. Cost multiplies by 100 for each card manually destroyed.<br/><br/>Cost: ${formatWhole(this.cost())} properties studied`;
+				return `Remove a card from your deck. Cost multiplies by 10 for each card manually destroyed.<br/><br/>Cost: ${formatWhole(this.cost())} properties studied`;
 			},
 			cost(x) {
 				let cost = new Decimal(500).times(new Decimal(10).pow(player[this.layer].cardsSold));
