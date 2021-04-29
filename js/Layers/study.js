@@ -438,12 +438,15 @@ addLayer("study", {
 			style: {
 				background: "#dc3545"
 			},
-			display: "Reset your deck to the basic starter deck. Resets destroyed cards count. Does not reset the rest of this job.",
+			display: "Reset your deck to the basic starter deck. Resets destroyed cards and played cards counts. Does not reset the rest of this job.",
 			canClick: true,
 			onClick: () => {
 				if (confirm("Are you sure you want to reset your deck to the starter deck?")) {
 					player.study.cards = baseCards();
 					player.study.cardsSold = new Decimal(0);
+					player.study.increasePointsGain = new Decimal(0);
+					player.study.multiplyPointsGain = new Decimal(0);
+					player.study.sellDiscount = new Decimal(0);
 				}
 			}
 		},
