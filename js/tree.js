@@ -43,7 +43,8 @@ addLayer("tree-tab", {
 		distill: getJobProgressBar("distill"),
 		study: getJobProgressBar("study"),
 		sands: getJobProgressBar("sands"),
-		generators: getJobProgressBar("generators")
+		generators: getJobProgressBar("generators"),
+		rituals: getJobProgressBar("rituals")
 	},
 	tabFormat: () => player.chapter < 3 ?
 		[
@@ -61,7 +62,8 @@ addLayer("tree-tab", {
 			["job", "distill"],
 			["job", "study"],
 			["job", "sands"],
-			["job", "generators"]
+			["job", "generators"],
+			["job", "rituals"]
 		] :
 		{
 			"Main": {
@@ -80,7 +82,8 @@ addLayer("tree-tab", {
 					["job", "distill"],
 					["job", "study"],
 					["job", "sands"],
-					["job", "generators"]
+					["job", "generators"],
+					["job", "rituals"]
 				]
 			}
 		},

@@ -349,7 +349,7 @@ function loadVue() {
               style="display: grid">
           <button
               v-bind:class="{ buyable: true, can: tmp[layer].buyables[data].canAfford, locked: !tmp[layer].buyables[data].canAfford}"
-              v-bind:style="[tmp[layer].buyables[data].canAfford ? {'background-color': tmp[layer].color} : {}, size ? {'height': size, 'width': size} : {}, tmp[layer].componentStyles.buyable, tmp[layer].buyables[data].style]"
+              v-bind:style="[tmp[layer].buyables[data].canAfford ? {'background-color': tmp[layer].buyables[data].color || tmp[layer].color} : {}, size ? {'height': size, 'width': size} : {}, tmp[layer].componentStyles.buyable, tmp[layer].buyables[data].style]"
               v-on:click="buyBuyable(layer, data)">
 				<span v-if="tmp[layer].buyables[data].title">
 				  <!--suppress HtmlUnknownTag -->

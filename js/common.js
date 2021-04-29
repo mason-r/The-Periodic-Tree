@@ -8,6 +8,7 @@ const distillColor = "#8AFFC1";
 const studyColor = "#654321";
 const sandsColor = "#C2B280";
 const electricColor = "#89C6FF";
+const ritualsColor = "#1e1e1e";
 
 function getJobLevel(job, useModifier = true) {
 	if (job === "") return new Decimal(0);

@@ -129,7 +129,8 @@ addLayer("flowers", {
 						["clickable", "selectDistill"],
 						["clickable", "selectStudy"],
 						["clickable", "selectSands"],
-						["clickable", "selectGenerators"]
+						["clickable", "selectGenerators"],
+						["clickable", "selectRituals"]
 					]]
 				]]]],
 				"blank",
@@ -139,8 +140,8 @@ addLayer("flowers", {
 				["candypop", "distill"],
 				["candypop", "study"],
 				["candypop", "sands"],
-				["candypop", "generators"]
-				// TODO rituals
+				["candypop", "generators"],
+				["candypop", "rituals"]
 			],
 			unlocked: () => hasMilestone("generators", 5)
 		}
@@ -328,7 +329,7 @@ addLayer("flowers", {
 			style: { height: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "flowers",
 			onClick: () => player.flowers.sacrificeType = "flowers",
-			unlocked: () => player.flowers.layerShown
+			unlocked: () => tmp.flowers.layerShown
 		},
 		selectDistill: {
 			title: "Distilling",
@@ -336,7 +337,7 @@ addLayer("flowers", {
 			style: { height: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "distill",
 			onClick: () => player.flowers.sacrificeType = "distill",
-			unlocked: () => player.distill.layerShown
+			unlocked: () => tmp.distill.layerShown
 		},
 		selectStudy: {
 			title: "Studying",
@@ -344,7 +345,7 @@ addLayer("flowers", {
 			style: { height: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "study",
 			onClick: () => player.flowers.sacrificeType = "study",
-			unlocked: () => player.study.layerShown
+			unlocked: () => tmp.study.layerShown
 		},
 		selectSands: {
 			title: "Experimenting",
@@ -352,7 +353,7 @@ addLayer("flowers", {
 			style: { height: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "sands",
 			onClick: () => player.flowers.sacrificeType = "sands",
-			unlocked: () => player.sands.layerShown
+			unlocked: () => tmp.sands.layerShown
 		},
 		selectGenerators: {
 			title: "Generating",
@@ -360,7 +361,15 @@ addLayer("flowers", {
 			style: { height: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "generators",
 			onClick: () => player.flowers.sacrificeType = "generators",
-			unlocked: () => player.generators.layerShown
+			unlocked: () => tmp.generators.layerShown
+		},
+		selectRituals: {
+			title: "Rituals",
+			color: ritualsColor,
+			style: { height: "50px" },
+			canClick: () => player.flowers.sacrificeType !== "rituals",
+			onClick: () => player.flowers.sacrificeType = "rituals",
+			unlocked: () => tmp.rituals.layerShown
 		},
 		flowers: {
 			title: "Subjugation of nature<br/>",
@@ -416,8 +425,18 @@ addLayer("flowers", {
 				player.levelModifiers.generators = player.levelModifiers.generators.add(1);
 				player.study.deep = player.study.deep.min(getJobLevel("study"));
 			}
+		},
+		rituals: {
+			title: "Waste Garden<br/>",
+			color: "#dc3545",
+			display: () => `Throw (and permanently <b>LOSE</b>) three ${layers.flowers.clickables["select" + player.flowers.sacrificeType.slice(0, 1).toUpperCase() + player.flowers.sacrificeType.slice(1)].title} levels into the blackcurrant candypop`,
+			canClick: () => player.flowers.sacrificeType !== "rituals" && getJobLevel(player.flowers.sacrificeType).gte(13),
+			onClick: () => {
+				player.levelModifiers[player.flowers.sacrificeType] = player.levelModifiers[player.flowers.sacrificeType].sub(3);
+				player.levelModifiers.rituals = player.levelModifiers.rituals.add(1);
+				player.study.deep = player.study.deep.min(getJobLevel("study"));
+			}
 		}
-		// rituals = blackcurrant?
 	},
 	bars: {
 		job: getJobProgressBar("flowers", flowersColor)
@@ -428,7 +447,6 @@ addLayer("flowers", {
 // - https://www.shmoop.com/study-guides/literature/time-machine-hg-wells/quotes
 //
 // - delicate flowers
-// - waste garden
 //
 // - common sense of the morning
 //

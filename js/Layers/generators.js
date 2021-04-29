@@ -97,16 +97,19 @@ addLayer("generators", {
 			distillActive: false,
 			studyActive: false,
 			sandsActive: false,
+			ritualsActive: false,
 			flowersDuration: 0,
 			distillDuration: 0,
 			studyDuration: 0,
 			sandsDuration: 0,
+			ritualsDuration: 0,
 			batteries: {
 				generators: new Decimal(0),
 				flowers: new Decimal(0),
 				distill: new Decimal(0),
 				study: new Decimal(0),
-				sands: new Decimal(0)
+				sands: new Decimal(0),
+				rituals: new Decimal(0)
 			}
 		};
 	},
@@ -129,6 +132,9 @@ addLayer("generators", {
 		}
 		if (player.generators.sandsActive && (player.tab === "sands" || player.sands.timeLoopActive)) {
 			gain = gain.add(layers.generators.clickables.sandsGenerator.effect());
+		}
+		if (player.generators.ritualsActive && (player.tab === "rituals" || player.rituals.timeLoopActive)) {
+			gain = gain.add(layers.generators.clickables.ritualsGenerator.effect());
 		}
 		gain = gain.times(buyableEffect(this.layer, 11));
 		gain = gain.times(new Decimal(1.1).pow(getJobLevel(this.layer)));
@@ -165,7 +171,7 @@ addLayer("generators", {
 				})()],
 				"blank",
 				"blank",
-				["row", [["clickable", "flowersGenerator"], ["clickable", "distillGenerator"], ["clickable", "studyGenerator"], ["clickable", "sandsGenerator"]]],
+				["row", [["clickable", "flowersGenerator"], ["clickable", "distillGenerator"], ["clickable", "studyGenerator"], ["clickable", "sandsGenerator"], ["clickable", "ritualsGenerator"]]],
 				"blank",
 				"blank",
 				"upgrades",
@@ -191,7 +197,7 @@ addLayer("generators", {
 				"blank",
 				["row", [["battery", "flowers"], ["battery", "distill"]]],
 				["row", [["battery", "study"], ["battery", "sands"]]],
-				["row", [["battery", "generators"]]] // TODO rituals battery
+				["row", [["battery", "generators"], ["battery", "rituals"]]]
 			],
 			unlocked: () => hasMilestone("generators", 0)
 		}
@@ -366,13 +372,33 @@ addLayer("generators", {
 				return effect;
 			}
 		},
-		// TODO ritual generator
-		// "Nobody Calls Me Chicken."
+		ritualsGenerator: {
+			title: "Nobody Calls Me Chicken.<br/>",
+			display() {
+				return `Generate <b>${format(this.effect())}</b> joules/s if rituals job is active.<br/>(based on rituals level)<br/><br/>All ritual effects are softcapped immediately and the job runs 10x slower.<br/><br/>Currently: <b>${player.generators.ritualsActive ? "ACTIVE" : "INACTIVE"}</b>`;
+			},
+			class: () => ({"gradient-border": player.generators.ritualsActive}),
+			style: {
+				width: "200px",
+				height: "200px"
+			},
+			onClick() {
+				player.generators.ritualsActive = !player.generators.ritualsActive;
+			},
+			effect() {
+				let effect = getJobLevel("rituals");
+				if (hasUpgrade("generators", 12)) {
+					effect = effect.times(Decimal.times(0.01, player.generators.ritualsDuration).add(1));
+				}
+				return effect;
+			}
+		},
 		flowers: getBatteryCharger("flowers", "History is gonna change.", "Collecting"),
 		distill: getBatteryCharger("distill", "You disintegrated Einstein!"),
 		study: getBatteryCharger("study", "I figured, what the hell?"),
 		sands: getBatteryCharger("sands", "Ronald Reagan? The actor? Ha!", "Experiments"),
 		generators: getBatteryCharger("generators", "Good night, future boy!"),
+		rituals: getBatteryCharger("rituals", "Your future is whatever you make it"),
 		// TODO ritual charger,
 		"perc1": {
 			title: "1%",
@@ -490,6 +516,7 @@ addLayer("generators", {
 		study: getBatteryCapBuyable("study", "I'm back <i>from</i> the future."),
 		sands: getBatteryCapBuyable("sands", "Alright, boys, buckle up."),
 		generators: getBatteryCapBuyable("generators", "Unless you've got power!"),
+		rituals: getBatteryCapBuyable("rituals", "?")
 	},
 	bars: {
 		job: getJobProgressBar("generators", electricColor)

@@ -310,6 +310,10 @@ h1, h2, h3, b, input {
     margin-top: 4px;
 }
 
+#rituals + .job-details .smallUpg {
+    color: white;
+}
+
 #points {
     color: var(--points);
     text-shadow: 0 0 10px var(--points);

@@ -91,7 +91,8 @@ function addedPlayerData() {
 			distill: new Decimal(0),
 			study: new Decimal(0),
 			sands: new Decimal(0),
-			generators: new Decimal(0)
+			generators: new Decimal(0),
+			rituals: new Decimal(0)
 		}
 	};
 }
