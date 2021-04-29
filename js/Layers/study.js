@@ -133,7 +133,7 @@ function getCardUpgradeBuyable(id) {
 			player.study.insights = player.study.insights.sub(cost());
 			setBuyableAmount("study", id, getBuyableAmount("study", id).add(1));
 		},
-		unlocked: () => id in player.study.cards
+		unlocked: () => id in player.study.cards && hasMilestone("study", 3)
 	};
 }
 
