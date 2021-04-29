@@ -278,9 +278,9 @@ addLayer("study", {
 				["row", player.study.shop.map(({card, price}, i) =>
 					["column", [
 						card == null ? cardFormat("soldOut") : cardFormat(card, "", "shopCard flipCard", `purchaseCard(${i})`),
-						["display-text", `<div class='card-note'>${card in player.study.cards ? player.study.cards[card] : 'New!'}</div>`],
+						["display-text", `<div class='card-note'>${card in player.study.cards ? player.study.cards[card] : card == null ? '' : 'New!'}</div>`],
 						"blank",
-						["display-text", `<h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${price ? formatWhole(price) : "​" /*zero width space*/}</h2>`]
+						["display-text", `<h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${card == null ? "​" /*zero width space*/ : formatWhole(price)}</h2>`]
 					], {
 						margin: "auto 10px 20px",
 						cursor: "pointer",

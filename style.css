@@ -1104,6 +1104,10 @@ b, h3 {
     font-size: x-large;
 }
 
+.card-note:empty {
+    padding: 0;
+}
+
 .upgCol:hover > .instant > .card-note,
 .upgCol:hover > .card-note {
     transform: translate(-50%, -50%) scale(1.3);
