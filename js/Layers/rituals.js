@@ -6,8 +6,8 @@ function createRuneBuyable(id, title) {
 		},
 		color: layers[id].color,
 		style: {
-			width: '150px',
-			height: '150px'
+			width: '160px',
+			height: '160px'
 		},
 		cost(x) {
 			const amount = x || getBuyableAmount("rituals", this.id);

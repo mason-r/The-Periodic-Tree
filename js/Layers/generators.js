@@ -404,7 +404,7 @@ addLayer("generators", {
 			title: "1%",
 			style: {
 				width: "60px",
-				height: "60px"
+				minHeight: "60px"
 			},
 			canClick: () => player.generators.allocPerc.neq(0.01),
 			onClick: () => {
@@ -415,7 +415,7 @@ addLayer("generators", {
 			title: "10%",
 			style: {
 				width: "60px",
-				height: "60px"
+				minHeight: "60px"
 			},
 			canClick: () => player.generators.allocPerc.neq(0.1),
 			onClick: () => {
@@ -426,7 +426,7 @@ addLayer("generators", {
 			title: "50%",
 			style: {
 				width: "60px",
-				height: "60px"
+				minHeight: "60px"
 			},
 			canClick: () => player.generators.allocPerc.neq(0.5),
 			onClick: () => {
@@ -437,7 +437,7 @@ addLayer("generators", {
 			title: "100%",
 			style: {
 				width: "60px",
-				height: "60px"
+				minHeight: "60px"
 			},
 			canClick: () => player.generators.allocPerc.neq(1),
 			onClick: () => {
@@ -516,7 +516,7 @@ addLayer("generators", {
 		study: getBatteryCapBuyable("study", "I'm back <i>from</i> the future."),
 		sands: getBatteryCapBuyable("sands", "Alright, boys, buckle up."),
 		generators: getBatteryCapBuyable("generators", "Unless you've got power!"),
-		rituals: getBatteryCapBuyable("rituals", "?")
+		rituals: getBatteryCapBuyable("rituals", "Who the hell is Clara?")
 	},
 	bars: {
 		job: getJobProgressBar("generators", electricColor)

@@ -326,7 +326,7 @@ addLayer("flowers", {
 		selectFlowers: {
 			title: "Collecting",
 			color: flowersColor,
-			style: { height: "50px" },
+			style: { minHeight: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "flowers",
 			onClick: () => player.flowers.sacrificeType = "flowers",
 			unlocked: () => tmp.flowers.layerShown
@@ -334,7 +334,7 @@ addLayer("flowers", {
 		selectDistill: {
 			title: "Distilling",
 			color: distillColor,
-			style: { height: "50px" },
+			style: { minHeight: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "distill",
 			onClick: () => player.flowers.sacrificeType = "distill",
 			unlocked: () => tmp.distill.layerShown
@@ -342,7 +342,7 @@ addLayer("flowers", {
 		selectStudy: {
 			title: "Studying",
 			color: studyColor,
-			style: { height: "50px" },
+			style: { minHeight: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "study",
 			onClick: () => player.flowers.sacrificeType = "study",
 			unlocked: () => tmp.study.layerShown
@@ -350,7 +350,7 @@ addLayer("flowers", {
 		selectSands: {
 			title: "Experimenting",
 			color: sandsColor,
-			style: { height: "50px" },
+			style: { minHeight: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "sands",
 			onClick: () => player.flowers.sacrificeType = "sands",
 			unlocked: () => tmp.sands.layerShown
@@ -358,7 +358,7 @@ addLayer("flowers", {
 		selectGenerators: {
 			title: "Generating",
 			color: electricColor,
-			style: { height: "50px" },
+			style: { minHeight: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "generators",
 			onClick: () => player.flowers.sacrificeType = "generators",
 			unlocked: () => tmp.generators.layerShown
@@ -366,7 +366,7 @@ addLayer("flowers", {
 		selectRituals: {
 			title: "Rituals",
 			color: ritualsColor,
-			style: { height: "50px" },
+			style: { minHeight: "50px" },
 			canClick: () => player.flowers.sacrificeType !== "rituals",
 			onClick: () => player.flowers.sacrificeType = "rituals",
 			unlocked: () => tmp.rituals.layerShown
