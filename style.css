@@ -507,11 +507,11 @@ ul {
     transition-duration: 0s
 }
 
-.tooltipBox { 
+.tooltipBox {
 	position: relative;
 	display: inline-block;
   }
-  
+
   .tooltipBox:hover .tooltip{
 	opacity: 1;
   }
@@ -519,8 +519,8 @@ ul {
   .forceTooltip .tooltip{
 	opacity: 1;
   }
-  
-  .tooltip { 
+
+  .tooltip {
 	pointer-events: none;
 	text-align: center;
 	width: 150px;
@@ -537,10 +537,10 @@ ul {
 	border-radius: 3px;
 	opacity: 0;
 	transition: opacity 0.25s;
-  
+
 	position: absolute;
 	z-index: 99999999 !important;
-  
+
 	background-color: var(--background_tooltip);
 	color: var(--points);
 	content: attr(tooltip);
@@ -561,7 +561,7 @@ ul {
 	border-style: solid;
 	border-color: var(--background_tooltip) transparent transparent transparent;
   }
-  
+
 #loadingSection {
     display: flex;
     flex-direction: column;
@@ -1120,4 +1120,18 @@ b, h3 {
     mask-box-image: url(android-chrome-512x512.png);
     -webkit-mask-box-image: url(android-chrome-512x512.png);
     flex-shrink: 0;
+}
+
+[style*="--count"] {
+    position: relative;
+}
+
+[style*="--count"]::after {
+    counter-reset: count var(--count);
+    content: counter(count);
+    position: absolute;
+    top: 125%;
+    color: white;
+    font-size: large;
+    transform: translate(-50%, -50%);
 }

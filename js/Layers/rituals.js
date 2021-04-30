@@ -1,3 +1,18 @@
+// Note: id is the corresponding *buyable* ID
+function createRuneSelector(id, rune) {
+	// TODO image based on rune
+	return {
+		color: layers[rune]?.color,
+		style: {
+			width: "60px",
+			minHeight: "60px",
+			"--count": () => (getBuyableAmount("rituals", id)?.toNumber() || 0) - Object.values(player.rituals.board).filter(r => r === rune).length
+		},
+		canClick: () => player.rituals.selectedRune !== rune,
+		onClick: () => player.rituals.selectedRune = rune
+	}
+}
+
 function createRuneBuyable(id, title) {
 	return {
 		title: title + "<br/>",
@@ -38,13 +53,16 @@ addLayer("rituals", {
 			xp: new Decimal(0),
 			lastLevel: new Decimal(0),
 			timeLoopActive: false,
-			board: {}
+			board: {},
+			selectedRune: null
 		};
 	},
 	tabFormat: () => player.tab !== "rituals" ? [] : [
 		["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("rituals")}</span>`]]]]],
 		"blank",
 		"buyables",
+		"blank",
+		["sticky", ["36px", ["clickables"]]],
 		"blank",
 		["milestones-filtered", [2, 5, 6]]
 	],
@@ -94,13 +112,21 @@ addLayer("rituals", {
 		}
 	},
 	clickables: {
-		clear: {},
-		clearAll: {},
-		flowers: {},
-		distill: {},
-		study: {},
-		sands: {},
-		generators: {}
+		11: {
+			title: "Clear All",
+			style: {
+				color: "white",
+				minHeight: "60px"
+			},
+			canClick: () => Object.keys(player.rituals.board).length > 0,
+			onClick: () => player.rituals.board = {}
+		},
+		12: createRuneSelector(null, null),
+		13: createRuneSelector(11, "flowers"),
+		14: createRuneSelector(12, "distill"),
+		15: createRuneSelector(13, "study"),
+		16: createRuneSelector(14, "sands"),
+		17: createRuneSelector(15, "generators")
 	},
 	buyables: {
 		rows: 1,
