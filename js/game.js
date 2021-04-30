@@ -5,9 +5,9 @@ let gameEnded = false;
 
 // Don't change this
 const TMT_VERSION = {
-	tmtNum: "2.π",
-	tmtName: "Incrementally Updated"
-};
+	tmtNum: "2.4.0.1",
+	tmtName: "Rationalized Edition"
+}
 
 function getResetGain(layer, useType = null) {
 	let type = useType;

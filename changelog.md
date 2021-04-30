@@ -1,5 +1,26 @@
 # The Modding Tree changelog:
 
+## v2.4: Rationalized Edition - 4/29/21
+- Completely reworked tooltips. Shift-click a node to force its tooltip to stay displayed. (And hopefully finally fixed flickering!)
+- Added text-input and slider components.
+- Added the ability to toggle respec confirmations.
+- Added custom respec confirmation messages.
+- The red layer highlight will not appear before a layer is unlocked.
+- Added unlocking hotkeys.
+- You no longer need to supply 'rows' and 'cols' for any Big Features.
+- Node symbols can use HTML.
+- Added documentation for the respec button.
+- Added ctrlDown and shiftDown variables.
+- Added prestigeNotify to subtabs, and prestigeNotify in subtabs also highlights the layer node.
+- The version number no longer contains special characters or irrational numbers.
+
+
+# v2.π.1 - 4/7/21
+- Fixed formatting for some larger numbers.
+- Upgrades will expand if there is too much text to display. 
+- Fixed styling challenges.
+- No longer attempts to display a base currency when there is none.
+
 ## v2.π: Incrementally Updated - 2/5/21
 - Performance improvements.
 - Fixed tooltips overlapping with the top display.
@@ -8,6 +29,7 @@
 - "Best" is updated automatically.
 - Fixed keeping Decimal values on reset.
 - Code reorganization and style improvements by fudo.
+
 
 ## v2.3.5 - 12/21/20
 - Added resetTime, which tracks the time since a layer prestiged or was reset.

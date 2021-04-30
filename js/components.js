@@ -141,29 +141,21 @@ function loadVue() {
 	});
 
 	// data = id
-	Vue.component("challenge", {
-		props: ["layer", "data"],
+	Vue.component('challenge', {
+		props: ['layer', 'data'],
 		template: `
-          <div
-              v-if="tmp[layer].challenges && tmp[layer].challenges[data]!== undefined && tmp[layer].challenges[data].unlocked && !(player.hideChallenges && maxedChallenge(layer, [data]))"
-              v-bind:class="{hChallenge: true, done: tmp[layer].challenges[data].defaultStyle === 'done', canComplete:tmp[layer].challenges[data].defaultStyle === 'canComplete', locked: tmp[layer].challenges[data].defaultStyle === 'locked'}">
-          <br>
-          <h3 v-html="tmp[layer].challenges[data].name"></h3><br><br>
-          <button v-bind:class="{ longUpg: true, can: true, [layer]: true }"
-                  v-bind:style="{'background-color': tmp[layer].color}" v-on:click="startChallenge(layer, data)">
-            {{ tmp[layer].challenges[data].buttonText }}
-          </button>
-          <br><br>
-          <span v-if="tmp[layer].challenges[data].fullDisplay" v-html="tmp[layer].challenges[data].fullDisplay"></span>
-          <span v-else>
+		<div v-if="tmp[layer].challenges && tmp[layer].challenges[data]!== undefined && tmp[layer].challenges[data].unlocked && !(player.hideChallenges && maxedChallenge(layer, [data]))" v-bind:class="{hChallenge: true, done: tmp[layer].challenges[data].defaultStyle === 'done', canComplete:tmp[layer].challenges[data].defaultStyle === 'canComplete', locked: tmp[layer].challenges[data].defaultStyle === 'locked'}" v-bind:style="tmp[layer].challenges[data].style">
+			<br><h3 v-html="tmp[layer].challenges[data].name"></h3><br><br>
+			<button v-bind:class="{ longUpg: true, can: true, [layer]: true }" v-bind:style="{'background-color': tmp[layer].color}" v-on:click="startChallenge(layer, data)">{{tmp[layer].challenges[data].buttonText}}</button><br><br>
+			<span v-if="tmp[layer].challenges[data].fullDisplay" v-html="tmp[layer].challenges[data].fullDisplay"></span>
+			<span v-else>
 				<span v-html="tmp[layer].challenges[data].challengeDescription"></span><br>
 				Goal:  <span v-if="tmp[layer].challenges[data].goalDescription"
                              v-html="tmp[layer].challenges[data].goalDescription"></span><span
               v-else>{{ format(tmp[layer].challenges[data].goal) }}
             {{ tmp[layer].challenges[data].currencyDisplayName ? tmp[layer].challenges[data].currencyDisplayName : "points" }}</span><br>
 				Reward: <span v-html="tmp[layer].challenges[data].rewardDescription"></span><br>
-				<span v-if="tmp[layer].challenges[data].rewardEffect!==undefined">Currently: <span
-                    v-html="(tmp[layer].challenges[data].rewardDisplay) ? (tmp[layer].challenges[data].rewardDisplay) : format(tmp[layer].challenges[data].rewardEffect)"></span></span>
+				<span v-if="tmp[layer].challenges[data].rewardDisplay!==undefined">Currently: <span v-html="(tmp[layer].challenges[data].rewardDisplay) ? (tmp[layer].challenges[data].rewardDisplay) : format(tmp[layer].challenges[data].rewardEffect)"></span></span>
 			</span>
           </div>
 		`
@@ -304,67 +296,52 @@ function loadVue() {
 	Vue.component("resource-display", {
 		props: ["layer"],
 		template: `
-          <div style="margin-top: -13px">
-          <span><br>You have {{ formatWhole(tmp[layer].baseAmount) }} {{ tmp[layer].baseResource }}</span>
-          <span v-if="tmp[layer].passiveGeneration"><br>You are gaining
-            {{ formatWhole(tmp[layer].resetGain.times(tmp[layer].passiveGeneration)) }} {{ tmp[layer].resource }} per second</span>
-          <br><br>
-          <span v-if="tmp[layer].showBest">Your best {{ tmp[layer].resource }} is {{ formatWhole(player[layer].best) }}
-            <br></span>
-          <span v-if="tmp[layer].showTotal">You have made a total of {{ formatWhole(player[layer].total) }}
-            {{ tmp[layer].resource }}<br></span>
-          </div>
+		<div style="margin-top: -13px">
+			<span v-if="tmp[layer].baseAmount"><br>You have {{formatWhole(tmp[layer].baseAmount)}} {{tmp[layer].baseResource}}</span>
+			<span v-if="tmp[layer].passiveGeneration"><br>You are gaining {{formatWhole(tmp[layer].resetGain.times(tmp[layer].passiveGeneration))}} {{tmp[layer].resource}} per second</span>
+			<br><br>
+			<span v-if="tmp[layer].showBest">Your best {{tmp[layer].resource}} is {{formatWhole(player[layer].best)}}<br></span>
+			<span v-if="tmp[layer].showTotal">You have made a total of {{formatWhole(player[layer].total)}} {{tmp[layer].resource}}<br></span>
+		</div>
 		`
 	});
 
 	// data = button size, in px
-	Vue.component("buyables", {
-		props: ["layer", "data"],
+	Vue.component('buyables', {
+		props: ['layer', 'data'],
 		template: `
-          <div v-if="tmp[layer].buyables" class="upgTable">
-          <respec-button
-              v-if="tmp[layer].buyables.respec && !(tmp[layer].buyables.showRespec !== undefined && tmp[layer].buyables.showRespec === false)"
-              :layer="layer"
-              v-bind:style="[{'margin-bottom': '12px'}, tmp[layer].componentStyles['respec-button']]"></respec-button>
-          <div v-for="row in tmp[layer].buyables.rows" class="upgRow">
-            <div v-for="col in tmp[layer].buyables.cols">
-              <div v-if="tmp[layer].buyables[row*10+col]!== undefined && tmp[layer].buyables[row*10+col].unlocked"
-                   class="upgAlign"
-                   v-bind:style="{'margin': '7px',  'height': (data ? data : 'inherit'),}">
-                <buyable :layer="layer" :data="row*10+col" :size="data"></buyable>
-              </div>
-            </div>
-            <br>
-          </div>
-          </div>
-		`
-	});
+		<div v-if="tmp[layer].buyables" class="upgTable">
+			<div>
+				<div class="tooltipBox"><input type="checkbox" v-model="player[layer].noRespecConfirm" ><tooltip v-bind:text="'Disable respec confirmation'"></tooltip></div>
+				<respec-button v-if="tmp[layer].buyables.respec && !(tmp[layer].buyables.showRespec !== undefined && tmp[layer].buyables.showRespec == false)" :layer = "layer" v-bind:style="[{'margin-bottom': '12px'}, tmp[layer].componentStyles['respec-button']]"></respec-button>
+			</div>
+			<div v-for="row in tmp[layer].buyables.rows" class="upgRow">
+				<div v-for="col in tmp[layer].buyables.cols"><div v-if="tmp[layer].buyables[row*10+col]!== undefined && tmp[layer].buyables[row*10+col].unlocked" class="upgAlign" v-bind:style="{'margin-left': '7px', 'margin-right': '7px',  'height': (data ? data : 'inherit'),}">
+					<buyable :layer = "layer" :data = "row*10+col" :size = "data"></buyable>
+				</div></div>
+				<br>
+			</div>
+		</div>
+	`
+	})
 
 	// data = id of buyable
-	Vue.component("buyable", {
-		props: ["layer", "data", "size"],
+	Vue.component('buyable', {
+		props: ['layer', 'data', 'size'],
 		template: `
-          <div
-              v-if="tmp[layer].buyables && tmp[layer].buyables[data]!== undefined && tmp[layer].buyables[data].unlocked"
-              style="display: grid">
-          <button
-              v-bind:class="{ buyable: true, can: tmp[layer].buyables[data].canAfford, locked: !tmp[layer].buyables[data].canAfford}"
-              v-bind:style="[tmp[layer].buyables[data].canAfford ? {'background-color': tmp[layer].buyables[data].color || tmp[layer].color} : {}, size ? {'height': size, 'width': size} : {}, tmp[layer].componentStyles.buyable, tmp[layer].buyables[data].style]"
-              v-on:click="buyBuyable(layer, data)">
-				<span v-if="tmp[layer].buyables[data].title">
-				  <!--suppress HtmlUnknownTag -->
-				  <h2 v-html="tmp[layer].buyables[data].title"></h2><br>
-				</span>
-            <span v-bind:style="{'white-space': 'pre-line'}" v-html="tmp[layer].buyables[data].display"></span>
-          </button>
-          <br v-if="(tmp[layer].buyables[data].sellOne !== undefined && !(tmp[layer].buyables[data].canSellOne !== undefined && tmp[layer].buyables[data].canSellOne === false)) || (tmp[layer].buyables[data].sellAll && !(tmp[layer].buyables[data].canSellAll !== undefined && tmp[layer].buyables[data].canSellAll === false))">
-          <sell-one :layer="layer" :data="data" v-bind:style="tmp[layer].componentStyles['sell-one']"
-                    v-if="(tmp[layer].buyables[data].sellOne)&& !(tmp[layer].buyables[data].canSellOne !== undefined && tmp[layer].buyables[data].canSellOne === false)"></sell-one>
-          <sell-all :layer="layer" :data="data" v-bind:style="tmp[layer].componentStyles['sell-all']"
-                    v-if="(tmp[layer].buyables[data].sellAll)&& !(tmp[layer].buyables[data].canSellAll !== undefined && tmp[layer].buyables[data].canSellAll === false)"></sell-all>
-          </div>
+		<div v-if="tmp[layer].buyables && tmp[layer].buyables[data]!== undefined && tmp[layer].buyables[data].unlocked" style="display: grid">
+			<button v-bind:class="{ buyable: true, can: tmp[layer].buyables[data].canAfford, locked: !tmp[layer].buyables[data].canAfford}"
+			v-bind:style="[tmp[layer].buyables[data].canAfford ? {'background-color': tmp[layer].buyables[data].color || tmp[layer].color} : {}, size ? {'height': size, 'width': size} : {}, tmp[layer].componentStyles.buyable, tmp[layer].buyables[data].style]"
+			v-on:click="buyBuyable(layer, data)">
+				<span v-if= "tmp[layer].buyables[data].title"><h2 v-html="tmp[layer].buyables[data].title"></h2><br></span>
+				<span v-bind:style="{'white-space': 'pre-line'}" v-html="tmp[layer].buyables[data].display"></span>
+			</button>
+			<br v-if="(tmp[layer].buyables[data].sellOne !== undefined && !(tmp[layer].buyables[data].canSellOne !== undefined && tmp[layer].buyables[data].canSellOne == false)) || (tmp[layer].buyables[data].sellAll && !(tmp[layer].buyables[data].canSellAll !== undefined && tmp[layer].buyables[data].canSellAll == false))">
+			<sell-one :layer="layer" :data="data" v-bind:style="tmp[layer].componentStyles['sell-one']" v-if="(tmp[layer].buyables[data].sellOne)&& !(tmp[layer].buyables[data].canSellOne !== undefined && tmp[layer].buyables[data].canSellOne == false)"></sell-one>
+			<sell-all :layer="layer" :data="data" v-bind:style="tmp[layer].componentStyles['sell-all']" v-if="(tmp[layer].buyables[data].sellAll)&& !(tmp[layer].buyables[data].canSellAll !== undefined && tmp[layer].buyables[data].canSellAll == false)"></sell-all>
+		</div>
 		`
-	});
+	})
 
 	Vue.component("respec-button", {
 		props: ["layer", "data"],
@@ -517,22 +494,14 @@ function loadVue() {
 	Vue.component("achievement", {
 		props: ["layer", "data"],
 		template: `
-          <div
-              v-if="tmp[layer].achievements && tmp[layer].achievements[data]!== undefined && tmp[layer].achievements[data].unlocked"
-              v-bind:class="{ [layer]: true, achievement: true, locked: !hasAchievement(layer, data), bought: hasAchievement(layer, data)}"
-              v-bind:tooltip="
-				(tmp[layer].achievements[data].tooltip === '') ? false : hasAchievement(layer, data) ? (tmp[layer].achievements[data].doneTooltip ? tmp[layer].achievements[data].doneTooltip : (tmp[layer].achievements[data].tooltip ? tmp[layer].achievements[data].tooltip : 'You did it!'))
-				: (tmp[layer].achievements[data].goalTooltip ? tmp[layer].achievements[data].goalTooltip : (tmp[layer].achievements[data].tooltip ? tmp[layer].achievements[data].tooltip : 'LOCKED'))
-			"
-              v-bind:style="tmp[layer].achievements[data].computedStyle">
-          <span v-if="tmp[layer].achievements[data].name">
-			  <br>
-            <!--suppress HtmlUnknownTag -->
-			  <h3 v-bind:style="tmp[layer].achievements[data].textStyle"
-                  v-html="tmp[layer].achievements[data].name"></h3>
-			  <br>
-			</span>
-          </div>
+		<div v-if="tmp[layer].achievements && tmp[layer].achievements[data]!== undefined && tmp[layer].achievements[data].unlocked" v-bind:class="{ [layer]: true, achievement: true, tooltipBox:true, locked: !hasAchievement(layer, data), bought: hasAchievement(layer, data)}"
+			v-bind:style="tmp[layer].achievements[data].computedStyle">
+			<tooltip :text="
+			(tmp[layer].achievements[data].tooltip == '') ? false : hasAchievement(layer, data) ? (tmp[layer].achievements[data].doneTooltip ? tmp[layer].achievements[data].doneTooltip : (tmp[layer].achievements[data].tooltip ? tmp[layer].achievements[data].tooltip : 'You did it!'))
+			: (tmp[layer].achievements[data].goalTooltip ? tmp[layer].achievements[data].goalTooltip : (tmp[layer].achievements[data].tooltip ? tmp[layer].achievements[data].tooltip : 'LOCKED'))
+		"></tooltip>
+			<span v-if= "tmp[layer].achievements[data].name"><br><h3 v-bind:style="tmp[layer].achievements[data].textStyle" v-html="tmp[layer].achievements[data].name"></h3><br></span>
+		</div>
 		`
 	});
 
@@ -562,6 +531,24 @@ function loadVue() {
 		`
 	});
 
+	// Updates the value in player[layer][data]
+	Vue.component('text-input', {
+		props: ['layer', 'data'],
+		template: `
+			<input class="instant" :id="'input-' + layer + '-' + data" :value="player[layer][data].toString()" v-on:focus="focused(true)" v-on:blur="focused(false)"
+			v-on:change="player[layer][data] = toValue(document.getElementById('input-' + layer + '-' + data).value, player[layer][data])">
+		`
+	})
+
+// Updates the value in player[layer][data]
+	Vue.component('slider', {
+		props: ['layer', 'data'],
+		template: `
+			<div class="tooltipBox">
+			<tooltip :text="player[layer][data[0]]"></tooltip><input type="range" v-model="player[layer][data[0]]" :min="data[1]" :max="data[2]"></div>
+		`
+	})
+
 	// These are for buyables, data is the id of the corresponding buyable
 	Vue.component("sell-one", {
 		props: ["layer", "data"],
@@ -586,12 +573,13 @@ function loadVue() {
 
 	// SYSTEM COMPONENTS
 
-	Vue.component("tab-buttons", systemComponents["tab-buttons"]);
-	Vue.component("tree-node", systemComponents["tree-node"]);
-	Vue.component("layer-tab", systemComponents["layer-tab"]);
-	Vue.component("overlay-head", systemComponents["overlay-head"]);
-	Vue.component("info-tab", systemComponents["info-tab"]);
-	Vue.component("options-tab", systemComponents["options-tab"]);
+	Vue.component('tab-buttons', systemComponents['tab-buttons'])
+	Vue.component('tree-node', systemComponents['tree-node'])
+	Vue.component('layer-tab', systemComponents['layer-tab'])
+	Vue.component('overlay-head', systemComponents['overlay-head'])
+	Vue.component('info-tab', systemComponents['info-tab'])
+	Vue.component('options-tab', systemComponents['options-tab'])
+	Vue.component('tooltip', systemComponents['tooltip'])
 
 
 	Vue.component("sticky", {

@@ -64,7 +64,8 @@ function updateLayers(){
 function setupLayer(layer){
     layers[layer].layer = layer
     if (layers[layer].upgrades){
-        for (let thing in layers[layer].upgrades){
+        setRowCol(layers[layer].upgrades)
+        for (thing in layers[layer].upgrades){
             if (!isNaN(thing)){
                 layers[layer].upgrades[thing].id = thing
                 layers[layer].upgrades[thing].layer = layer
@@ -84,7 +85,8 @@ function setupLayer(layer){
         }
     }
     if (layers[layer].achievements){
-        for (let thing in layers[layer].achievements){
+        setRowCol(layers[layer].achievements)
+        for (thing in layers[layer].achievements){
             if (!isNaN(thing)){
                 layers[layer].achievements[thing].id = thing
                 layers[layer].achievements[thing].layer = layer
@@ -94,7 +96,8 @@ function setupLayer(layer){
         }
     }
     if (layers[layer].challenges){
-        for (let thing in layers[layer].challenges){
+        setRowCol(layers[layer].challenges)
+        for (thing in layers[layer].challenges){
             if (!isNaN(thing)){
                 layers[layer].challenges[thing].id = thing
                 layers[layer].challenges[thing].layer = layer
@@ -108,7 +111,8 @@ function setupLayer(layer){
     }
     if (layers[layer].buyables){
         layers[layer].buyables.layer = layer
-        for (let thing in layers[layer].buyables){
+        setRowCol(layers[layer].buyables)
+        for (thing in layers[layer].buyables){
             if (!isNaN(thing)){
                 layers[layer].buyables[thing].id = thing
                 layers[layer].buyables[thing].layer = layer
@@ -120,7 +124,8 @@ function setupLayer(layer){
 
     if (layers[layer].clickables){
         layers[layer].clickables.layer = layer
-        for (let thing in layers[layer].clickables){
+        setRowCol(layers[layer].clickables)
+        for (thing in layers[layer].clickables){
             if (!isNaN(thing)){
                 layers[layer].clickables[thing].id = thing
                 layers[layer].clickables[thing].layer = layer
@@ -215,6 +220,35 @@ function addLayer(layerName, layerData, tabLayers = null){ // Call this to add l
 function addNode(layerName, layerData){ // Does the same thing, but for non-layer nodes
     layers[layerName] = layerData
     layers[layerName].isLayer = false
+}
+
+// If data is a function, return the result of calling it. Otherwise, return the data.
+function readData(data, args=null){
+	if ((!!data && data.constructor && data.call && data.apply))
+		return data(args);
+	else
+		return data;
+}
+
+function setRowCol(upgrades) {
+    if (upgrades.rows && upgrades.cols) return
+    let maxRow = 0
+    let maxCol = 0
+    for (up in upgrades) {
+        if (!isNaN(up)) {
+            if (Math.floor(up/10) > maxRow) maxRow = Math.floor(up/10)
+            if (up%10 > maxCol) maxCol = up%10
+        }
+    }
+    upgrades.rows = maxRow
+    upgrades.cols = maxCol
+}
+
+function someLayerUnlocked(row){
+    for (layer in ROW_LAYERS[row])
+        if (player[layer].unlocked)
+            return true
+    return false
 }
 
 
