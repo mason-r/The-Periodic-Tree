@@ -1135,3 +1135,20 @@ b, h3 {
     font-size: large;
     transform: translate(-50%, -50%);
 }
+
+.upg.locked.candypop-selector {
+    box-shadow: #f1ebd9 0 0 8px 4px;
+    transition-property: transform;
+}
+.upg.locked.generator-selector {
+    box-shadow: #89C6FF 0 0 8px 4px;
+    transition-property: transform;
+}
+.upg.locked.rune {
+    box-shadow: #1e1e1e 0 0 8px 12px;
+    transition-property: transform;
+}
+
+.rune {
+    transition-property: transform, box-shadow;
+}

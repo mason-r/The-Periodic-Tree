@@ -1,12 +1,47 @@
+Vue.component("rune", {
+	props: ["layer", "data"],
+	template: `<div class="upgAlign">
+		<button class="upg can rune" style="width: 60px; min-height: 60px;"
+			v-on:click="setRune(data)"
+			v-bind:style="{
+				background: 'url(images/' + player.rituals.board[\`\$\{data[0]\}\$\{data[1]\}\`] + 'Rune.webp) no-repeat center / contain ' + (layers[player.rituals.board[\`\$\{data[0]\}\$\{data[1]\}\`]]?.color || ritualsColor)
+			}">
+		</button>
+	</div>`
+})
+
+const rituals = {
+	xp: {
+		title: "Ritual of Doctrina",
+		pattern: [ [ 0, 1 ], [ 1, 0 ] ],
+		effect: amount => new Decimal(amount),
+		effectDisplay: () => format(ritualEffect("xp")) + " xp/s",
+		unlocked: () => true
+	}
+};
+
+function ritualEffect(id) {
+	let effect = rituals[id].effect(player.rituals.rituals[id] || 0);
+	if (player.generators.ritualsActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
+		effect = effect.sqrt();
+	}
+	return effect;
+}
+
 // Note: id is the corresponding *buyable* ID
 function createRuneSelector(id, rune) {
 	// TODO image based on rune
 	return {
-		color: layers[rune]?.color,
+		color: layers[rune]?.color || ritualsColor,
+		class: {
+			rune: true
+		},
 		style: {
 			width: "60px",
 			minHeight: "60px",
-			"--count": () => (getBuyableAmount("rituals", id)?.toNumber() || 0) - Object.values(player.rituals.board).filter(r => r === rune).length
+			background: rune ? 'url(images/' + rune + 'Rune.webp) no-repeat center / contain' : '',
+			backgroundColor: layers[rune]?.color || ritualsColor,
+			"--count": rune === null ? "" : () => (getBuyableAmount("rituals", id)?.toNumber() || 0) - Object.values(player.rituals.board).filter(r => r === rune).length
 		},
 		canClick: () => player.rituals.selectedRune !== rune,
 		onClick: () => player.rituals.selectedRune = rune
@@ -19,6 +54,7 @@ function createRuneBuyable(id, title) {
 		display() {
 			return `Craft another rune<br/><br/>Currently: ${formatWhole(getBuyableAmount("rituals", this.id))}<br/><br/>Cost: ${format(this.cost())} ${layers[id].resource}`;
 		},
+		runeType: id,
 		color: layers[id].color,
 		style: {
 			width: '160px',
@@ -39,6 +75,75 @@ function createRuneBuyable(id, title) {
 	};
 }
 
+function getRows() {
+	let rows = 3;
+	if (hasMilestone("rituals", 1)) {
+		rows++;
+	}
+	if (hasMilestone("rituals", 4)) {
+		rows++;
+	}
+	return rows;
+}
+
+function getCols() {
+	let cols = 3;
+	if (hasMilestone("rituals", 0)) {
+		cols++;
+	}
+	if (hasMilestone("rituals", 3)) {
+		cols++;
+	}
+	return cols;
+}
+
+function setRune([row, col]) {
+	if (player.rituals.selectedRune == null || (getBuyableAmount("rituals", Object.values(layers.rituals.buyables).find(b => b.runeType === player.rituals.selectedRune).id)?.toNumber() || 0) - Object.values(player.rituals.board).filter(r => r === player.rituals.selectedRune).length > 0) {
+		player.rituals.board[`${row}${col}`] = player.rituals.selectedRune;
+		player.rituals.rituals = getRituals();
+	}
+}
+
+function checkRitual(ritual, top, left) {
+	// Store a lookup table of what runes this pattern is using
+	const types = {};
+
+	for (let r = 0; r < ritual.pattern.length; r++) {
+		for (let c = 0; c < ritual.pattern[r].length; c++) {
+			let patternTile = ritual.pattern[r][c];
+			let tile = player.rituals.board[`${top + r}${left + c}`];
+			if ((patternTile in types && types[patternTile] !== tile) ||
+				tile == null) {
+				return false;
+			}
+			types[patternTile] = tile;
+		}
+	}
+	return true;
+}
+
+function getRituals() {
+	const rows = getRows();
+	const cols = getCols();
+	const ritualCounts = {};
+	Object.entries(rituals).forEach(([id, ritual]) => {
+		let ritualCount = 0;
+		for (let row = 0; row < rows && row <= rows - ritual.pattern.length; row++) {
+			for (let col = 0; col < cols && col <= cols - ritual.pattern[0].length; col++) {
+				// [row, col] is the top left of the ritual
+				// TODO allow negative numbers to represent "not this type"
+				if (checkRitual(ritual, row, col)) {
+					ritualCount++;
+				}
+			}
+		}
+		if (ritualCount > 0) {
+			ritualCounts[id] = ritualCount;
+		}
+	});
+	return ritualCounts;
+}
+
 addLayer("rituals", {
 	name: "rituals",
 	image: "images/bright-72804.jpg",
@@ -54,7 +159,8 @@ addLayer("rituals", {
 			lastLevel: new Decimal(0),
 			timeLoopActive: false,
 			board: {},
-			selectedRune: null
+			selectedRune: null,
+			rituals: {}
 		};
 	},
 	tabFormat: () => player.tab !== "rituals" ? [] : [
@@ -64,6 +170,10 @@ addLayer("rituals", {
 		"blank",
 		["sticky", ["36px", ["clickables"]]],
 		"blank",
+		...new Array(getRows()).fill(0).map((_,row) => ["row", new Array(getCols()).fill(0).map((_,col) => ["rune", [row, col]])]),
+		"blank",
+		...Object.keys(rituals).filter(id => ritualEffect(id).gt(0)).map(id => ["display-text", `${rituals[id].title} (${player.rituals.rituals[id]}): ${rituals[id].effectDisplay()}`]),
+		"blank",
 		["milestones-filtered", [2, 5, 6]]
 	],
 	update(diff) {
@@ -71,6 +181,9 @@ addLayer("rituals", {
 			if (player.generators.ritualsActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 				diff = diff / 10;
 			}
+			let xpGain = ritualEffect("xp");
+			player[this.layer].xp = player[this.layer].xp.add(xpGain);
+			checkJobXP(this.layer);
 		}
 	},
 	milestones: {
@@ -99,7 +212,7 @@ addLayer("rituals", {
 		5: {
 			title: "You must not be seen.",
 			requirementDescription: "Level 10",
-			"effectDescription": "Unlock the Ritual of Ascent",
+			"effectDescription": "Unlock the Ritual of Ascensio",
 			done: () => player.rituals.xp.gte(1e9),
 			unlocked: () => hasMilestone("rituals", 2)
 		},
@@ -112,6 +225,8 @@ addLayer("rituals", {
 		}
 	},
 	clickables: {
+		rows: 1,
+		cols: 7,
 		11: {
 			title: "Clear All",
 			style: {

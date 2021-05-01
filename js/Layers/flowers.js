@@ -326,7 +326,8 @@ addLayer("flowers", {
 		selectFlowers: {
 			title: "Collecting",
 			color: flowersColor,
-			style: { minHeight: "50px" },
+			class: { 'candypop-selector': true },
+			style: { minHeight: "50px", color: "black", backgroundColor: flowersColor },
 			canClick: () => player.flowers.sacrificeType !== "flowers",
 			onClick: () => player.flowers.sacrificeType = "flowers",
 			unlocked: () => tmp.flowers.layerShown
@@ -334,7 +335,8 @@ addLayer("flowers", {
 		selectDistill: {
 			title: "Distilling",
 			color: distillColor,
-			style: { minHeight: "50px" },
+			class: { 'candypop-selector': true },
+			style: { minHeight: "50px", color: "black", backgroundColor: distillColor },
 			canClick: () => player.flowers.sacrificeType !== "distill",
 			onClick: () => player.flowers.sacrificeType = "distill",
 			unlocked: () => tmp.distill.layerShown
@@ -342,7 +344,8 @@ addLayer("flowers", {
 		selectStudy: {
 			title: "Studying",
 			color: studyColor,
-			style: { minHeight: "50px" },
+			class: { 'candypop-selector': true },
+			style: { minHeight: "50px", color: "black", backgroundColor: studyColor },
 			canClick: () => player.flowers.sacrificeType !== "study",
 			onClick: () => player.flowers.sacrificeType = "study",
 			unlocked: () => tmp.study.layerShown
@@ -350,7 +353,8 @@ addLayer("flowers", {
 		selectSands: {
 			title: "Experimenting",
 			color: sandsColor,
-			style: { minHeight: "50px" },
+			class: { 'candypop-selector': true },
+			style: { minHeight: "50px", color: "black", backgroundColor: sandsColor },
 			canClick: () => player.flowers.sacrificeType !== "sands",
 			onClick: () => player.flowers.sacrificeType = "sands",
 			unlocked: () => tmp.sands.layerShown
@@ -358,7 +362,8 @@ addLayer("flowers", {
 		selectGenerators: {
 			title: "Generating",
 			color: electricColor,
-			style: { minHeight: "50px" },
+			class: { 'candypop-selector': true },
+			style: { minHeight: "50px", color: "black", backgroundColor: electricColor },
 			canClick: () => player.flowers.sacrificeType !== "generators",
 			onClick: () => player.flowers.sacrificeType = "generators",
 			unlocked: () => tmp.generators.layerShown
@@ -366,7 +371,8 @@ addLayer("flowers", {
 		selectRituals: {
 			title: "Rituals",
 			color: ritualsColor,
-			style: { minHeight: "50px" },
+			class: { 'candypop-selector': true },
+			style: { minHeight: "50px", color: "white", backgroundColor: ritualsColor },
 			canClick: () => player.flowers.sacrificeType !== "rituals",
 			onClick: () => player.flowers.sacrificeType = "rituals",
 			unlocked: () => tmp.rituals.layerShown

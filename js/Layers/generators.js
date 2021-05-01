@@ -402,9 +402,12 @@ addLayer("generators", {
 		// TODO ritual charger,
 		"perc1": {
 			title: "1%",
+			class: { 'generator-selector': true },
 			style: {
 				width: "60px",
-				minHeight: "60px"
+				minHeight: "60px",
+				color: "black",
+				backgroundColor: electricColor
 			},
 			canClick: () => player.generators.allocPerc.neq(0.01),
 			onClick: () => {
@@ -413,9 +416,12 @@ addLayer("generators", {
 		},
 		"perc10": {
 			title: "10%",
+			class: { 'generator-selector': true },
 			style: {
 				width: "60px",
-				minHeight: "60px"
+				minHeight: "60px",
+				color: "black",
+				backgroundColor: electricColor
 			},
 			canClick: () => player.generators.allocPerc.neq(0.1),
 			onClick: () => {
@@ -424,9 +430,12 @@ addLayer("generators", {
 		},
 		"perc50": {
 			title: "50%",
+			class: { 'generator-selector': true },
 			style: {
 				width: "60px",
-				minHeight: "60px"
+				minHeight: "60px",
+				color: "black",
+				backgroundColor: electricColor
 			},
 			canClick: () => player.generators.allocPerc.neq(0.5),
 			onClick: () => {
@@ -435,9 +444,12 @@ addLayer("generators", {
 		},
 		"perc100": {
 			title: "100%",
+			class: { 'generator-selector': true },
 			style: {
 				width: "60px",
-				minHeight: "60px"
+				minHeight: "60px",
+				color: "black",
+				backgroundColor: electricColor
 			},
 			canClick: () => player.generators.allocPerc.neq(1),
 			onClick: () => {
