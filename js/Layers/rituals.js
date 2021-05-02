@@ -294,7 +294,10 @@ addLayer("rituals", {
 				minHeight: "60px"
 			},
 			canClick: () => Object.keys(player.rituals.board).length > 0,
-			onClick: () => player.rituals.board = {}
+			onClick: () => {
+				player.rituals.board = {};
+				player.rituals.rituals = getRituals();
+			}
 		},
 		12: createRuneSelector(null, null),
 		13: createRuneSelector(11, "flowers"),

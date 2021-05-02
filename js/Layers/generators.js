@@ -207,6 +207,8 @@ addLayer("generators", {
 				if (player[this.layer].batteries[key].lt(0.01)) {
 					player[this.layer].batteries[key] = new Decimal(0);
 				}
+			});
+			["flowers", "distill", "study", "sands", "rituals"].forEach(key => {
 				if (player[this.layer][`${key}Active`]) {
 					player[this.layer][`${key}Duration`] += diff;
 				}
@@ -267,7 +269,7 @@ addLayer("generators", {
 			title: "Well, good luck.<br>",
 			description: "Multiply joules gain by 2 raised to the number of active generators<br>",
 			cost: new Decimal(1e4),
-			effect: () => Decimal.pow(2, ["flower", "distill", "study", "sands"].filter(g => player.generators[`${g}Active`]).length),
+			effect: () => Decimal.pow(2, ["flower", "distill", "study", "sands", "rituals"].filter(g => player.generators[`${g}Active`]).length),
 			unlocked: () => hasMilestone("generators", 3),
 			effectDisplay() {
 				return `x${formatWhole(this.effect())}`;
