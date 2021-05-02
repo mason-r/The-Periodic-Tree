@@ -222,7 +222,9 @@ function drawNextCard() {
 					card.classList.add("flipCard");
 				}
 			}
-			doPopup("none", "Shop restocked", "Check it out!", 1, layers.study.color);
+			if (player.study.notifs) {
+				doPopup("none", "Shop restocked", "Check it out!", 1, layers.study.color);
+			}
 		}
 	}
 }
@@ -249,6 +251,7 @@ addLayer("study", {
 			cards: baseCards(),
 			lastCard: null,
 			shop: getShop(),
+			notifs: true,
 			increasePointsGain: new Decimal(0),
 			multiplyPointsGain: new Decimal(0),
 			increaseXpGain: new Decimal(0),
@@ -325,6 +328,12 @@ addLayer("study", {
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
 				"blank",
 				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`]]],
+				"blank",
+				["row", [
+					["display-text", "Shop Refresh Notifications"],
+					"blank",
+					["toggle", ["study", "notifs"]]
+				]],
 				"blank",
 				["display-text", `Cards refresh in ${getRefreshDraws() - player.study.refreshProgress} draws`],
 				"blank",
