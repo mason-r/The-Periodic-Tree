@@ -83,33 +83,35 @@ const getShop = (numCards = 3) => {
 	return new Array(numCards).fill(1).map(() => shopCards[Math.floor(Math.random() * shopCards.length)]);
 };
 
-const cardFormat = (card, id = "", className = "", onclick = "", overrideLevel = "", width = "200px", height = "300px") => {
-	return card == null ? null : ["display-text", `
-		<div id="${id}" class="card ${className}" style="width: ${width}; height: ${height};" onclick="${onclick}">
+Vue.component("card", {
+	props: ["layer", "data"], // data is object with card, id, className, onclick, overrideLevel, width, height, and note
+	template: `<div class="upgCol">
+		<div :id="data.id" class="card" :class="{ [data.className]: true }" :style="{ width: data.width || '200px', height: data.height || '300px' }" v-on:click="onclick">
 			<span style="border-bottom: 1px solid white; margin: 0; max-height: calc(50% - 30px); padding-bottom: 10px;">
-				<!--suppress HtmlUnknownTag -->
-				<h3>${isFunction(cards[card].title) ? cards[card].title(overrideLevel || cardLevel(card)) : cards[card].title}</h3>
+				<h3>{{ title }}</h3>
 			</span>
-			<span style="flex-basis: 0;"><span>${isFunction(cards[card].description) ? cards[card].description(overrideLevel || cardLevel(card)) : cards[card].description}</span></span>
-			<span style="flex-shrink: 1"></span>
-			<img src="images/Time2wait.svg" alt="hourglass"/>
-		</div>`];
-};
-
-const cardFormatWithNote = (card, note, id = "", className = "", onclick = "", overrideLevel = "", width = "200px", height = "300px") => {
-	return card == null ? null : ["display-text", `<div class="upgCol">
-		<div id="${id}" class="card ${className}" style="width: ${width}; height: ${height};" onclick="${onclick}">
-			<span style="border-bottom: 1px solid white; margin: 0; max-height: calc(50% - 30px); padding-bottom: 10px;">
-				<!--suppress HtmlUnknownTag -->
-				<h3>${isFunction(cards[card].title) ? cards[card].title(overrideLevel || cardLevel(card)) : cards[card].title}</h3>
-			</span>
-			<span style="flex-basis: 0;"><span>${isFunction(cards[card].description) ? cards[card].description(overrideLevel || cardLevel(card)) : cards[card].description}</span></span>
+			<span style="flex-basis: 0;"><span v-html="description"></span></span>
 			<span style="flex-shrink: 1"></span>
 			<img src="images/Time2wait.svg" alt="hourglass"/>
 		</div>
-		<div class="card-note">${note}</div>
-	</div>`];
-};
+		<div class="card-note" v-if="data.note != null">{{ data.note }}</div>
+	</div>`,
+	computed: {
+		title() {
+			return isFunction(cards[this.data.card].title) ? cards[this.data.card].title(overrideLevel || cardLevel(this.data.card)) : cards[this.data.card].title;
+		},
+		description() {
+			return isFunction(cards[this.data.card].description) ? cards[this.data.card].description(this.data.overrideLevel || cardLevel(this.data.card)) : cards[this.data.card].description;
+		}
+	},
+	methods: {
+		onclick() {
+			if (this.data.onclick) {
+				this.data.onclick();
+			}
+		}
+	}
+});
 
 function getCardUpgradeBuyable(id) {
 	const cost = x => {
@@ -256,7 +258,7 @@ addLayer("study", {
 				"blank",
 				["display-text", `Next draw in ${new Decimal(getDrawDuration() - player.study.drawProgress).clampMax(getDrawDuration() - 0.01).toFixed(2)} seconds`],
 				"blank",
-				cardFormat(player.study.lastCard, "mainCard", "flipCard"),
+				["card", { card: player.study.lastCard, id: "mainCard", className: "flipCard" }],
 				"blank",
 				["milestones-filtered", [2, 5, 6]]
 			]
@@ -267,7 +269,7 @@ addLayer("study", {
 				"blank",
 				["clickable", "reset"],
 				"blank",
-				["row", Object.entries(player.study.cards).map(([card, amount]) => cardFormatWithNote(card, amount))]
+				["row", Object.entries(player.study.cards).map(([card, amount]) => ["card", { card, note: amount }])]
 			]
 		},
 		"Buy Cards": {
@@ -282,7 +284,7 @@ addLayer("study", {
 				"blank",
 				["row", player.study.shop.map(({card, price}, i) =>
 					["column", [
-						card == null ? cardFormat("soldOut") : cardFormat(card, "", "shopCard flipCard", `purchaseCard(${i})`),
+						card == null ? ["card", { card: "soldOut" }] : ["card", { card, className: "shopCard flipCard", onclick: () => purchaseCard(i) }],
 						["display-text", `<div class='card-note'>${card in player.study.cards ? player.study.cards[card] : card == null ? '' : 'New!'}</div>`],
 						"blank",
 						["display-text", `<h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${card == null ? "​" /*zero width space*/ : formatWhole(price)}</h2>`]
@@ -302,7 +304,7 @@ addLayer("study", {
 				"blank",
 				["sticky", ["86px", ["clickable", "sell"]]],
 				"blank",
-				["row", Object.entries(player.study.cards).map(([card, amount]) => cardFormatWithNote(card, amount, "", player.study.selected === card ? "selectedCard cursor" : "cursor", `toggleSelectCard('${card}')`)), {width: "100%"}]
+				["row", Object.entries(player.study.cards).map(([card, amount]) => ["card", { card, note: amount, className: player.study.selected === card ? "selectedCard cursor" : "cursor", onclick: () => toggleSelectCard(card) }]), {width: "100%"}]
 			],
 			unlocked: () => hasMilestone("study", 1)
 		},
@@ -327,9 +329,9 @@ addLayer("study", {
 					"blank"
 				]] : null,
 				["column", Object.keys(player.study.cards).filter(card => card in layers.study.buyables).map(card => ["row", [
-					cardFormat(card),
+					["card", { card }],
 					["display-text", "〉〉", {fontSize: "36px", margin: "10px"}],
-					cardFormat(card, "", "", "", cardLevel(card).add(1)),
+					["card", { card, overrideLevel: cardLevel(card).add(1) }],
 					["buyable", card]
 				]])]
 			],
