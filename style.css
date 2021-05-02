@@ -833,7 +833,6 @@ button > * {
 /*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .selectedCard, .selectedCard:hover {
     transform: scale(1.2);
-    box-shadow: black 0 0 16px 8px;
     z-index: 2;
 }
 
@@ -1093,7 +1092,7 @@ b, h3 {
     padding: 8px;
     border-radius: 10px;
     position: absolute;
-    z-index: 10;
+    z-index: 9;
     transform: translate(-50%, -50%);
     margin-top: -20px;
     font-size: x-large;

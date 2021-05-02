@@ -26,23 +26,17 @@ const cards = {
 		gainStudyXp(amount.times(10));
 		checkJobXP("study");
 	}),
-	playTwice: createCard("Oh no, not again.", level => level === 0 ? "Play the next card twice." : `Play the next card twice, with the effect boosted by ${level.div(4)} levels.`, null, (nextCard, level) => {
+	playTwice: createCard("Oh no, not again.", level => level.eq(0) ? "Play the next card twice." : `Play the next card twice, with the effect boosted by ${level.div(4)} levels.`, null, (nextCard, level) => {
 		if (nextCard in cards && cards[nextCard].onDraw) {
 			cards[nextCard].onDraw(cardLevel(nextCard).add(level.div(4)));
 			cards[nextCard].onDraw(cardLevel(nextCard).add(level.div(4)), false);
 		}
 	}),
-	increasePointsGain: createCard("Have another drink, enjoy yourself.", level => {
-		const effect = softcap(player.study.increasePointsGain, new Decimal(100).times(level.add(1))).times(10);
-		let text = `Permanently increase studied properties gain by 10%.<br/><br/>Currently: +${formatWhole(effect)}%`;
-		if (player.study.increasePointsGain.gt(new Decimal(100).times(level.add(1)))) {
-			text = text + "<br/>(softcapped)";
-		}
-		return text;
-	}, () => player.study.increasePointsGain = player.study.increasePointsGain.add(1)),
+	increasePointsGain: createCard("Have another drink, enjoy yourself.", level => `Permanently increase studied properties gain by ${formatWhole(new Decimal(25).times(Decimal.pow(1.25, level)))}%.<br/><br/>Currently: +${formatWhole(player.study.increasePointsGain.times(new Decimal(25).times(Decimal.pow(1.25, level))))}%`, () => player.study.increasePointsGain = player.study.increasePointsGain.add(1)),
 	multiplyPointsGain: createCard("Reality is frequently inaccurate.", level => {
-		const effect = new Decimal(1.02).pow(softcap(player.study.multiplyPointsGain, new Decimal(100).times(level.div(4).add(1)), .2));
-		let text = `Permanently multiply studied properties gain by x1.02<br/><br/>Currently: x${format(effect)}`;
+		const scale = new Decimal(1.02).add(level.add(1).sqrt().div(100));
+		const effect = scale.pow(softcap(player.study.multiplyPointsGain, new Decimal(100).times(level.div(4).add(1)), .2));
+		let text = `Permanently multiply studied properties gain by x${format(scale)}<br/><br/>Currently: x${format(effect)}`;
 		if (player.study.multiplyPointsGain.gt(new Decimal(100).times(level.div(4).add(1)))) {
 			text = text + "<br/>(softcapped)";
 		}
@@ -57,10 +51,11 @@ const cards = {
 		return text;
 	}, () => player.study.sellDiscount = player.study.sellDiscount.add(1)),
 	soldOut: createCard("Out of Stock!"),
-	gainXp: createCard("A billion times over ... and no one learns anything.", level => `Gain xp equal to ${level === 0 ? "" : `${format(level.div(4).add(1))}x times `}your number of properties.`, level => {
+	gainXp: createCard("A billion times over ... and no one learns anything.", level => `Gain xp equal to ${level.eq(0) ? "" : `${format(level.div(4).add(1))}x times `}your number of properties.`, level => {
 		gainStudyXp(player.study.points.times(level.div(4).add(1)));
 		checkJobXP("study");
-	})
+	}),
+	increaseXpGain: createCard("There's a whole new <i>Guide</i>!", level => `Permanently increase this job's xp gain by ${formatWhole(new Decimal(10).times(Decimal.pow(1.5, level)))}%.<br/><br/>Currently: +${formatWhole(player.study.increaseXpGain.times(new Decimal(10).times(Decimal.pow(1.5, level))))}%`, () => player.study.increaseXpGain = player.study.increaseXpGain.add(1))
 };
 
 const shopCards = [
@@ -73,6 +68,7 @@ const shopCards = [
 	{card: "multiplyPointsGain", price: 18},
 	{card: "sellDiscount", price: 14},
 	{card: "gainXp", price: 25},
+	{card: "increaseXpGain", price: 12},
 ];
 
 const baseCards = () => {
@@ -88,7 +84,7 @@ Vue.component("card", {
 	template: `<div class="upgCol">
 		<div :id="data.id" class="card" :class="{ [data.className]: true }" :style="{ width: data.width || '200px', height: data.height || '300px' }" v-on:click="onclick">
 			<span style="border-bottom: 1px solid white; margin: 0; max-height: calc(50% - 30px); padding-bottom: 10px;">
-				<h3>{{ title }}</h3>
+				<h3 v-html="title"></h3>
 			</span>
 			<span style="flex-basis: 0;"><span v-html="description"></span></span>
 			<span style="flex-shrink: 1"></span>
@@ -172,21 +168,63 @@ function getDrawDuration() {
 	return drawSpeed;
 }
 
-function getRefreshPeriod() {
-	let refreshPeriod = new Decimal(120);
-	if (player.generators.studyActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
-		refreshPeriod = refreshPeriod.times(10);
-	}
-	return refreshPeriod;
+function getRefreshDraws() {
+	let refreshDraws = new Decimal(12);
+	return refreshDraws;
 }
 
 function gainStudyXp(xpGain) {
 	if (hasUpgrade("generators", 13)) {
 		xpGain = xpGain.times(layers.generators.clickables.study.effect());
 	}
+	xpGain = xpGain.times(player.study.increaseXpGain.times(new Decimal(.1).times(Decimal.pow(1.5, cardLevel("increaseXpGain")))).add(1));
 	xpGain = xpGain.times(ritualEffect("globalXp"));
 	player.study.xp = player.study.xp.add(xpGain);
 	checkJobXP("study");
+}
+
+function drawNextCard() {
+	player.study.drawProgress = 0;
+	let random = Math.random() * Object.values(player.study.cards).reduce((acc, curr) => acc + curr);
+	const ownedCards = Object.keys(player.study.cards);
+	let newCard = null;
+	for (let i = 0; i < ownedCards.length; i++) {
+		if (random < player.study.cards[ownedCards[i]]) {
+			newCard = ownedCards[i];
+			break;
+		}
+		random -= player.study.cards[ownedCards[i]];
+	}
+	if (newCard) {
+		if (player.study.lastCard && player.study.lastCard in cards && cards[player.study.lastCard].modifyNextCard) {
+			cards[player.study.lastCard].modifyNextCard(newCard, cardLevel(newCard));
+		} else if (cards[newCard].onDraw) {
+			cards[newCard].onDraw(cardLevel(newCard));
+		}
+		player.study.lastCard = newCard;
+		const card = document.getElementById("mainCard");
+		if (card != null) {
+			card.classList.remove("flipCard");
+			void card.offsetWidth;
+			card.classList.add("flipCard");
+		}
+
+		if (hasMilestone("study", 0)) {
+			player.study.refreshProgress++;
+		}
+		if (player.study.refreshProgress >= getRefreshDraws()) {
+			player.study.refreshProgress = 0;
+			player.study.shop = getShop();
+			for (let card of document.getElementsByClassName("shopCard")) {
+				if (card != null) {
+					card.classList.remove("flipCard");
+					void card.offsetWidth;
+					card.classList.add("flipCard");
+				}
+			}
+			doPopup("none", "Shop restocked", "Check it out!", 1, layers.study.color);
+		}
+	}
 }
 
 addLayer("study", {
@@ -213,6 +251,7 @@ addLayer("study", {
 			shop: getShop(),
 			increasePointsGain: new Decimal(0),
 			multiplyPointsGain: new Decimal(0),
+			increaseXpGain: new Decimal(0),
 			sellDiscount: new Decimal(0),
 			cardsSold: new Decimal(0),
 			selected: -1,
@@ -224,7 +263,7 @@ addLayer("study", {
 			return new Decimal(0);
 		}
 		let gain = new Decimal(10);
-		gain = gain.times(softcap(player.study.increasePointsGain, new Decimal(100).times(cardLevel("increasePointsGain").add(1))).times(0.1).add(1));
+		gain = gain.times(player.study.increasePointsGain.times(new Decimal(.25).times(Decimal.pow(1.25, cardLevel("increasePointsGain")))).add(1));
 		gain = gain.times(new Decimal(1.02).pow(softcap(player.study.multiplyPointsGain, new Decimal(100).times(cardLevel("multiplyPointsGain").div(4).add(1)), .2)));
 		gain = gain.times(layers.generators.clickables[this.layer].effect());
 		gain = gain.times(ritualEffect("gain"));
@@ -235,33 +274,42 @@ addLayer("study", {
 	},
 	tabFormat: {
 		"Main": {
-			content: () => player.tab !== "study" ? null : [
-				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
-				"blank",
-				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied,<br/>and <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`]]],
-				"blank",
-				["display-text", (() => {
-					if (!hasMilestone("study", 0)) {
-						return "Discover new ways to harness the power of the cards at level 2";
-					}
-					if (!hasMilestone("study", 1)) {
-						return "Discover new ways to harness the power of the cards at level 4";
-					}
-					if (!hasMilestone("study", 3)) {
-						return "Discover new ways to harness the power of the cards at level 6";
-					}
-					if (!hasMilestone("study", 4)) {
-						return "Discover new ways to harness the power of the cards at level 8";
-					}
-					return "";
-				})()],
-				"blank",
-				["display-text", `Next draw in ${new Decimal(getDrawDuration() - player.study.drawProgress).clampMax(getDrawDuration() - 0.01).toFixed(2)} seconds`],
-				"blank",
-				["card", { card: player.study.lastCard, id: "mainCard", className: "flipCard" }],
-				"blank",
-				["milestones-filtered", [2, 5, 6]]
-			]
+			content: () => {
+				if (player.tab !== "study") {
+					return null;
+				}
+				const drawDuration = getDrawDuration();
+				return [
+					["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
+					"blank",
+					["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied,<br/>and <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`]]],
+					"blank",
+					["display-text", (() => {
+						if (!hasMilestone("study", 0)) {
+							return "Discover new ways to harness the power of the cards at level 2";
+						}
+						if (!hasMilestone("study", 1)) {
+							return "Discover new ways to harness the power of the cards at level 4";
+						}
+						if (!hasMilestone("study", 3)) {
+							return "Discover new ways to harness the power of the cards at level 6";
+						}
+						if (!hasMilestone("study", 4)) {
+							return "Discover new ways to harness the power of the cards at level 8";
+						}
+						return "";
+					})()],
+					"blank",
+					["display-text", `Next card will auto-draw in ${new Decimal(drawDuration - player.study.drawProgress).clampMax(drawDuration - 0.01).toFixed(2)} seconds<br/>`],
+					["display-text", drawDuration / 10 > player.study.drawProgress ? `You can manually draw next card in ${new Decimal(drawDuration / 10 - player.study.drawProgress).clampMax(drawDuration / 10 - 0.01).toFixed(2)} seconds` : `You can manually draw the next card NOW`],
+					"blank",
+					["card", { card: player.study.lastCard, id: "mainCard", className: "flipCard" }],
+					"blank",
+					["clickable", "manual"],
+					"blank",
+					["milestones-filtered", [2, 5, 6]]
+				];
+			}
 		},
 		"Deck": {
 			content: () => player.tab !== "study" ? null : [
@@ -278,7 +326,7 @@ addLayer("study", {
 				"blank",
 				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`]]],
 				"blank",
-				["display-text", `Cards refresh in ${new Decimal(getRefreshPeriod() - player.study.refreshProgress).clampMax(getRefreshPeriod() - 0.01).toFixed(2)} seconds`],
+				["display-text", `Cards refresh in ${getRefreshDraws() - player.study.refreshProgress} draws`],
 				"blank",
 				["display-text", `Your deck has ${getCardAmount()} out of the 30 card limit.`],
 				"blank",
@@ -347,45 +395,7 @@ addLayer("study", {
 			player[this.layer].drawProgress += diff;
 			// TODO draws/sec
 			if (player[this.layer].drawProgress > getDrawDuration()) {
-				player[this.layer].drawProgress = 0;
-				let random = Math.random() * Object.values(player.study.cards).reduce((acc, curr) => acc + curr);
-				const ownedCards = Object.keys(player.study.cards);
-				let newCard = null;
-				for (let i = 0; i < ownedCards.length; i++) {
-					if (random < player.study.cards[ownedCards[i]]) {
-						newCard = ownedCards[i];
-						break;
-					}
-					random -= player.study.cards[ownedCards[i]];
-				}
-				if (newCard) {
-					if (player[this.layer].lastCard && player[this.layer].lastCard in cards && cards[player[this.layer].lastCard].modifyNextCard) {
-						cards[player[this.layer].lastCard].modifyNextCard(newCard, cardLevel(newCard));
-					} else if (cards[newCard].onDraw) {
-						cards[newCard].onDraw(cardLevel(newCard));
-					}
-					player[this.layer].lastCard = newCard;
-					const card = document.getElementById("mainCard");
-					if (card != null) {
-						card.classList.remove("flipCard");
-						void card.offsetWidth;
-						card.classList.add("flipCard");
-					}
-				}
-			}
-			if (hasMilestone("study", 0)) {
-				player[this.layer].refreshProgress += diff;
-			}
-			if (player[this.layer].refreshProgress > getRefreshPeriod()) {
-				player[this.layer].refreshProgress = 0;
-				player[this.layer].shop = getShop();
-				for (let card of document.getElementsByClassName("shopCard")) {
-					if (card != null) {
-						card.classList.remove("flipCard");
-						void card.offsetWidth;
-						card.classList.add("flipCard");
-					}
-				}
+				drawNextCard();
 			}
 		}
 	},
@@ -434,6 +444,12 @@ addLayer("study", {
 		}
 	},
 	clickables: {
+		manual: {
+			title: "Think before you pluck. Irresponsible plucking costs lives.",
+			display: "Draw next card",
+			canClick: () => getDrawDuration() / 10 < player.study.drawProgress,
+			onClick: drawNextCard
+		},
 		reset: {
 			title: "RESET DECK",
 			style: {
@@ -445,8 +461,10 @@ addLayer("study", {
 				if (confirm("Are you sure you want to reset your deck to the starter deck?")) {
 					player.study.cards = baseCards();
 					player.study.cardsSold = new Decimal(0);
+					player.study.lastCard = null;
 					player.study.increasePointsGain = new Decimal(0);
 					player.study.multiplyPointsGain = new Decimal(0);
+					player.study.increaseXpGain = new Decimal(0);
 					player.study.sellDiscount = new Decimal(0);
 				}
 			}
@@ -540,7 +558,8 @@ addLayer("study", {
 		increasePointsGain: getCardUpgradeBuyable("increasePointsGain"),
 		multiplyPointsGain: getCardUpgradeBuyable("multiplyPointsGain"),
 		sellDiscount: getCardUpgradeBuyable("sellDiscount"),
-		gainXp: getCardUpgradeBuyable("gainXp")
+		gainXp: getCardUpgradeBuyable("gainXp"),
+		increaseXpGain: getCardUpgradeBuyable("increaseXpGain"),
 	},
 	bars: {
 		job: getJobProgressBar("study", studyColor)
