@@ -17,13 +17,13 @@ const cards = {
 	}),
 	gainInsight: createCard("And it shall be called... the Earth.", level => level === 0 ? "Gain a key insight." : `Gain ${formatWhole(level.add(1))} key insights.`, level => {
 		player.study.insights = player.study.insights.add(level).add(1);
-		player.study.xp = player.study.xp.add(level.add(1).times(10));
+		gainStudyXp(level.add(1).times(10));
 		checkJobXP("study");
 	}),
 	gainBigInsight: createCard("Yes! I shall design this computer for you.", level => `Gain ${new Decimal(getCardAmount()).times(level.add(1)).sqrt().floor()} key insights.<br/>(based on number of cards in the deck)`, level => {
 		const amount = new Decimal(getCardAmount()).times(level.add(1)).sqrt().floor();
 		player.study.insights = player.study.insights.add(amount);
-		player.study.xp = player.study.xp.add(amount.times(10));
+		gainStudyXp(amount.times(10));
 		checkJobXP("study");
 	}),
 	playTwice: createCard("Oh no, not again.", level => level === 0 ? "Play the next card twice." : `Play the next card twice, with the effect boosted by ${level.div(4)} levels.`, null, (nextCard, level) => {
@@ -58,7 +58,7 @@ const cards = {
 	}, () => player.study.sellDiscount = player.study.sellDiscount.add(1)),
 	soldOut: createCard("Out of Stock!"),
 	gainXp: createCard("A billion times over ... and no one learns anything.", level => `Gain xp equal to ${level === 0 ? "" : `${format(level.div(4).add(1))}x times `}your number of properties.`, level => {
-		player.study.xp = player.study.xp.add(player.study.points.times(level.div(4).add(1)));
+		gainStudyXp(player.study.points.times(level.div(4).add(1)));
 		checkJobXP("study");
 	})
 };
@@ -178,6 +178,15 @@ function getRefreshPeriod() {
 	return refreshPeriod;
 }
 
+function gainStudyXp(xpGain) {
+	if (hasUpgrade("generators", 13)) {
+		xpGain = xpGain.times(layers.generators.clickables.study.effect());
+	}
+	xpGain = xpGain.times(ritualEffect("globalXp"));
+	player.study.xp = player.study.xp.add(xpGain);
+	checkJobXP("study");
+}
+
 addLayer("study", {
 	name: "study",
 	resource: "properties studied",
@@ -219,6 +228,7 @@ addLayer("study", {
 		gain = gain.times(softcap(player.study.increasePointsGain, new Decimal(100).times(cardLevel("increasePointsGain").add(1))).times(0.1).add(1));
 		gain = gain.times(new Decimal(1.02).pow(softcap(player.study.multiplyPointsGain, new Decimal(100).times(cardLevel("multiplyPointsGain").div(4).add(1)), .2)));
 		gain = gain.times(layers.generators.clickables[this.layer].effect());
+		gain = gain.times(ritualEffect("gain"));
 		if (player.generators.studyActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 			gain = gain.sqrt();
 		}
@@ -384,12 +394,7 @@ addLayer("study", {
 		}
 	},
 	onAddPoints(gain) {
-		let xpGain = gain;
-		if (hasUpgrade("generators", 13)) {
-			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
-		}
-		player[this.layer].xp = player[this.layer].xp.add(xpGain);
-		checkJobXP(this.layer);
+		gainStudyXp(gain);
 	},
 	milestones: {
 		0: {

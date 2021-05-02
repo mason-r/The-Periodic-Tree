@@ -108,8 +108,7 @@ addLayer("generators", {
 				flowers: new Decimal(0),
 				distill: new Decimal(0),
 				study: new Decimal(0),
-				sands: new Decimal(0),
-				rituals: new Decimal(0)
+				sands: new Decimal(0)
 			}
 		};
 	},
@@ -139,6 +138,7 @@ addLayer("generators", {
 		gain = gain.times(buyableEffect(this.layer, 11));
 		gain = gain.times(new Decimal(1.1).pow(getJobLevel(this.layer)));
 		gain = gain.times(layers.generators.clickables[this.layer].effect());
+		gain = gain.times(ritualEffect("gain"));
 		if (hasUpgrade(this.layer, 11)) {
 			gain = gain.times(upgradeEffect(this.layer, 11));
 		}
@@ -197,7 +197,7 @@ addLayer("generators", {
 				"blank",
 				["row", [["battery", "flowers"], ["battery", "distill"]]],
 				["row", [["battery", "study"], ["battery", "sands"]]],
-				["row", [["battery", "generators"], ["battery", "rituals"]]]
+				["row", [["battery", "generators"]]]
 			],
 			unlocked: () => hasMilestone("generators", 0)
 		}
@@ -220,6 +220,7 @@ addLayer("generators", {
 		if (hasUpgrade("generators", 13)) {
 			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
 		}
+		xpGain = xpGain.times(ritualEffect("globalXp"));
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
 		checkJobXP(this.layer);
 	},
@@ -398,8 +399,6 @@ addLayer("generators", {
 		study: getBatteryCharger("study", "I figured, what the hell?"),
 		sands: getBatteryCharger("sands", "Ronald Reagan? The actor? Ha!", "Experiments"),
 		generators: getBatteryCharger("generators", "Good night, future boy!"),
-		rituals: getBatteryCharger("rituals", "Your future is whatever you make it"),
-		// TODO ritual charger,
 		"perc1": {
 			title: "1%",
 			class: { 'generator-selector': true },
@@ -527,8 +526,7 @@ addLayer("generators", {
 		distill: getBatteryCapBuyable("distill", "A hundred years ago?"),
 		study: getBatteryCapBuyable("study", "I'm back <i>from</i> the future."),
 		sands: getBatteryCapBuyable("sands", "Alright, boys, buckle up."),
-		generators: getBatteryCapBuyable("generators", "Unless you've got power!"),
-		rituals: getBatteryCapBuyable("rituals", "Who the hell is Clara?")
+		generators: getBatteryCapBuyable("generators", "Unless you've got power!")
 	},
 	bars: {
 		job: getJobProgressBar("generators", electricColor)

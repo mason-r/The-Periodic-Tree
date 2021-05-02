@@ -116,12 +116,14 @@ function updateInstrument(instrument, requiredLevel, diff) {
 
 function getEssentiaMult() {
 	let gain = new Decimal(1);
+	gain = gain.times(new Decimal(1.1).pow(getJobLevel(this.layer)));
 	gain = gain.times(player.distill.retortCompletions.div(100).add(1));
 	gain = gain.times(player.distill.alembicCompletions.div(100).add(1));
 	gain = gain.times(player.distill.crucibleCompletions.div(100).add(1));
 	gain = gain.times(player.distill.bainMarieCompletions.div(100).add(1));
 	gain = gain.times(player.distill.vapoursCompletions.div(100).add(1));
 	gain = gain.times(layers.generators.clickables.distill.effect());
+	gain = gain.times(ritualEffect("gain"));
 	if (player.generators.distillActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 		gain = gain.sqrt();
 	}
@@ -214,6 +216,7 @@ addLayer("distill", {
 		if (hasUpgrade("generators", 13)) {
 			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
 		}
+		xpGain = xpGain.times(ritualEffect("globalXp"));
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
 		checkJobXP(this.layer);
 	},

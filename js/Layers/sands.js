@@ -110,6 +110,7 @@ function getPotentiaMult() {
 	if (player.sands.selectedLens === "potentia") {
 		gain = gain.times(buyableEffect("sands", "glass"));
 	}
+	gain = gain.times(ritualEffect("gain"));
 	if (player.generators.sandsActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 		gain = gain.sqrt();
 	}
@@ -336,6 +337,7 @@ addLayer("sands", {
 		if (player.sands.selectedLens === "xp") {
 			xpGain = xpGain.times(Decimal.pow(buyableEffect("sands", "glass"), 2));
 		}
+		xpGain = xpGain.times(ritualEffect("globalXp"));
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
 		checkJobXP(this.layer);
 	},
@@ -454,8 +456,8 @@ addLayer("sands", {
 				return getTotalGrains().gte(this.cost().times(1.1));
 			},
 			buy() {
-				player.sands.spentGrains = new Decimal("1".repeat(getBuyableAmount("sands", "glass").toNumber()) + "000000");
 				setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1));
+				player.sands.spentGrains = new Decimal("1".repeat(getBuyableAmount("sands", "glass").toNumber()) + "000000");
 			},
 			unlocked: true
 		},

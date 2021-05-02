@@ -4,7 +4,7 @@ Vue.component("rune", {
 		<button class="upg can rune" style="width: 60px; min-height: 60px;"
 			v-on:click="setRune(data)"
 			v-bind:style="{
-				background: 'url(images/' + player.rituals.board[\`\$\{data[0]\}\$\{data[1]\}\`] + 'Rune.webp) no-repeat center / contain ' + (layers[player.rituals.board[\`\$\{data[0]\}\$\{data[1]\}\`]]?.color || ritualsColor)
+				background: (player.rituals.board[\`\$\{data[0]\}\$\{data[1]\}\`] ? 'url(images/' + player.rituals.board[\`\$\{data[0]\}\$\{data[1]\}\`] + 'Rune.webp) no-repeat center / contain ' : '') + (layers[player.rituals.board[\`\$\{data[0]\}\$\{data[1]\}\`]]?.color || ritualsColor)
 			}">
 		</button>
 	</div>`
@@ -14,14 +14,43 @@ const rituals = {
 	xp: {
 		title: "Ritual of Doctrina",
 		pattern: [ [ 0, 1 ], [ 1, 0 ] ],
-		effect: amount => new Decimal(amount),
+		effect: (amount, effectiveness) => Decimal.pow(4, amount).sub(1).times(effectiveness),
 		effectDisplay: () => format(ritualEffect("xp")) + " xp/s",
 		unlocked: () => true
+	},
+	gain: {
+		title: "Ritual of Emolumentum",
+		pattern: [ [ 0, 1, 1, 0 ] ],
+		effect: (amount, effectiveness) => new Decimal(amount).times(effectiveness).add(1),
+		effectDisplay: () => "x" + format(ritualEffect("gain")) + " all job's primary resources",
+		unlocked: () => hasMilestone("rituals", 0)
+	},
+	improvement: {
+		title: "Ritual of Melius",
+		pattern: [ [ 0, 1, 0 ], [ 1, 2, 1 ], [ 0, 1, 0 ] ],
+		effect: amount => new Decimal(amount).times(.01),
+		effectDisplay: () => "+" + format(ritualEffect("improvement")) + " increased effectiveness of all other ritual effects/s",
+		unlocked: () => hasMilestone("rituals", 1)
+	},
+	globalXp: {
+		title: "Ritual of Colegium",
+		pattern: [ [ 0, null, 0 ], [ null, null, null ], [ 0, null, 0 ] ],
+		effect: (amount, effectiveness) => new Decimal(amount).times(effectiveness).add(1),
+		effectDisplay: () => "x" + format(ritualEffect("globalXp")) + " all job's xp gain",
+		unlocked: () => hasMilestone("rituals", 3)
+	},
+	speed: {
+		title: "Ritual of Celeritas",
+		pattern: [ [ 0, null, null, 0 ], [ null, 1, 1, null ], [ null, 1, 1, null ], [ 0, null, null, 0 ] ],
+		effect: (amount, effectiveness) => new Decimal(amount).times(effectiveness).add(1),
+		effectDisplay: () => "x" + format(ritualEffect("speed")) + " global speed multiplier",
+		unlocked: () => hasMilestone("rituals", 3)
 	}
 };
 
 function ritualEffect(id) {
-	let effect = rituals[id].effect(player.rituals.rituals[id] || 0);
+	let level = player.tab === "rituals" || player.rituals.timeLoopActive ? player.rituals.rituals[id] || 0 : 0;
+	let effect = rituals[id].effect(level, player.rituals.effectiveness.max(1).times(Decimal.pow(1.1, getJobLevel("rituals"))).log2().add(1));
 	if (player.generators.ritualsActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 		effect = effect.sqrt();
 	}
@@ -111,8 +140,12 @@ function checkRitual(ritual, top, left) {
 	for (let r = 0; r < ritual.pattern.length; r++) {
 		for (let c = 0; c < ritual.pattern[r].length; c++) {
 			let patternTile = ritual.pattern[r][c];
+			if (patternTile == null) {
+				continue;
+			}
 			let tile = player.rituals.board[`${top + r}${left + c}`];
 			if ((patternTile in types && types[patternTile] !== tile) ||
+				(!(patternTile in types) && Object.values(types).includes(tile)) ||
 				tile == null) {
 				return false;
 			}
@@ -127,6 +160,9 @@ function getRituals() {
 	const cols = getCols();
 	const ritualCounts = {};
 	Object.entries(rituals).forEach(([id, ritual]) => {
+		if (!ritual.unlocked()) {
+			return;
+		}
 		let ritualCount = 0;
 		for (let row = 0; row < rows && row <= rows - ritual.pattern.length; row++) {
 			for (let col = 0; col < cols && col <= cols - ritual.pattern[0].length; col++) {
@@ -160,11 +196,31 @@ addLayer("rituals", {
 			timeLoopActive: false,
 			board: {},
 			selectedRune: null,
-			rituals: {}
+			rituals: {},
+			effectiveness: new Decimal(1)
 		};
 	},
 	tabFormat: () => player.tab !== "rituals" ? [] : [
 		["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("rituals")}</span>`]]]]],
+		"blank",
+		["display-text", (() => {
+			if (!hasMilestone("rituals", 0)) {
+				return "Discover new ways to harness the arcane power at level 2";
+			}
+			if (!hasMilestone("rituals", 1)) {
+				return "Discover new ways to harness the arcane power at level 4";
+			}
+			if (!hasMilestone("rituals", 3)) {
+				return "Discover new ways to harness the arcane power at level 6";
+			}
+			if (!hasMilestone("rituals", 4)) {
+				return "Discover new ways to harness the arcane power at level 8";
+			}
+			if (!hasMilestone("rituals", 5)) {
+				return "Discover new ways to harness the arcane power at level 10";
+			}
+			return "";
+		})()],
 		"blank",
 		"buyables",
 		"blank",
@@ -172,7 +228,7 @@ addLayer("rituals", {
 		"blank",
 		...new Array(getRows()).fill(0).map((_,row) => ["row", new Array(getCols()).fill(0).map((_,col) => ["rune", [row, col]])]),
 		"blank",
-		...Object.keys(rituals).filter(id => ritualEffect(id).gt(0)).map(id => ["display-text", `${rituals[id].title} (${player.rituals.rituals[id]}): ${rituals[id].effectDisplay()}`]),
+		...Object.keys(rituals).filter(id => id in player.rituals.rituals && player.rituals.rituals[id] > 0).map(id => ["display-text", `${rituals[id].title} (${player.rituals.rituals[id]}): ${rituals[id].effectDisplay()}<br/>`]),
 		"blank",
 		["milestones-filtered", [2, 5, 6]]
 	],
@@ -181,7 +237,11 @@ addLayer("rituals", {
 			if (player.generators.ritualsActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 				diff = diff / 10;
 			}
-			let xpGain = ritualEffect("xp");
+
+			player.rituals.effectiveness = player.rituals.effectiveness.add(ritualEffect("improvement").times(diff));
+
+			let xpGain = ritualEffect("xp").times(diff);
+			xpGain = xpGain.times(ritualEffect("globalXp"));
 			player[this.layer].xp = player[this.layer].xp.add(xpGain);
 			checkJobXP(this.layer);
 		}

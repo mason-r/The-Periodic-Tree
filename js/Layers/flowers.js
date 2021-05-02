@@ -56,6 +56,7 @@ addLayer("flowers", {
 		gain = gain.times(buyableEffect("flowers", 11));
 		gain = gain.times(layers.generators.clickables[this.layer].effect());
 		gain = gain.pow(buyableEffect("flowers", 13));
+		gain = gain.times(ritualEffect("gain"));
 		if (player.generators.flowerActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 			gain = gain.sqrt().div(10);
 		}
@@ -163,6 +164,7 @@ addLayer("flowers", {
 		if (hasUpgrade("generators", 13)) {
 			xpGain = xpGain.times(layers.generators.clickables[this.layer].effect());
 		}
+		xpGain = xpGain.times(ritualEffect("globalXp"));
 		player[this.layer].xp = player[this.layer].xp.add(xpGain);
 		checkJobXP(this.layer);
 	},
