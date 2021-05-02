@@ -116,7 +116,7 @@ function updateInstrument(instrument, requiredLevel, diff) {
 
 function getEssentiaMult() {
 	let gain = new Decimal(1);
-	gain = gain.times(new Decimal(1.1).pow(getJobLevel(this.layer)));
+	gain = gain.times(new Decimal(1.1).pow(getJobLevel("distill")));
 	gain = gain.times(player.distill.retortCompletions.div(100).add(1));
 	gain = gain.times(player.distill.alembicCompletions.div(100).add(1));
 	gain = gain.times(player.distill.crucibleCompletions.div(100).add(1));
