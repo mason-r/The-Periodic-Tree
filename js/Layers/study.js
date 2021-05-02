@@ -236,7 +236,6 @@ addLayer("study", {
 			content: () => player.tab !== "study" ? null : [
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
 				"blank",
-				<!--suppress HtmlUnknownTag -->
 				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied,<br/>and <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`]]],
 				"blank",
 				["display-text", (() => {
@@ -275,7 +274,6 @@ addLayer("study", {
 			content: () => player.tab !== "study" ? null : [
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
 				"blank",
-				<!--suppress HtmlUnknownTag -->
 				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`]]],
 				"blank",
 				["display-text", `Cards refresh in ${new Decimal(getRefreshPeriod() - player.study.refreshProgress).clampMax(getRefreshPeriod() - 0.01).toFixed(2)} seconds`],
@@ -300,7 +298,6 @@ addLayer("study", {
 			content: () => player.tab !== "study" ? null : [
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
 				"blank",
-				<!--suppress HtmlUnknownTag -->
 				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied`]]],
 				"blank",
 				["sticky", ["86px", ["clickable", "sell"]]],
@@ -313,7 +310,6 @@ addLayer("study", {
 			content: () => player.tab !== "study" ? null : [
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
 				"blank",
-				<!--suppress HtmlUnknownTag -->
 				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights`]]],
 				"blank",
 				hasMilestone("study", 4) ? ["column", [
