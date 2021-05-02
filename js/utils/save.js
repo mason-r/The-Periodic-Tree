@@ -182,7 +182,9 @@ function fixData(defaultData, newData) {
 		} else if ((!!defaultData[item]) && (typeof defaultData[item] === "object")) {
 			if (newData[item] === undefined || (typeof defaultData[item] !== "object")) {
 				newData[item] = defaultData[item];
-			} else {
+			// Note: Dangerously ignoring "cards" here, because player.study.cards was re-adding any cards
+			// from the starter deck that got completely removed by the player
+			} else if (item !== "cards") {
 				fixData(defaultData[item], newData[item]);
 			}
 		} else {
