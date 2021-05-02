@@ -217,9 +217,6 @@ addLayer("study", {
 			deep: new Decimal(0)
 		};
 	},
-	shouldNotify() {
-		return Object.values(tmp[this.layer].buyables).some(buyable => buyable.unlocked && buyable.canAfford);
-	},
 	getResetGain() {
 		if (!tmp[this.layer].layerShown || (player.tab !== this.layer && !player[this.layer].timeLoopActive)) {
 			return new Decimal(0);
@@ -340,7 +337,8 @@ addLayer("study", {
 					["buyable", card]
 				]])]
 			],
-			unlocked: () => hasMilestone("study", 3)
+			unlocked: () => hasMilestone("study", 3),
+			shouldNotify: () => Object.values(tmp.study.buyables).some(buyable => buyable.unlocked && buyable.canAfford)
 		}
 	},
 	update(diff) {

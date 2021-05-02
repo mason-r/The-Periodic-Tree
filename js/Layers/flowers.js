@@ -32,9 +32,6 @@ addLayer("flowers", {
 			sacrificeType: ""
 		};
 	},
-	shouldNotify() {
-		return Object.values(tmp[this.layer].buyables).some(buyable => buyable.unlocked && buyable.canAfford);
-	},
 	getResetGain() {
 		if (!tmp[this.layer].layerShown || (player.tab !== this.layer && !player[this.layer].timeLoopActive)) {
 			return new Decimal(0);
@@ -112,14 +109,15 @@ addLayer("flowers", {
 					}
 					return "";
 				})()],
-				player.chapter === 1 && hasMilestone("flowers", "4") ? ["upgrade", "nextChapter"] : null,
+				["upgrade", "nextChapter"],
 				"blank",
 				"buyables",
 				"blank",
 				"upgrades",
 				"blank",
 				["milestones-filtered", [4, 5]]
-			]
+			],
+			shouldNotify: () => Object.values(tmp.flowers.buyables).some(buyable => buyable.unlocked && buyable.canAfford) || Object.values(tmp.flowers.upgrades).some(upgrade => upgrade.unlocked && upgrade.canAfford)
 		},
 		"Candypop": {
 			content: () => player.tab !== "flowers" ? null : [
@@ -276,7 +274,7 @@ addLayer("flowers", {
 		nextChapter: {
 			title: "And those that carry us forward, are dreams.<br/>",
 			description: "Close the time loop.",
-			unlocked: true,
+			unlocked: () => player.chapter === 1 && hasMilestone("flowers", "4"),
 			onPurchase() {
 				showTab("none");
 				player.chapter = 2;

@@ -112,9 +112,6 @@ addLayer("generators", {
 			}
 		};
 	},
-	shouldNotify() {
-		return Object.values(tmp[this.layer].buyables).some(buyable => buyable.unlocked && buyable.canAfford);
-	},
 	getResetGain() {
 		if (!tmp[this.layer].layerShown || (player.tab !== this.layer && !player[this.layer].timeLoopActive)) {
 			return new Decimal(0);
@@ -178,7 +175,8 @@ addLayer("generators", {
 				"buyables",
 				"blank",
 				["milestones-filtered", [2, 5, 6]]
-			]
+			],
+			shouldNotify: () => [11, 12, 13].map(id => tmp.generators.buyables[id]).some(buyable => buyable.unlocked && buyable.canAfford)
 		},
 		"Batteries": {
 			content: () => player.tab !== "generators" ? null : [

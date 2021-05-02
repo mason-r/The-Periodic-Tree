@@ -144,9 +144,6 @@ addLayer("sands", {
 			spentGrains: new Decimal(0)
 		};
 	},
-	shouldNotify() {
-		return Object.values(tmp[this.layer].buyables).some(buyable => buyable.unlocked && buyable.canAfford);
-	},
 	tabFormat: {
 		"Main": {
 			content: () => {
@@ -235,7 +232,8 @@ addLayer("sands", {
 				"blank",
 				"upgrades"
 			],
-			unlocked: () => hasMilestone("sands", 0)
+			unlocked: () => hasMilestone("sands", 0),
+			shouldNotify: () => Object.values(tmp.sands.upgrades).some(upgrade => upgrade.unlocked && upgrade.canAfford) || Object.values(tmp.sands.buyables).some(buyable => buyable.id !== "glass" && buyable.unlocked && buyable.canAfford)
 		},
 		"Glass": {
 			content: () => player.tab !== "sands" ? null : [
@@ -251,7 +249,8 @@ addLayer("sands", {
 					["clickable", "blueLens"]
 				]]
 			],
-			unlocked: () => hasMilestone("generators", 2)
+			unlocked: () => hasMilestone("generators", 2),
+			shouldNotify: () => tmp.sands.buyables.glass.unlocked && tmp.sands.buyables.glass.canAfford
 		}
 	},
 	update(diff) {
