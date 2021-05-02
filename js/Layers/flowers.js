@@ -54,7 +54,7 @@ addLayer("flowers", {
 		gain = gain.times(layers.generators.clickables[this.layer].effect());
 		gain = gain.pow(buyableEffect("flowers", 13));
 		gain = gain.times(ritualEffect("gain"));
-		if (player.generators.flowerActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
+		if (player.generators.flowersActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 			gain = gain.sqrt().div(10);
 		}
 		return gain;
@@ -147,7 +147,7 @@ addLayer("flowers", {
 	},
 	update(diff) {
 		if (player.tab === this.layer || player[this.layer].timeLoopActive) {
-			if (player.generators.flowerActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
+			if (player.generators.flowersActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
 				diff = diff / 10;
 			}
 			player[this.layer].realTime += diff;
