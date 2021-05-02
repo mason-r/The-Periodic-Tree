@@ -42,7 +42,7 @@ function regularFormat(num, precision) {
 	if (num.eq(0)) {
 		return (0).toFixed(precision);
 	}
-	if (num.mag < 0.001) {
+	if (num.mag < 0.01) {
 		return num.toExponential(precision);
 	}
 	return num.toStringWithDecimalPlaces(precision);
