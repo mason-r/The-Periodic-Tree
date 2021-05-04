@@ -90,7 +90,7 @@ addLayer("tree-tab", {
 	infoboxes: {
 		genesis: {
 			title: "Chapter 1: Genesis",
-			body: `[WIP, needs feedback from Hudson]<br/>Finally, I've found the <span style="color: ${flowersColor}">flowers</span>! The legends were true, I was able to confirm they're the real deal by reverting some scratches I received on the trek here.<br/><br/>I just can't believe I actually found them! I'm going to get started collecting them right away. This field is plenty large enough, so I can start harnessing the <span style="color: ${flowersColor}">flowers</span> to speed up the harvesting process.`
+			body: `[WIP, needs feedback from Hudson]<br/>Finally, I've found the <span style="color: ${flowersColor}">flowers</span>! The legends were true, I was able to confirm they're the real deal by reverting some scratches I received on the trek here.<br/><br/>I just can't believe I actually found them! I'm going to start collecting them right away. This field is plenty large enough, so I can start harnessing the <span style="color: ${flowersColor}">flowers</span> to speed up the harvesting process.`
 		},
 		discovery: {
 			title: "Chapter 2: Discovery",
