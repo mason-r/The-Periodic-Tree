@@ -133,7 +133,7 @@ addLayer("flowers", {
 					]]
 				]]]],
 				"blank",
-				["display-text", "Note: Free levels do <b>NOT</b> affect xp requirements.<br/>Note: You cannot throw levels of a specific type if you'd drop below 10."],
+				["display-text", "Note: Free levels do <b>NOT</b> affect xp requirements.<br/>Note: You cannot throw levels of a specific type if you'd drop below 10.<br/>If you don't know why these are useful, they probably aren't."],
 				"blank",
 				["candypop", "flowers"],
 				["candypop", "distill"],
