@@ -1151,3 +1151,22 @@ b, h3 {
 .rune {
     transition-property: transform, box-shadow;
 }
+
+.ritual {
+    display: flex;
+    width: 90%;
+    margin-bottom: 20px;
+}
+
+.ritual * {
+    text-align: left;
+}
+
+.ritual > span {
+    width: 50%;
+}
+
+.ritual h3 {
+    margin-bottom: 10px;
+    display: block;
+}
