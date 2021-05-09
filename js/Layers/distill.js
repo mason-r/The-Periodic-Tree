@@ -1,26 +1,26 @@
 const instrumentData = {
 	retort: {
-		minLevel: 0,
+		unlocked: () => true,
 		label: "Retort",
 		logo: "🝭"
 	},
 	alembic: {
-		minLevel: 2,
+		unlocked: () => getJobLevel("distill").gte(2),
 		label: "Alembic",
 		logo: "🝪"
 	},
 	crucible: {
-		minLevel: 4,
+		unlocked: () => getJobLevel("distill").gte(4),
 		label: "Crucible",
 		logo: "🝧"
 	},
 	bainMarie: {
-		minLevel: 6,
+		unlocked: () => hasMilestone("rituals", 2),
 		label: "Bain-Marie",
 		logo: "🝫"
 	},
 	vapours: {
-		minLevel: 8,
+		unlocked: () => false,
 		label: "Bath of Vapours",
 		logo: "🝬"
 	}
@@ -29,7 +29,7 @@ const instrumentData = {
 Vue.component("instrument", {
 	props: ["layer", "data"],
 	template: `
-      <div v-if="completions.gt(0) || getJobLevel('distill').gte(instrumentData[data].minLevel)"
+      <div v-if="completions.gt(0) || instrumentData[data].unlocked()"
            class="upgTable instant">
       <div class="upgRow">
         <div class="upgTable instant">
@@ -52,7 +52,7 @@ Vue.component("instrument", {
 	`,
 	computed: {
 		completions() {
-			return player.distill[`${this.data}Completions`];
+			return softcap(player.distill[`${this.data}Completions`], new Decimal(1000), .25);
 		},
 		canAfford() {
 			return layers.distill.buyables[this.data].canAfford();
@@ -96,7 +96,7 @@ function getInstrumentBuyable(id, instrumentName, title, baseSpeed, baseCost, co
 			player.distill.points = player.distill.points.sub(this.cost());
 			setBuyableAmount("distill", id, getBuyableAmount("distill", id).add(1));
 		},
-		unlocked: true
+		unlocked: () => instrumentData[id].unlocked()
 	};
 }
 
@@ -117,11 +117,11 @@ function updateInstrument(instrument, requiredLevel, diff) {
 function getEssentiaMult() {
 	let gain = new Decimal(1);
 	gain = gain.times(new Decimal(1.1).pow(getJobLevel("distill")));
-	gain = gain.times(player.distill.retortCompletions.div(100).add(1));
-	gain = gain.times(player.distill.alembicCompletions.div(100).add(1));
-	gain = gain.times(player.distill.crucibleCompletions.div(100).add(1));
-	gain = gain.times(player.distill.bainMarieCompletions.div(100).add(1));
-	gain = gain.times(player.distill.vapoursCompletions.div(100).add(1));
+	gain = gain.times(softcap(player.distill.retortCompletions, new Decimal(1000), .25).div(100).add(1));
+	gain = gain.times(softcap(player.distill.alembicCompletions, new Decimal(1000), .25).div(100).add(1));
+	gain = gain.times(softcap(player.distill.crucibleCompletions, new Decimal(1000), .25).div(100).add(1));
+	gain = gain.times(softcap(player.distill.bainMarieCompletions, new Decimal(1000), .25).div(100).add(1));
+	gain = gain.times(softcap(player.distill.vapoursCompletions, new Decimal(1000), .25).div(100).add(1));
 	gain = gain.times(layers.generators.clickables.distill.effect());
 	gain = gain.times(ritualEffect("gain"));
 	if (player.generators.distillActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
@@ -136,8 +136,8 @@ addLayer("distill", {
 	image: "images/PIXNIO-252785-4924x3283.jpg",
 	color: distillColor,
 	jobName: "Distill flowers",
-	showJobDelay: 0.25,
-	layerShown: () => player.chapter > 1 && hasMilestone("flowers", 4),
+	showJobDelay: 0.5,
+	layerShown: () => hasMilestone("study", 2),
 	startData() {
 		return {
 			unlocked: true,
@@ -232,8 +232,11 @@ addLayer("distill", {
 		2: {
 			title: "\"The only true wisdom consists in knowing that you know nothing.\"",
 			requirementDescription: "Level 5",
-			"effectDescription": "Unlock studying job",
-			done: () => player.distill.xp.gte(1e4)
+			"effectDescription": "Unlock a new time slot",
+			done: () => player.distill.xp.gte(1e4),
+			onComplete: () => {
+				player.timeSlots = player.timeSlots.add(1);
+			}
 		},
 		3: {
 			requirementDescription: "Level 6",
@@ -246,7 +249,7 @@ addLayer("distill", {
 		5: {
 			title: "That's us, dude!",
 			requirementDescription: "Level 10",
-			"effectDescription": "Unlock time experiments job",
+			"effectDescription": "Unlock run generators job",
 			done: () => player.distill.xp.gte(1e9),
 			unlocked: () => hasMilestone("distill", 2)
 		},
@@ -262,8 +265,8 @@ addLayer("distill", {
 		retort: getInstrumentBuyable("retort", "retort", "Be excellent to each other.", new Decimal(0.06), new Decimal(1), new Decimal(1.05)),
 		alembic: getInstrumentBuyable("alembic", "alembic", "EXCELLENT!", new Decimal(0.03), new Decimal(100), new Decimal(1.1)),
 		crucible: getInstrumentBuyable("crucible", "crucible", "Party on dudes!", new Decimal(0.02), new Decimal(1000), new Decimal(1.15)),
-		bainMarie: getInstrumentBuyable("bainMarie", "bain-marie", "Greetings, my excellent friends.", new Decimal(0.015), new Decimal(10000), new Decimal(1.2)),
-		vapours: getInstrumentBuyable("vapours", "bath of vapours", "Most outstanding, Rufus! Let's jam!", new Decimal(0.012), new Decimal(100000), new Decimal(1.25))
+		bainMarie: getInstrumentBuyable("bainMarie", "bain-marie", "Greetings, my excellent friends.", new Decimal(0.015), new Decimal(100000), new Decimal(1.25)),
+		vapours: getInstrumentBuyable("vapours", "bath of vapours", "Most outstanding, Rufus! Let's jam!", new Decimal(0.012), new Decimal(10000000), new Decimal(1.5))
 	},
 	bars: {
 		job: getJobProgressBar("distill", distillColor)

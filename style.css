@@ -455,7 +455,7 @@ a {
 }
 
 .vl {
-    border-left: 6px solid var(--color);
+    border-left: 6px solid #333c4a;
     height: 100%;
     position: fixed;
     left: 50%;

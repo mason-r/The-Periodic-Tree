@@ -461,8 +461,8 @@ function gameLoop(diff) {
 
 }
 
-function hardReset() {
-	if (!confirm("Are you sure you want to do this? You will lose all your progress!")) {
+function hardReset(override = false) {
+	if (!(override || confirm("Are you sure you want to do this? You will lose all your progress!"))) {
 		return;
 	}
 	player = null;

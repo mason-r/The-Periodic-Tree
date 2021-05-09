@@ -94,10 +94,10 @@ Vue.component("card", {
 	</div>`,
 	computed: {
 		title() {
-			return isFunction(cards[this.data.card].title) ? cards[this.data.card].title(overrideLevel || cardLevel(this.data.card)) : cards[this.data.card].title;
+			return this.data.card ? isFunction(cards[this.data.card].title) ? cards[this.data.card].title(overrideLevel || cardLevel(this.data.card)) : cards[this.data.card].title : "";
 		},
 		description() {
-			return isFunction(cards[this.data.card].description) ? cards[this.data.card].description(this.data.overrideLevel || cardLevel(this.data.card)) : cards[this.data.card].description;
+			return this.data.card ? isFunction(cards[this.data.card].description) ? cards[this.data.card].description(this.data.overrideLevel || cardLevel(this.data.card)) : cards[this.data.card].description : "";
 		}
 	},
 	methods: {
@@ -112,7 +112,7 @@ Vue.component("card", {
 function getCardUpgradeBuyable(id) {
 	const cost = x => {
 		const amount = x || getBuyableAmount("study", id);
-		return new Decimal(100).pow(amount.add(1));
+		return new Decimal(10).pow(amount.add(2));
 	};
 	return {
 		title: "Upgrade<br/>",
@@ -235,8 +235,8 @@ addLayer("study", {
 	image: "images/orchid_sketch.jpg",
 	color: studyColor,
 	jobName: "Study flowers",
-	showJobDelay: 0.5,
-	layerShown: () => hasMilestone("distill", 2),
+	showJobDelay: 0.25,
+	layerShown: () => player.chapter > 1 && hasMilestone("flowers", 4),
 	startData() {
 		return {
 			unlocked: true,
@@ -423,11 +423,8 @@ addLayer("study", {
 		2: {
 			title: "And all dared to brave unknown terrors, to do mighty deeds,",
 			requirementDescription: "Level 5",
-			"effectDescription": "Unlock a time loop",
-			done: () => player.study.xp.gte(1e4),
-			onComplete: () => {
-				player.timeSlots = player.timeSlots.add(1);
-			}
+			"effectDescription": "Unlock distill flowers job",
+			done: () => player.study.xp.gte(1e4)
 		},
 		3: {
 			requirementDescription: "Level 6",
@@ -440,7 +437,7 @@ addLayer("study", {
 		5: {
 			title: "to boldly split infinitives that no man had split before—",
 			requirementDescription: "Level 10",
-			"effectDescription": "Unlock generators job",
+			"effectDescription": "Unlock experiments job",
 			done: () => player.study.xp.gte(1e9),
 			unlocked: () => hasMilestone("study", 2)
 		},

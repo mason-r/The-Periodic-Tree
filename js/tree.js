@@ -59,8 +59,8 @@ addLayer("tree-tab", {
 			"blank",
 			player.chapter === 2 ? "blank" : null,
 			["job", "flowers"],
-			["job", "distill"],
 			["job", "study"],
+			["job", "distill"],
 			["job", "sands"],
 			["job", "generators"],
 			["job", "rituals"]
@@ -94,7 +94,7 @@ addLayer("tree-tab", {
 		},
 		discovery: {
 			title: "Chapter 2: Discovery",
-			body: `[WIP, needs feedback from Hudson]<br/>The field is completely barren... Fortunately, I've collected enough <span style="color: ${flowersColor}">flowers</span> that I can finally create a time loop. Not only will this allow me to revert the field whenever it empties, it'll now open me up to close myself in the loop, effectively allowing it to run while the real me continues with my next task: <span style="color: ${distillColor}">Distilling</span> the <span style="color: ${flowersColor}">flowers</span>, and eventually experimenting with how to further take advantage of the time altering properties of them.<br/><br/>It'll be prudent of me not to forget about collecting <span style="color: ${flowersColor}">flowers</span>, as I'll still need them as I move forward, and in general should balance the time I spend on every job I can do.`
+			body: `[WIP, needs feedback from Hudson]<br/>The field is completely barren... Fortunately, I've collected enough <span style="color: ${flowersColor}">flowers</span> that I can finally create a time loop. Not only will this allow me to revert the field whenever it empties, it'll now open me up to close myself in the loop, effectively allowing it to run while the real me continues with my next task: <span style="color: ${studyColor}">Studying</span> the <span style="color: ${flowersColor}">flowers</span>, and eventually experimenting with how to further take advantage of the time altering properties of them.<br/><br/>It'll be prudent of me not to forget about collecting <span style="color: ${flowersColor}">flowers</span>, as I'll still need them as I move forward, and in general should balance the time I spend on every job I can do.`
 		}
 	}
 });

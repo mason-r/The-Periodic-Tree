@@ -1,7 +1,7 @@
 Vue.component("battery", {
 	props: ["layer", "data"],
 	template: `
-      <div style="margin: 20px" v-if="player[data].unlocked">
+      <div style="margin: 20px" v-if="tmp[data].layerShown">
       <h2>{{ layers.generators.clickables[data].name || data[0].toUpperCase() + data.slice(1) }} battery</h2>
       <div>x{{ format(layers.generators.clickables[data].effect()) }}<br>{{ layers[data].resource }} gain</div>
       <br>
@@ -84,7 +84,7 @@ addLayer("generators", {
 	color: electricColor,
 	jobName: "Run Generators",
 	showJobDelay: 1,
-	layerShown: () => hasMilestone("study", 5),
+	layerShown: () => hasMilestone("distill", 5),
 	startData() {
 		return {
 			unlocked: true,
@@ -168,7 +168,7 @@ addLayer("generators", {
 				})()],
 				"blank",
 				"blank",
-				["row", [["clickable", "flowersGenerator"], ["clickable", "distillGenerator"], ["clickable", "studyGenerator"], ["clickable", "sandsGenerator"], ["clickable", "ritualsGenerator"]]],
+				["row", ["flowersGenerator", "studyGenerator", "distillGenerator", "sandsGenerator", "ritualsGenerator"].filter(id => tmp.generators.clickables[id].unlocked).map(id => ["clickable", id])],
 				"blank",
 				"blank",
 				"upgrades",
@@ -193,8 +193,8 @@ addLayer("generators", {
 					["clickable", "perc100"]
 				]]]],
 				"blank",
-				["row", [["battery", "flowers"], ["battery", "distill"]]],
-				["row", [["battery", "study"], ["battery", "sands"]]],
+				["row", [["battery", "flowers"], ["battery", "study"]]],
+				["row", [["battery", "distill"], ["battery", "sands"]]],
 				["row", [["battery", "generators"]]]
 			],
 			unlocked: () => hasMilestone("generators", 0)
@@ -277,7 +277,7 @@ addLayer("generators", {
 		},
 		12: {
 			title: "For both our sakes.<br>",
-			description: "Increase generator's output by 1% for each second since it was activated<br>",
+			description: "Increase generator's output by 1% for each second it has been activated<br>",
 			cost: new Decimal(1e5),
 			unlocked: () => hasMilestone("generators", 3)
 		},
@@ -308,7 +308,8 @@ addLayer("generators", {
 					effect = effect.times(Decimal.times(0.01, player.generators.flowersDuration).add(1));
 				}
 				return effect;
-			}
+			},
+			unlocked: () => tmp.flowers.layerShown
 		},
 		distillGenerator: {
 			title: "Wait A Minute, Doc.<br/>",
@@ -329,7 +330,8 @@ addLayer("generators", {
 					effect = effect.times(Decimal.times(0.01, player.generators.distillDuration).add(1));
 				}
 				return effect;
-			}
+			},
+			unlocked: () => tmp.distill.layerShown
 		},
 		studyGenerator: {
 			title: "Great Scott!<br/>",
@@ -350,7 +352,8 @@ addLayer("generators", {
 					effect = effect.times(Decimal.times(0.01, player.generators.studyDuration).add(1));
 				}
 				return effect;
-			}
+			},
+			unlocked: () => tmp.study.layerShown
 		},
 		sandsGenerator: {
 			title: "This is heavy!<br/>",
@@ -371,7 +374,8 @@ addLayer("generators", {
 					effect = effect.times(Decimal.times(0.01, player.generators.sandsDuration).add(1));
 				}
 				return effect;
-			}
+			},
+			unlocked: () => tmp.sands.layerShown
 		},
 		ritualsGenerator: {
 			title: "Nobody Calls Me Chicken.<br/>",
@@ -392,7 +396,8 @@ addLayer("generators", {
 					effect = effect.times(Decimal.times(0.01, player.generators.ritualsDuration).add(1));
 				}
 				return effect;
-			}
+			},
+			unlocked: () => tmp.rituals.layerShown
 		},
 		flowers: getBatteryCharger("flowers", "History is gonna change.", "Collecting"),
 		distill: getBatteryCharger("distill", "You disintegrated Einstein!"),

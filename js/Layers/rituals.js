@@ -22,7 +22,7 @@ Vue.component("ritual", {
 				</div>
 			</div>
 		</span>
-		<span style="margin: 0;"><h3>{{ data.title }}</h3>{{ data.description }}</span>
+		<span><h3>{{ data.title }}</h3>{{ data.description }}</span>
 	</div>`
 });
 
@@ -47,7 +47,7 @@ const rituals = {
 		title: "Ritual of Melius",
 		description: "Each of these rituals increases the effectiveness of all other rituals over time, with diminishing returns",
 		pattern: [ [ 0, 1, 0 ], [ 1, 2, 1 ], [ 0, 1, 0 ] ],
-		effect: amount => new Decimal(amount).times(.01),
+		effect: amount => new Decimal(amount).pow(2).times(.01),
 		effectDisplay: () => "+" + format(ritualEffect("improvement")) + " increased effectiveness of all other ritual effects/s",
 		unlocked: () => hasMilestone("rituals", 1)
 	},
@@ -294,7 +294,7 @@ addLayer("rituals", {
 		2: {
 			title: "You know the laws, Miss Granger.",
 			requirementDescription: "Level 5",
-			"effectDescription": "Unlock a new feature in study job",
+			"effectDescription": "Unlock a new feature in distill job",
 			done: () => player.rituals.xp.gte(1e4)
 		},
 		3: {
@@ -337,8 +337,8 @@ addLayer("rituals", {
 		},
 		12: createRuneSelector(null, null),
 		13: createRuneSelector(11, "flowers"),
-		14: createRuneSelector(12, "distill"),
-		15: createRuneSelector(13, "study"),
+		14: createRuneSelector(13, "study"),
+		15: createRuneSelector(14, "distill"),
 		16: createRuneSelector(14, "sands"),
 		17: createRuneSelector(15, "generators")
 	},
@@ -346,8 +346,8 @@ addLayer("rituals", {
 		rows: 1,
 		cols: 5,
 		11: createRuneBuyable("flowers", "I did my waiting!"),
-		12: createRuneBuyable("distill", "We enter a world that is entirely our own"),
-		13: createRuneBuyable("study", "I solemnly swear that I am up to no good."),
+		12: createRuneBuyable("study", "I solemnly swear that I am up to no good."),
+		13: createRuneBuyable("distill", "We enter a world that is entirely our own"),
 		14: createRuneBuyable("sands", "Finally the flesh reflects the madness within."),
 		15: createRuneBuyable("generators", "Mysterious thing, time")
 	},

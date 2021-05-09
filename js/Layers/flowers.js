@@ -29,7 +29,7 @@ addLayer("flowers", {
 			lastLevel: new Decimal(1),
 			realTime: 0,
 			timeLoopActive: false,
-			sacrificeType: ""
+			sacrificeType: "flowers"
 		};
 	},
 	getResetGain() {
@@ -186,7 +186,7 @@ addLayer("flowers", {
 		4: {
 			title: "The story was so fantastic and incredible,",
 			requirementDescription: "Level 10",
-			"effectDescription": "Unlock distill flowers job",
+			"effectDescription": "Unlock study flowers job",
 			done: () => player.flowers.xp.gte(1e9),
 			unlocked: () => player.chapter > 1
 		},

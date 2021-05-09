@@ -12,11 +12,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.23",
-	name: "Chapter 2 (Generators)",
+	num: "0.24",
+	name: "Chapter 2 (Rituals)",
 };
 
 let changelog = `<h1>Changelog:</h1><br>
+	<br><h3>v.0.24</h3><br>
+		- Added rituals job<br>
+		- Re-ordered and re-balanced layers<br>
 	<br><h3>v.0.23</h3><br>
 		- Added rest of generators job mechanics<br>
 		- Re-balanced some layers<br>
@@ -102,7 +105,7 @@ const displayThings = [];
 
 // Determines when the game "ends"
 function isEndgame() {
-	return getJobLevel("generators").gte(10) && getJobLevel("sands").gte(10);
+	return getJobLevel("rituals").gte(10);
 }
 
 
@@ -116,23 +119,7 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion) {
-	if (["0.0", "0.1", "0.11", "0.12", "0.13", "0.14", "0.15"].includes(oldVersion) && player.chapter !== 1) {
-		layerDataReset("study");
-		layerDataReset("sands");
-		player.flowers.timeLoopActive = false;
-		player.usedTimeSlots = new Decimal(0);
-		player.timeSlots = new Decimal(1);
-		player.flowers.xp = player.flowers.xp.clampMax(1e9);
-		player.flowers.points = player.flowers.points.clampMax(1e6);
-		setBuyableAmount("flowers", 11, (getBuyableAmount("flowers", 11) || new Decimal(0)).clampMax(6));
-		setBuyableAmount("flowers", 12, (getBuyableAmount("flowers", 12) || new Decimal(0)).clampMax(3));
-		setBuyableAmount("flowers", 13, (getBuyableAmount("flowers", 13) || new Decimal(0)).clampMax(0));
-	}
-	if (["0.0", "0.1", "0.11", "0.12", "0.13", "0.14", "0.15", "0.20", "0.21", "0.22"].includes(oldVersion)) {
-		player.chapterTime[player.chapter] = player.timePlayed;
-		player.study.cards = player.study.cards.reduce((acc, card) => {
-			acc[card] = (acc[card] || 0) + 1;
-			return acc;
-		}, {});
+	if (["0.0", "0.1", "0.11", "0.12", "0.13", "0.14", "0.15", "0.20", "0.21", "0.22", "0.23"].includes(oldVersion)) {
+		hardReset();
 	}
 }

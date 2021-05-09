@@ -124,7 +124,7 @@ addLayer("sands", {
 	color: sandsColor,
 	jobName: "Experiments with time",
 	showJobDelay: 0.75,
-	layerShown: () => hasMilestone("distill", 5),
+	layerShown: () => hasMilestone("study", 5),
 	startData() {
 		return {
 			unlocked: true,
