@@ -588,6 +588,8 @@ function loadVue() {
 		`
 	});
 
+	Vue.component("PerfectScrollbar", Vue2PerfectScrollbar.PerfectScrollbar);
+
 	app = new Vue({
 		el: "#app",
 		data: {

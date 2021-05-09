@@ -174,11 +174,6 @@ h1, h2, h3, b, input {
     cursor: pointer;
 }
 
-#treeTab {
-    height: calc(100% - 70px);
-    padding-bottom: 20px;
-}
-
 /*noinspection CssUnusedSymbol*/
 .back:hover {
     transform: scale(1.1, 1.1);
@@ -438,7 +433,7 @@ a {
 }
 
 /*noinspection CssUnusedSymbol*/
-.col.right {
+.right {
     top: 50px;
     right: 0;
     z-index: 999999;
@@ -782,7 +777,7 @@ button > * {
 
 @media only screen and (max-width: 1280px) {
     /*noinspection CssUnusedSymbol*/
-    .col.right {
+    .right {
         min-width: 100%;
         background: var(--background);
     }
@@ -1169,4 +1164,16 @@ b, h3 {
 .ritual h3 {
     margin-bottom: 10px;
     display: block;
+}
+
+.ps {
+    height: calc(100% - 70px);
+    padding-bottom: 20px;
+    position: fixed !important;
+    transition-duration: 0s;
+    width: 49.5%;
+}
+
+.ps__rail-y {
+    z-index: 100;
 }
