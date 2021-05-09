@@ -498,7 +498,7 @@ const interval = setInterval(function () {
 			player.offTime = undefined;
 		}
 	}
-	if (player.devSpeed) {
+	if (player.devSpeed != null) {
 		diff *= player.devSpeed;
 	}
 	player.time = now;
