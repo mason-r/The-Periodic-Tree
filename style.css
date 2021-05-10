@@ -212,6 +212,8 @@ h1, h2, h3, b, input {
     overflow: hidden;
     margin-left: -0.5px;
     transition-property: clip-path;
+    transition-duration: .25s;
+    transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .overlayText {
