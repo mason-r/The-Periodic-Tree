@@ -88,6 +88,19 @@ function loadVue() {
 		`
 	});
 
+	// data [other layer, tabformat for within proxy]
+	Vue.component('layer-proxy', {
+		props: ['layer', 'data'],
+		computed: {
+			key() {return this.$vnode.key}
+		},
+		template: `
+		<div>
+			<column :layer="data[0]" :data="data[1]" :key="key + 'col'"></column>
+		</div>
+		`
+	})
+
 	Vue.component("infobox", {
 		props: ["layer", "data"],
 		template: `
@@ -276,7 +289,7 @@ function loadVue() {
 
 	// Displays the main resource for the layer
 	Vue.component("main-display", {
-		props: ["layer"],
+		props: ["layer", "data"],
 		template: `<div class="sticky">
           <div class="upgTable instant">
             <div class="upgRow">
@@ -287,7 +300,7 @@ function loadVue() {
           <div class="instant" style="width: 8px; height: 17px;"></div>
           <span v-if="player[layer].points.lt('1e1000')">You have </span>
           <h2 v-bind:style="{'color': tmp[layer].color, 'text-shadow': '0px 0px 10px ' + tmp[layer].color}">
-            {{ formatWhole(player[layer].points) }}</h2> {{ tmp[layer].resource }}<span
+            {{ data ? format(player[layer].points, data) : formatWhole(player[layer].points) }}</h2> {{ tmp[layer].resource }}<span
               v-if="layers[layer].effectDescription">, <span v-html="run(layers[layer].effectDescription, layers[layer])"></span></span>
         </div>
 		`
@@ -435,6 +448,57 @@ function loadVue() {
           </button>
 		`
 	});
+
+
+	// data = button size, in px
+	Vue.component('grid', {
+		props: ['layer', 'data'],
+		template: `
+		<div v-if="tmp[layer].grid" class="upgTable">
+			<div v-for="row in tmp[layer].grid.rows" class="upgRow">
+				<div v-for="col in tmp[layer].grid.cols"><div v-if="run(layers[layer].grid.getUnlocked, layers[layer].grid, row*100+col)"
+					class="upgAlign" v-bind:style="{'margin': '1px',  'height': 'inherit',}">
+					<gridable :layer = "layer" :data = "row*100+col" v-bind:style="tmp[layer].componentStyles.gridable"></gridable>
+				</div></div>
+				<br>
+			</div>
+		</div>
+	`
+	})
+
+	Vue.component('gridable', {
+		props: ['layer', 'data'],
+		template: `
+		<button 
+		v-if="tmp[layer].grid && player[layer].grid[data]!== undefined && run(layers[layer].grid.getUnlocked, layers[layer].grid, data)" 
+		v-bind:class="{ tile: true, can: canClick, locked: !canClick}"
+		v-bind:style="[canClick ? {'background-color': tmp[layer].color} : {}, gridRun(layer, 'getStyle', player[this.layer].grid[this.data], this.data)]"
+		v-on:click="clickGrid(layer, data)"  @mousedown="start" @mouseleave="stop" @mouseup="stop" @touchstart="start" @touchend="stop" @touchcancel="stop">
+			<span v-if= "layers[layer].grid.getTitle"><h3 v-html="gridRun(this.layer, 'getTitle', player[this.layer].grid[this.data], this.data)"></h3><br></span>
+			<span v-bind:style="{'white-space': 'pre-line'}" v-html="gridRun(this.layer, 'getDisplay', player[this.layer].grid[this.data], this.data)"></span>	
+		</button>
+		`,
+		data() { return { interval: false, time: 0,}},
+		computed: {
+			canClick() {
+				return gridRun(this.layer, 'getCanClick', player[this.layer].grid[this.data], this.data)}
+		},
+		methods: {
+			start() {
+				if (!this.interval && layers[this.layer].grid.onHold) {
+					this.interval = setInterval((function() {
+						if(this.time >= 5 && gridRun(this.layer, 'getCanClick', player[this.layer].grid[this.data], this.data)) {
+							gridRun(this.layer, 'onHold', player[this.layer].grid[this.data], this.data)						}	
+						this.time = this.time+1
+					}).bind(this), 50)}
+			},
+			stop() {
+				clearInterval(this.interval)
+				this.interval = false
+			  	this.time = 0
+			}
+		},
+	})
 
 	// data = button size, in px
 	Vue.component("microtabs", {
@@ -588,7 +652,7 @@ function loadVue() {
 	});
 
 	// SYSTEM COMPONENTS
-
+	Vue.component('node-mark', systemComponents['node-mark'])
 	Vue.component('tab-buttons', systemComponents['tab-buttons'])
 	Vue.component('tree-node', systemComponents['tree-node'])
 	Vue.component('layer-tab', systemComponents['layer-tab'])

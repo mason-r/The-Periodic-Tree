@@ -63,6 +63,15 @@ function setClickableState(layer, id, state) {
 	player[layer].clickables[id] = state;
 }
 
+
+function getGridData(layer, id) {
+	return (player[layer].grid[id])
+}
+
+function setGridData(layer, id, data) {
+	player[layer].grid[id] = data
+}
+
 function upgradeEffect(layer, id) {
 	return (tmp[layer].upgrades[id].effect);
 }
@@ -82,6 +91,11 @@ function clickableEffect(layer, id) {
 function achievementEffect(layer, id) {
 	return (tmp[layer].achievements[id].effect);
 }
+
+function gridEffect(layer, id) {
+	return (gridRun(layer, 'getEffect', player[layer].grid[id], id))
+}
+
 
 function canAffordPurchase(layer, thing, cost) {
 
@@ -202,9 +216,20 @@ function clickClickable(layer, id) {
 	if (tmp[layer].clickables[id].canClick === false) {
 		return;
 	}
+	if (tmp[layer].clickables[id].getCanClick === false) {
+		return;
+	}
 
 	run(layers[layer].clickables[id].onClick, layers[layer].clickables[id]);
 	updateClickableTemp(layer);
+}
+
+function clickGrid(layer, id) {
+	if (!player[layer].unlocked) return
+	if (!run(layers[layer].grid.getUnlocked, layers[layer].grid, id)) return
+	if (!gridRun(layer, 'getCanClick', player[layer].grid[id], id)) return
+
+	gridRun(layer, 'onClick', player[layer].grid[id], id)
 }
 
 // Function to determine if the player is in a challenge
@@ -520,5 +545,14 @@ function run(func, target, args = null) {
 		return bound(args);
 	} else {
 		return func;
+	}
+}
+
+function gridRun(layer, func, data, id) {
+	if (isFunction(layers[layer].grid[func])) {
+		let bound = layers[layer].grid[func].bind(layers[layer].grid)
+		return bound(data, id)
+	} else {
+		return layers[layer].grid[func];
 	}
 }

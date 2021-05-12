@@ -11,6 +11,8 @@ const activeFunctions = [
 	"sellOne", "sellAll", "pay", "actualCostFunction", "actualEffectFunction",
 	"effectDescription", "display", "fullDisplay", "effectDisplay", "rewardDisplay",
 	"tabFormat", "content",
+	"onComplete", "onPurchase", "onEnter", "onExit",
+	"getUnlocked", "getStyle", "getCanClick", "getTitle", "getDisplay"
 ];
 
 const noCall = doNotCallTheseFunctionsEveryTick;
@@ -42,19 +44,11 @@ function setupTemp() {
 	}
 
 	tmp.other = {
-		screenWidth: window.innerWidth,
-		splitScreen: window.innerWidth >=1024,
-		lastPoints: player.points || new Decimal(0),
-		oomps: new Decimal(0),
-
-		held: {
-			time: null,
-			id: null,
-			layer: null,
-			type: null,
-		}
+		lastPoints: player.points || decimalZero,
+		oomps: decimalZero,
     }
 
+	updateWidth()
 
 	temp = tmp
 }
@@ -82,11 +76,11 @@ function setupTempData(layerData, tmpData, funcsData) {
 		}
 		else { // noinspection JSUnfilteredForInLoop
 			if (isFunction(layerData[item]) && !activeFunctions.includes(item)){
-						funcsData[item] = layerData[item]
-						tmpData[item] = new Decimal(1) // The safest thing to put probably?
-					} else {
-						tmpData[item] = layerData[item]
-					}
+				funcsData[item] = layerData[item]
+				tmpData[item] = decimalOne // The safest thing to put probably?
+			} else {
+				tmpData[item] = layerData[item]
+			}
 		}
 	}	
 }
