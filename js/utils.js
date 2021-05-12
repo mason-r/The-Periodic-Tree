@@ -18,6 +18,11 @@ function canAffordUpgrade(layer, id) {
 	return canAffordPurchase(layer, upg, cost);
 }
 
+function canBuyBuyable(layer, id) {
+	let b = temp[layer].buyables[id]
+	return (b.unlocked && b.canAfford && player[layer].buyables[id].lt(b.purchaseLimit))
+}
+
 function hasUpgrade(layer, id) {
 	return (player[layer].upgrades.includes(toNumber(id)) || player[layer].upgrades.includes(id.toString()));
 }
@@ -179,7 +184,7 @@ function buyBuyable(layer, id) {
 	if (!tmp[layer].buyables[id].unlocked) {
 		return;
 	}
-	if (!tmp[layer].buyables[id].canAfford) {
+	if (!tmp[layer].buyables[id].canBuy) {
 		return;
 	}
 
@@ -229,14 +234,14 @@ function showTab(name) {
 	if (player.tab === name && isPlainObject(tmp[name].tabFormat)) {
 		player.subtabs[name].mainTabs = Object.keys(layers[name].tabFormat)[0];
 	}
+	var toTreeTab = name == "none"
+	player.tab = name
+	if (player.navTab == "none" && (tmp[name].row !== "side") && (tmp[name].row !== "otherside")) player.lastSafeTab = name
+	delete player.notify[name]
+	updateTabFormats()
+	needCanvasUpdate = true
+	document.activeElement.blur()
 
-	player.tab = name;
-	if (player.navTab === "none" && (tmp[name].row !== "side") && (tmp[name].row !== "otherside")) {
-		player.lastSafeTab = name;
-	}
-	delete player.notify[name];
-	needCanvasUpdate = true;
-	document.activeElement.blur();
 }
 
 function showNavTab(name) {
@@ -244,10 +249,11 @@ function showNavTab(name) {
 		return;
 	}
 
-
-	player.navTab = name;
-	player.notify[name] = false;
-	needCanvasUpdate = true;
+	var toTreeTab = name == "tree"
+	player.navTab = name
+	player.notify[name] = false
+	updateTabFormats()
+	needCanvasUpdate = true
 }
 
 
@@ -338,6 +344,7 @@ function layerunlocked(layer) {
 function keepGoing() {
 	player.keepGoing = true;
 	needCanvasUpdate = true;
+	goBack()
 }
 
 function toNumber(x) {
@@ -360,6 +367,7 @@ function updateMilestones(layer) {
 			if (tmp[layer].milestonePopups || tmp[layer].milestonePopups === undefined) {
 				doPopup("milestone", tmp[layer].milestones[id].requirementDescription, "Milestone Gotten!", 3, tmp[layer].color);
 			}
+			player[layer].lastMilestone = id;
 		}
 	}
 }
@@ -423,7 +431,6 @@ document.onkeydown = function (e) {
 	if (ctrlDown && hotkeys[key]) e.preventDefault()
 	if (hotkeys[key]) {
 		let k = hotkeys[key]
-		console.log(tmp[k.layer].hotkeys)
 		if (player[k.layer].unlocked && tmp[k.layer].hotkeys[k.id].unlocked)
 			k.onPress()
 	}
@@ -441,20 +448,6 @@ function focused(x) {
 	onFocused = x;
 }
 
-function prestigeButtonText(layer) {
-	if (layers[layer].prestigeButtonText !== undefined) {
-		return layers[layer].prestigeButtonText();
-	} else if (tmp[layer].type === "normal") {
-		return `${player[layer].points.lt(1e3) ? (tmp[layer].resetDescription !== undefined ? tmp[layer].resetDescription : "Reset for ") : ""}+<b>${formatWhole(tmp[layer].resetGain)}</b> ${tmp[layer].resource} ${tmp[layer].resetGain.lt(100) && player[layer].points.lt(1e3) ? `<br><br>Next at ${(tmp[layer].roundUpCost ? formatWhole(tmp[layer].nextAt) : format(tmp[layer].nextAt))} ${tmp[layer].baseResource}` : ""}`;
-	} else if (tmp[layer].type === "static") {
-		return `${tmp[layer].resetDescription !== undefined ? tmp[layer].resetDescription : "Reset for "}+<b>${formatWhole(tmp[layer].resetGain)}</b> ${tmp[layer].resource}<br><br>${player[layer].points.lt(30) ? (tmp[layer].baseAmount.gte(tmp[layer].nextAt) && (tmp[layer].canBuyMax !== undefined) && tmp[layer].canBuyMax ? "Next:" : "Req:") : ""} ${formatWhole(tmp[layer].baseAmount)} / ${(tmp[layer].roundUpCost ? formatWhole(tmp[layer].nextAtDisp) : format(tmp[layer].nextAtDisp))} ${tmp[layer].baseResource}
-		`;
-	} else if (tmp[layer].type === "none") {
-		return "";
-	} else {
-		return "You need prestige button text";
-	}
-}
 
 function isFunction(obj) {
 	return !!(obj && obj.constructor && obj.call && obj.apply);
@@ -522,7 +515,7 @@ function adjustPopupTime(diff) {
 }
 
 function run(func, target, args = null) {
-	if (func && func.constructor && func.call && func.apply) {
+	if (ifFunction(func)) {
 		let bound = func.bind(target);
 		return bound(args);
 	} else {

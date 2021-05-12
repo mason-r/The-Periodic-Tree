@@ -21,6 +21,7 @@
 	<script type="text/javascript" src="js/tree.js"></script>
 	<script type="text/javascript" src="js/mod.js"></script>
 	<script type="text/javascript" src="js/technical/temp.js"></script>
+	<script type="text/javascript" src="js/technical/displays.js"></script>
 	<script type="text/javascript" src="js/game.js"></script>
 	<script type="text/javascript" src="js/utils.js"></script>
 	<script type="text/javascript" src="js/technical/systemComponents.js"></script>
@@ -67,7 +68,7 @@
 		<div v-if="false" id="loadingSection" class="fullWidth">
 			<h1>Loading...<br>(If this takes too long it means there was a serious error!)</h1>
 		</div>
-		<div class="vl" v-if="player.navTab!== 'none' &&player.tab!=='none'&&!(gameEnded && !player.keepGoing)"></div>
+		<div class="vl" v-if="player.navTab !== 'none' && tmp.other.splitScreen && player.tab!='none' && !(gameEnded && !player.keepGoing)"></div>
 		<div v-if="(gameEnded && !player.keepGoing)" class="fullWidth">
 			<br>
 			<h2>{{modInfo.name}} {{VERSION.withoutName}}</h2><br><br>
@@ -87,8 +88,15 @@
 			<br><br>
 		</div>
 
-		<div id="treeOverlay" v-if="!(gameEnded && !player.keepGoing)" class="treeOverlay" onscroll="resizeCanvas()"
-			v-bind:class="{ fullWidth: (player.tab === 'none' || player.navTab === 'none'), col: (player.tab !== 'none' && player.navTab !== 'none'), left: (player.tab !== 'none' && player.navTab !== 'none')}">
+		<div id="treeOverlay" v-if="!(gameEnded && !player.keepGoing) && (player.tab === 'none' || tmp.other.splitScreen || !readData(layoutInfo.showTree))" class="treeOverlay" onscroll="resizeCanvas()"
+			v-bind:class="{
+				fullWidth: (player.tab === 'none' || player.navTab === 'none'),
+				col: (player.tab !== 'none' && player.navTab !== 'none'),
+				left: (player.tab !== 'none' && player.navTab !== 'none')
+			}"
+			:style="{
+				'margin-top': !readData(layoutInfo.showTree) && player.tab == 'info-tab' ? '50px' : ''
+			}">
 			<button v-if= "player.navTab === 'none' && (tmp[player.tab].row === 'side' || tmp[player.tab].row === 'otherside')" class="other-back overlayThing" onclick="goBack()">←</button>
 			<overlay-head v-if="!(gameEnded && !player.keepGoing)"></overlay-head>
 			<div class="sideLayers">
@@ -98,7 +106,7 @@
 			</div>
 		</div>
 
-		<perfect-scrollbar v-if="!(gameEnded && !player.keepGoing)" style="height: calc(100% - 70px)" id="treeTab" v-bind:style="{'z-index': (tmp.scrolled ? '1' : '5000')}" onscroll="resizeCanvas()"
+		<perfect-scrollbar v-if="!(gameEnded && !player.keepGoing) && (player.tab === 'none' || tmp.other.splitScreen)" style="height: calc(100% - 70px); z-index: 0;" id="treeTab" onscroll="resizeCanvas()"
 				v-bind:class="{ fullWidth: (player.tab === 'none' || player.navTab === 'none'), left: (player.tab !== 'none' && player.navTab !== 'none')}">
 				<br>
 				<overlay-head id="fakeHead" style="visibility: hidden;">
@@ -119,7 +127,7 @@
 			</transition-group>
 		</div>
 
-		<perfect-scrollbar v-if="player.navTab !== 'none' && player.tab !== 'none' && !(gameEnded && !player.keepGoing)" onscroll="resizeCanvas()" v-bind:class="{ fullWidth: player.navTab === 'none', right: player.navTab !== 'none', fast: true, tab: true}">
+		<perfect-scrollbar v-if="player.navTab !== 'none' && player.tab !== 'none' && !(gameEnded && !player.keepGoing)" onscroll="resizeCanvas()" style="background-color:var(--background)" v-bind:class="{ fullWidth: player.navTab === 'none' || !tmp.other.splitScreen || !readData(layoutInfo.showTree), right: player.navTab !== 'none', fast: true, tab: true}">
 			<div v-for="layer in LAYERS" >
 				<div v-if="player.tab===layer" >
 					<layer-tab :layer="layer" :back="'none'" :spacing="'50px'" :key="'left'"></layer-tab>

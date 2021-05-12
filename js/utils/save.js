@@ -94,6 +94,7 @@ function getStartLayerData(layer) {
 	layerdata.spentOnBuyables = new Decimal(0);
 	layerdata.upgrades = [];
 	layerdata.milestones = [];
+	layerdata.lastMilestone = null;
 	layerdata.achievements = [];
 	layerdata.challenges = getStartChallenges(layer);
 	return layerdata;
@@ -219,6 +220,7 @@ function load() {
 	setupTemp();
 	updateTemp();
 	updateTemp();
+	updateTabFormats();
 	loadVue();
 }
 function setupModInfo() {

@@ -43,12 +43,13 @@ function regularFormat(num, precision) {
 		return (0).toFixed(precision);
 	}
 	if (num.mag < 0.01) {
-		return num.toExponential(precision);
+		precision = 3;
 	}
 	return num.toStringWithDecimalPlaces(precision);
 }
 
-function format(decimal, precision=2,) {
+function format(decimal, precision=2, small) {
+	small = small || modInfo.allowSmall;
 	decimal = new Decimal(decimal);
 	if (isNaN(decimal.sign)||isNaN(decimal.layer)||isNaN(decimal.mag)) {
 		player.hasNaN = true;
@@ -75,9 +76,19 @@ function format(decimal, precision=2,) {
 		return exponentialFormat(decimal, precision);
 	} else if (decimal.gte(1e3)) {
 		return commaFormat(decimal, 0);
-	} else {
+	} else if (decimal.gte(0.001) || !small) {
 		return regularFormat(decimal, precision);
+	} else if (decimal.eq(0)) {
+		return (0).toFixed(precision);
 	}
+
+	decimal = invertOOM(decimal);
+    if (decimal.lt("1e1000")){
+    	const val = exponentialFormat(decimal, precision);
+        return val.replace(/([^(?:e|F)]*)$/, '-$1');
+    } else {
+        return format(decimal, precision) + "⁻¹";
+    }
 }
 
 function formatWhole(decimal) {
@@ -108,3 +119,25 @@ function formatTime(s) {
 	}
 }
 
+function toPlaces(x, precision, maxAccepted) {
+    x = new Decimal(x);
+    let result = x.toStringWithDecimalPlaces(precision);
+    if (new Decimal(result).gte(maxAccepted)) {
+        result = new Decimal(maxAccepted - Math.pow(0.1, precision)).toStringWithDecimalPlaces(precision);
+    }
+    return result;
+}
+
+// Will also display very small numbers
+function formatSmall(x, precision=2) {
+    return format(x, precision, true);
+}
+
+function invertOOM(x){
+    let e = x.log10().ceil();
+    let m = x.div(Decimal.pow(10, e));
+    e = e.neg();
+    x = new Decimal(10).pow(e).times(m);
+
+    return x;
+}

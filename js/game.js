@@ -5,8 +5,8 @@ let gameEnded = false;
 
 // Don't change this
 const TMT_VERSION = {
-	tmtNum: "2.4.1",
-	tmtName: "Rationalized Edition"
+	tmtNum: "2.5.3",
+	tmtName: "Dreams Really Do Come True"
 }
 
 function getResetGain(layer, useType = null) {
@@ -117,9 +117,13 @@ function shouldNotify(layer) {
 		return true;
 	}
 
+	if (tmp[layer].shouldNotify)
+		return true
+
 	if (isPlainObject(tmp[layer].tabFormat)) {
 		for (let subtab in tmp[layer].tabFormat) {
 			if (subtabShouldNotify(layer, "mainTabs", subtab)) {
+				tmp[layer].trueGlowColor = tmp[layer].tabFormat[subtab].glowColor
 				return true;
 			}
 		}
@@ -128,12 +132,13 @@ function shouldNotify(layer) {
 	for (let family in tmp[layer].microtabs) {
 		for (let subtab in tmp[layer].microtabs[family]) {
 			if (subtabShouldNotify(layer, family, subtab)) {
+				tmp[layer].trueGlowColor = tmp[layer].microtabs[family][subtab].glowColor
 				return true;
 			}
 		}
 	}
 
-	return tmp[layer].shouldNotify;
+	return false;
 
 }
 
@@ -162,7 +167,7 @@ function rowReset(row, layer) {
 }
 
 function layerDataReset(layer, keep = []) {
-	let storedData = {unlocked: player[layer].unlocked}; // Always keep unlocked
+	let storedData = {unlocked: player[layer].unlocked, forceTooltip: player[layer].forceTooltip, noRespecConfirm: player[layer].noRespecConfirm} // Always keep these
 
 	for (let thing in keep) {
 		if (player[layer][keep[thing]] !== undefined) {
@@ -508,6 +513,9 @@ const interval = setInterval(function () {
 	}
 	tmp.scrolled = document.getElementById("treeTab")?.scrollTop > 30;
 	updateTemp();
+	updateOomps(diff);
+	updateWidth()
+	updateTabFormats()
 	gameLoop(diff);
 	fixNaNs();
 	adjustPopupTime(0.05);
