@@ -216,9 +216,6 @@ function clickClickable(layer, id) {
 	if (tmp[layer].clickables[id].canClick === false) {
 		return;
 	}
-	if (tmp[layer].clickables[id].getCanClick === false) {
-		return;
-	}
 
 	run(layers[layer].clickables[id].onClick, layers[layer].clickables[id]);
 	updateClickableTemp(layer);

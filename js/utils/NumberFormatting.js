@@ -21,18 +21,11 @@ function commaFormat(num, precision) {
 	if (num.mag < 0.001) {
 		return (0).toFixed(precision);
 	}
-	if (precision === null || precision === undefined) {
-		if (num.layer > 1) {
-			let firstPart = new Decimal(num);
-			firstPart.mag = Math.floor(num.mag);
-			let secondPart = new Decimal(num);
-			secondPart.layer = 0;
-			secondPart.mag = num.mag - firstPart.mag;
-			return firstPart.floor().toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,") + secondPart.toStringWithDecimalPlaces(2).substr(1);
-		}
-		return num.floor().toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-	}
-	return num.toStringWithDecimalPlaces(precision).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+	let init = num.toStringWithDecimalPlaces(precision)
+    let portions = init.split(".")
+    portions[0] = portions[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,")
+    if (portions.length == 1) return portions[0]
+    return portions[0] + "." + portions[1]
 }
 
 function regularFormat(num, precision) {
@@ -43,7 +36,7 @@ function regularFormat(num, precision) {
 		return (0).toFixed(precision);
 	}
 	if (num.mag < 0.1 && precision !== 0) {
-		precision = 4;
+		precision = Math.max(precision, 4);
 	}
 	return num.toStringWithDecimalPlaces(precision);
 }
