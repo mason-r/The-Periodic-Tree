@@ -337,8 +337,8 @@ addLayer("rituals", {
 		},
 		12: createRuneSelector(null, null),
 		13: createRuneSelector(11, "flowers"),
-		14: createRuneSelector(13, "study"),
-		15: createRuneSelector(14, "distill"),
+		14: createRuneSelector(12, "study"),
+		15: createRuneSelector(13, "distill"),
 		16: createRuneSelector(14, "sands"),
 		17: createRuneSelector(15, "generators")
 	},
