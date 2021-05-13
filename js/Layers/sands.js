@@ -148,7 +148,7 @@ addLayer("sands", {
 		"Main": {
 			content: () => {
 				new Decimal(1).sub(player.sands.shrunkAmount.div(nextStoneCost())).times(10000);
-				return player.tab !== "sands" ? null : [
+				return [
 					"main-display",
 					"blank",
 					["display-text", (() => {
@@ -194,7 +194,7 @@ addLayer("sands", {
 			}
 		},
 		"Upgrades": {
-			content: () => player.tab !== "sands" ? null : [
+			content: () => [
 				"main-display",
 				"blank",
 				["display-text", (() => {
@@ -236,7 +236,7 @@ addLayer("sands", {
 			shouldNotify: () => Object.values(tmp.sands.upgrades).some(upgrade => upgrade.unlocked && upgrade.canAfford) || Object.values(tmp.sands.buyables).some(buyable => buyable.id !== "glass" && buyable.unlocked && buyable.canAfford)
 		},
 		"Glass": {
-			content: () => player.tab !== "sands" ? null : [
+			content: () => [
 				"main-display",
 				"blank",
 				["buyable", "glass"],

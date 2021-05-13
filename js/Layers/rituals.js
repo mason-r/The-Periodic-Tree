@@ -223,7 +223,7 @@ addLayer("rituals", {
 	},
 	tabFormat: {
 		"Main": {
-			content: () => player.tab !== "rituals" ? [] : [
+			content: () => [
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("rituals")}</span>`]]]]],
 				"blank",
 				["display-text", (() => {
@@ -258,7 +258,7 @@ addLayer("rituals", {
 			shouldNotify: () => Object.values(tmp.rituals.buyables).some(buyable => buyable.unlocked && buyable.canAfford)
 		},
 		"Ritual Book": {
-			content: () => player.tab !== "rituals" ? [] : [
+			content: () => [
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("rituals")}</span>`]]]]],
 				"blank",
 				["display-text", "Form rituals in the grid to gain powerful effects. You can have multiples of each ritual, and runes can be a part of multiple, overlapping rituals.<br/><br/>For any ritual, replace the tiles with any rune, but each tile with the same number must have the same rune.<br/>Blank tiles can have anything in them."],

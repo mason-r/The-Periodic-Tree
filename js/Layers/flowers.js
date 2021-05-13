@@ -62,7 +62,7 @@ addLayer("flowers", {
 	passiveGeneration: new Decimal(1),
 	tabFormat: {
 		"Main": {
-			content: () => player.tab !== "flowers" ? null :[
+			content: () => [
 				"main-display",
 				["display-text", `You are collecting <span style="color: ${flowersColor}; text-shadow: ${flowersColor} 0 0 10px">${format(tmp.flowers.getResetGain)}</span> flowers per second`],
 				"blank",
@@ -120,7 +120,7 @@ addLayer("flowers", {
 			shouldNotify: () => Object.values(tmp.flowers.buyables).some(buyable => buyable.unlocked && buyable.canAfford) || Object.values(tmp.flowers.upgrades).some(upgrade => upgrade.unlocked && upgrade.canAfford)
 		},
 		"Candypop": {
-			content: () => player.tab !== "flowers" ? null : [
+			content: () => [
 				["sticky", [0, ["column", [
 					["display-text", "Choose input job:"],
 					["row", [
@@ -283,7 +283,7 @@ addLayer("flowers", {
 		},
 		11: {
 			title: "A chain of beautiful flowers<br>",
-			description: "Increase collection speed based on how many flowers you have<br>",
+			description: "Increase collection speed based on how many flowers you have",
 			cost: new Decimal(10),
 			effect: () => player.flowers.points.clampMin(1).pow(0.1).add(1),
 			unlocked: () => hasMilestone("flowers", 0),

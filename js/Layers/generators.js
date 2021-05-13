@@ -144,7 +144,7 @@ addLayer("generators", {
 	passiveGeneration: new Decimal(1),
 	tabFormat: {
 		"Main": {
-			content: () => player.tab !== "generators" ? null : [
+			content: () => [
 				"main-display",
 				["display-text", `You are collecting <span style="color: ${electricColor}; text-shadow: ${electricColor} 0 0 10px">${format(tmp.generators.getResetGain)}</span> joules per second`],
 				"blank",
@@ -179,7 +179,7 @@ addLayer("generators", {
 			shouldNotify: () => [11, 12, 13].map(id => tmp.generators.buyables[id]).some(buyable => buyable.unlocked && buyable.canAfford)
 		},
 		"Batteries": {
-			content: () => player.tab !== "generators" ? null : [
+			content: () => [
 				"main-display",
 				["display-text", "Each battery effects a job's output.<br/>Every power of 10 joules increases that job's gain by 1x.<br/>Batteries slowly lose charge over time.<br/>"],
 				"blank",

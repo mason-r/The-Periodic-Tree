@@ -301,7 +301,7 @@ function layOver(obj1, obj2) {
 
 function prestigeNotify(layer) {
 	if (layers[layer].prestigeNotify) return layers[layer].prestigeNotify()
-	
+
 	if (isPlainObject(tmp[layer].tabFormat)) {
 		for (subtab in tmp[layer].tabFormat){
 			if (subtabResetNotify(layer, 'mainTabs', subtab))
@@ -537,7 +537,7 @@ function adjustPopupTime(diff) {
 }
 
 function run(func, target, args = null) {
-	if (ifFunction(func)) {
+	if (isFunction(func)) {
 		let bound = func.bind(target);
 		return bound(args);
 	} else {

@@ -81,7 +81,7 @@ const getShop = (numCards = 3) => {
 
 Vue.component("card", {
 	props: ["layer", "data"], // data is object with card, id, className, onclick, overrideLevel, width, height, and note
-	template: `<div class="upgCol">
+	template: `<div class="upgCol" v-if="data.card">
 		<div :id="data.id" class="card" :class="{ [data.className]: true }" :style="{ width: data.width || '200px', height: data.height || '300px' }" v-on:click="onclick">
 			<span style="border-bottom: 1px solid white; margin: 0; max-height: calc(50% - 30px); padding-bottom: 10px;">
 				<h3 v-html="title"></h3>
@@ -278,9 +278,6 @@ addLayer("study", {
 	tabFormat: {
 		"Main": {
 			content: () => {
-				if (player.tab !== "study") {
-					return null;
-				}
 				const drawDuration = getDrawDuration();
 				return [
 					["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
@@ -315,7 +312,7 @@ addLayer("study", {
 			}
 		},
 		"Deck": {
-			content: () => player.tab !== "study" ? null : [
+			content: () => [
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
 				"blank",
 				["clickable", "reset"],
@@ -324,7 +321,7 @@ addLayer("study", {
 			]
 		},
 		"Buy Cards": {
-			content: () => player.tab !== "study" ? null : [
+			content: () => [
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
 				"blank",
 				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights</span>`]]],
@@ -354,7 +351,7 @@ addLayer("study", {
 			unlocked: () => hasMilestone("study", 0)
 		},
 		"Destroy Cards": {
-			content: () => player.tab !== "study" ? null : [
+			content: () => [
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
 				"blank",
 				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: ${studyColor}; text-shadow: ${studyColor} 0 0 10px">${formatWhole(player.study.points)}</h2> properties studied`]]],
@@ -366,7 +363,7 @@ addLayer("study", {
 			unlocked: () => hasMilestone("study", 1)
 		},
 		"Upgrade Cards": {
-			content: () => player.tab !== "study" ? null : [
+			content: () => [
 				["sticky", [0, ["row", [["bar", "job"], ["display-text", `<span style="margin-left: 20px;">Lv. ${getJobLevel("study")}</span>`]]]]],
 				"blank",
 				["sticky", ["36px", ["display-text", `<span>You have <h2 style="color: darkcyan; text-shadow: darkcyan 0 0 10px">${formatWhole(player.study.insights)}</h2> key insights`]]],

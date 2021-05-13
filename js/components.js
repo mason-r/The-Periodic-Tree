@@ -209,7 +209,7 @@ function loadVue() {
 				</span>
 				<span v-html="tmp[layer].upgrades[data].description"></span>
 				<span v-if="tmp[layer].upgrades[data].effectDisplay"><br>Currently: <span
-                    v-html="tmp[layer].upgrades[data].effectDisplay"></span></span>
+                    v-html="run(tmp[layer].upgrades[data].effectDisplay, layers[layer].upgrades[data])"></span></span>
 				<span v-if="tmp[layer].upgrades[data].cost"><br><br>Cost:
                   {{ formatWhole(tmp[layer].upgrades[data].cost) }}
                   {{ (tmp[layer].upgrades[data].currencyDisplayName ? tmp[layer].upgrades[data].currencyDisplayName : tmp[layer].resource) }}</span>
@@ -417,7 +417,7 @@ function loadVue() {
 			  <!--suppress HtmlUnknownTag -->
 			  <h2 v-html="tmp[layer].clickables[data].title"></h2><br>
 			</span>
-          <span v-bind:style="{'white-space': 'pre-line'}" v-html="tmp[layer].clickables[data].display"></span>
+          <span v-bind:style="{'white-space': 'pre-line'}" v-html="run(layers[layer].clickables[data].display, layers[layer].clickables[data])"></span>
           </button>
 		`,
 		data() {
@@ -469,13 +469,13 @@ function loadVue() {
 	Vue.component('gridable', {
 		props: ['layer', 'data'],
 		template: `
-		<button 
-		v-if="tmp[layer].grid && player[layer].grid[data]!== undefined && run(layers[layer].grid.getUnlocked, layers[layer].grid, data)" 
+		<button
+		v-if="tmp[layer].grid && player[layer].grid[data]!== undefined && run(layers[layer].grid.getUnlocked, layers[layer].grid, data)"
 		v-bind:class="{ tile: true, can: canClick, locked: !canClick}"
 		v-bind:style="[canClick ? {'background-color': tmp[layer].color} : {}, gridRun(layer, 'getStyle', player[this.layer].grid[this.data], this.data)]"
 		v-on:click="clickGrid(layer, data)"  @mousedown="start" @mouseleave="stop" @mouseup="stop" @touchstart="start" @touchend="stop" @touchcancel="stop">
 			<span v-if= "layers[layer].grid.getTitle"><h3 v-html="gridRun(this.layer, 'getTitle', player[this.layer].grid[this.data], this.data)"></h3><br></span>
-			<span v-bind:style="{'white-space': 'pre-line'}" v-html="gridRun(this.layer, 'getDisplay', player[this.layer].grid[this.data], this.data)"></span>	
+			<span v-bind:style="{'white-space': 'pre-line'}" v-html="gridRun(this.layer, 'getDisplay', player[this.layer].grid[this.data], this.data)"></span>
 		</button>
 		`,
 		data() { return { interval: false, time: 0,}},
@@ -488,7 +488,7 @@ function loadVue() {
 				if (!this.interval && layers[this.layer].grid.onHold) {
 					this.interval = setInterval((function() {
 						if(this.time >= 5 && gridRun(this.layer, 'getCanClick', player[this.layer].grid[this.data], this.data)) {
-							gridRun(this.layer, 'onHold', player[this.layer].grid[this.data], this.data)						}	
+							gridRun(this.layer, 'onHold', player[this.layer].grid[this.data], this.data)						}
 						this.time = this.time+1
 					}).bind(this), 50)}
 			},
@@ -534,14 +534,14 @@ function loadVue() {
           <div v-if="tmp[layer].bars && tmp[layer].bars[data].unlocked !== false"
                v-bind:style="{'position': 'relative'}">
           <div
-              v-bind:style="[tmp[layer].bars[data].style, tmp[layer].bars[data].dims, {'display': 'table', 'borderRadius': '10px', 'boxShadow': '0 0 10px 2px var(--shadowColor), inset 0 0 10px 4px var(--innerShadowColor)'}]">
+              v-bind:style="[tmp[layer].bars[data].style, style.dims, {'display': 'table', 'borderRadius': '10px', 'boxShadow': '0 0 10px 2px var(--shadowColor), inset 0 0 10px 4px var(--innerShadowColor)'}]">
             <div class="overlayTextContainer barBorder"
                  v-bind:style="[tmp[layer].bars[data].borderStyle, style.dims]">
               <span class="overlayText" v-bind:style="[tmp[layer].bars[data].style, tmp[layer].bars[data].textStyle]"
                     v-html="run(layers[layer].bars[data].display, layers[layer].bars[data])"></span>
             </div>
             <div class="barBG barBorder"
-                 v-bind:style="[tmp[layer].bars[data].style, tmp[layer].bars[data].baseStyle, tmp[layer].bars[data].borderStyle,  tmp[layer].bars[data].dims]">
+                 v-bind:style="[tmp[layer].bars[data].style, tmp[layer].bars[data].baseStyle, tmp[layer].bars[data].borderStyle, style.dims]">
               <div class="fill"
                    v-bind:style="[tmp[layer].bars[data].style, tmp[layer].bars[data].fillStyle, style.fillDims]"></div>
             </div>

@@ -90,7 +90,10 @@ function getInstrumentBuyable(id, instrumentName, title, baseSpeed, baseCost, co
 			return speed;
 		},
 		canAfford() {
-			return player.distill.points.gte(this.cost()) && getBuyableAmount("distill", id).lt(100);
+			return player.distill.points.gte(this.cost());
+		},
+		purchaseLimit() {
+			return new Decimal(100);
 		},
 		buy() {
 			player.distill.points = player.distill.points.sub(this.cost());
@@ -160,9 +163,9 @@ addLayer("distill", {
 		};
 	},
 	shouldNotify() {
-		return Object.values(tmp[this.layer].buyables).some(buyable => buyable.unlocked && buyable.canAfford);
+		return Object.keys(tmp[this.layer].buyables).some(buyable => canBuyBuyable(this.layer, id));
 	},
-	tabFormat: () => player.tab !== "distill" ? null : [
+	tabFormat: () => [
 		"main-display",
 		["display-text", `You are getting ${format(getEssentiaMult())} essentia every time an instrument finishes.`],
 		"blank",

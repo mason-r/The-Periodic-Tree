@@ -29,7 +29,7 @@ function setupTemp() {
 	tmp.displayThings = []
 	tmp.scrolled = 0
 	funcs = {}
-	
+
 	setupTempData(layers, tmp, funcs)
 	for (let layer in layers){
 		tmp[layer].resetGain = {}
@@ -82,7 +82,7 @@ function setupTempData(layerData, tmpData, funcsData) {
 				tmpData[item] = layerData[item]
 			}
 		}
-	}	
+	}
 }
 
 function updateTemp() {
@@ -106,12 +106,12 @@ function updateTemp() {
 	for (let thing in displayThings){
 		let text = displayThings[thing]
 		if (isFunction(text)) text = text()
-		tmp.displayThings.push(text) 
+		tmp.displayThings.push(text)
 	}
 }
 
 function updateTempData(layerData, tmpData, funcsData) {
-	
+
 	for (let item in funcsData){
 		if (Array.isArray(layerData[item])) {
 			if (item === "tabFormat" || item === "content") return // These are only updated when needed
@@ -135,7 +135,7 @@ function updateTempData(layerData, tmpData, funcsData) {
 			}
 			Vue.set(tmpData, item, value)
 		}
-	}	
+	}
 }
 
 function updateChallengeTemp(layer)

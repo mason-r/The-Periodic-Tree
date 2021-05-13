@@ -18,14 +18,14 @@ function getResetGain(layer, useType = null) {
 		}
 	}
 	if (tmp[layer].type === "none") {
-		return new decimalZero;
+		return decimalZero;
 	}
 	if (tmp[layer].gainExp.eq(0)) {
-		return new decimalZero;
+		return decimalZero;
 	}
 	if (type === "static") {
 		if ((!tmp[layer].canBuyMax) || tmp[layer].baseAmount.lt(tmp[layer].requires)) {
-			return new Decimal(1);
+			return decimalOne;
 		}
 		let gain = tmp[layer].baseAmount.div(tmp[layer].requires).div(tmp[layer].gainMult).max(1).log(tmp[layer].base).times(tmp[layer].gainExp).pow(Decimal.pow(tmp[layer].exponent, -1));
 		gain = gain.times(tmp[layer].directMult);
