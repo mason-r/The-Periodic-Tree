@@ -145,6 +145,8 @@ const systemComponents = {
         Original idea by papyrus (on discord)
         <br>
         Hourglass used with modifications from <a v-bind:href="'https://codepen.io/jkantner/pen/wvWXyKG'" target="_blank" class="link" v-bind:style = "{'font-size': '14px', 'display': 'inline'}" >jkantner</a> under MIT license
+    <br><br>
+        <img :src="'http://thepaperpilot.tech/nocount/tag.svg?url=' + encodeURIComponent(window.location.href)" alt="Hits" />
 		<br><br>
 		<div class="link" onclick="showTab('changelog-tab')">Changelog</div><br>
         <span v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink" target="_blank">{{modInfo.discordName}}</a><br></span>
@@ -157,8 +159,9 @@ const systemComponents = {
         <span v-if="player.chapterTime[3] > 0">Chapter 3 Time: {{ formatTime(player.chapterTime[3]) }}</span><br>
         <span v-if="player.chapterTime[4] > 0">Chapter 4 Time: {{ formatTime(player.chapterTime[4]) }}</span><br>
         <span v-if="player.chapterTime[5] > 0">Chapter 5 Time: {{ formatTime(player.chapterTime[5]) }}</span><br><br>
-        <h3>Hotkeys</h3><br>
-        <span v-for="key in hotkeys" v-if="player[key.layer].unlocked && tmp[key.layer].hotkeys[key.id].unlocked"><br>{{key.description}}</span></div>
+        <h3 v-if="Object.keys(hotkeys) > 0">Hotkeys</h3><br>
+        <span v-for="key in hotkeys" v-if="player[key.layer].unlocked && tmp[key.layer].hotkeys[key.id].unlocked"><br>{{key.description}}</span>
+      </div>
     `
 	},
 
