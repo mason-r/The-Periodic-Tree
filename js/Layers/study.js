@@ -37,15 +37,21 @@ const cards = {
 		const scale = new Decimal(1.02).add(level.add(1).sqrt().div(100));
 		const effect = scale.pow(softcap(player.study.multiplyPointsGain, new Decimal(100).times(level.div(4).add(1)), .2));
 		let text = `Permanently multiply studied properties gain by x${format(scale)}<br/><br/>Currently: x${format(effect)}`;
-		if (player.study.multiplyPointsGain.gt(new Decimal(100).times(level.div(4).add(1)))) {
+		const leftTillSoftcap = new Decimal(100).times(level.div(4).add(1)).sub(player.study.multiplyPointsGain);
+		if (leftTillSoftcap.gt(0)) {
+			text = text + "<br/>(softcapped in " + formatWhole(leftTillSoftcap) + " draws)";
+		} else {
 			text = text + "<br/>(softcapped)";
 		}
 		return text;
 	}, () => player.study.multiplyPointsGain = player.study.multiplyPointsGain.add(1)),
 	sellDiscount: createCard("It doesn't grow on trees you know.", level => {
 		const effect = new Decimal(0.98).pow(softcap(player.study.sellDiscount, new Decimal(100).times(level.div(2).add(1)), .5));
-		let text = `Permanently multiply sell cost by 0.98<br/><br/>Currently: x${format(effect)}`;
-		if (player.study.sellDiscount.gt(new Decimal(100).times(level.div(2).add(1)))) {
+		let text = `Permanently multiply sell cost by 0.98<br/><br/>Currently: x${formatSmall(effect)}`;
+		const leftTillSoftcap = new Decimal(100).times(level.div(2).add(1)).sub(player.study.sellDiscount);
+		if (leftTillSoftcap.gt(0)) {
+			text = text + "<br/>(softcapped in " + formatWhole(leftTillSoftcap) + " draws)";
+		} else {
 			text = text + "<br/>(softcapped)";
 		}
 		return text;
