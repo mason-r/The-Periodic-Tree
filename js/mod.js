@@ -89,6 +89,7 @@ function addedPlayerData() {
 		timeSlots: new Decimal(0),
 		usedTimeSlots: new Decimal(0),
 		chapterTime: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+		advancedExp: false,
 		levelModifiers: {
 			flowers: new Decimal(0),
 			distill: new Decimal(0),

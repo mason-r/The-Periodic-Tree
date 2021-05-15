@@ -181,6 +181,7 @@ const systemComponents = {
             <tr>
                 <td><button class="opt" onclick="adjustMSDisp()">Show Milestones: {{ MS_DISPLAYS[MS_SETTINGS.indexOf(player.msDisplay)]}}</button></td>
 								<td><button class="opt" onclick="toggleOpt('forceOneTab'); needsCanvasUpdate = true">Single-Tab Mode: {{ player.forceOneTab?"ALWAYS":"AUTO" }}</button></td>
+                <td><button class="opt" onclick="toggleOpt('advancedExp')">XP bars: {{ player.advancedExp ? "ADVANCED" : "SIMPLE" }}</button></td>
 						</tr>
         </table>`
 	},

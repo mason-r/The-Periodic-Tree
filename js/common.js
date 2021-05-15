@@ -61,7 +61,9 @@ function getJobProgressBar(job, color) {
 			}
 			return progress;
 		},
+		display: () => player.advancedExp ? `${format(player[job].xp)} / ${format(getXPRequirement(getJobLevel(job, false).add(1)))}` : null,
 		fillStyle: { backgroundColor: color || layers[job].color },
-		borderStyle: { borderColor: color || layers[job].color }
+		borderStyle: { borderColor: color || layers[job].color },
+		textStyle: { color: 'white', textShadow: '-1px -1px 0 #000,  1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000' }
 	};
 }
