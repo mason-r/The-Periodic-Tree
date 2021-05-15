@@ -384,7 +384,7 @@ addLayer("sands", {
 	clickables: {
 		chip: {
 			title: "Keep Moving Forward<br/>",
-			display: "Hover over this to chip away at the stone until its the size of a grain of sand.",
+			display: "Hover over this to chip away at the stone until it's the size of a grain of sand.",
 			touchstart: () => {
 				player.sands.chipping = true;
 			},
