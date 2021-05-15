@@ -47,7 +47,7 @@
 
 <body onload="load()">
 	<div id="app">
-		<img :src="'http://thepaperpilot.tech/count/tag.svg?url=' + encodeURIComponent(window.location.href)" alt="Hits" style="display: none"/>
+		<img :src="'https://thepaperpilot.tech/count/tag.svg?url=' + encodeURIComponent(window.location.href)" alt="Hits" style="display: none"/>
 		<canvas id="treeCanvas" class="canvas" v-if ="!(gameEnded && !player.keepGoing)"></canvas>
 
 		<div class="nav">

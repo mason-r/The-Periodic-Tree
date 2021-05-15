@@ -146,7 +146,7 @@ const systemComponents = {
         <br>
         Hourglass used with modifications from <a v-bind:href="'https://codepen.io/jkantner/pen/wvWXyKG'" target="_blank" class="link" v-bind:style = "{'font-size': '14px', 'display': 'inline'}" >jkantner</a> under MIT license
     <br><br>
-        <img :src="'http://thepaperpilot.tech/nocount/tag.svg?url=' + encodeURIComponent(window.location.href)" alt="Hits" />
+        <img :src="'https://thepaperpilot.tech/nocount/tag.svg?url=' + encodeURIComponent(window.location.href)" alt="Hits" />
 		<br><br>
 		<div class="link" onclick="showTab('changelog-tab')">Changelog</div><br>
         <span v-if="modInfo.discordLink"><a class="link" v-bind:href="modInfo.discordLink" target="_blank">{{modInfo.discordName}}</a><br></span>
