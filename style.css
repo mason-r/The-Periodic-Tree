@@ -333,7 +333,7 @@ h1, h2, h3, b, input {
 }
 
 a {
-    color: #ffab40;
+    color: #02f2f2;
     text-decoration-line: none;
     cursor: pointer
 }
@@ -341,17 +341,15 @@ a {
 .link {
     display: block;
     font-size: 20px;
-    color: #ffab40;
+    color: #02f2f2;
     cursor: pointer;
-    -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: #02f2f2;
     text-decoration: none;
 }
 
 .link:hover {
     transform: scale(1.2, 1.2);
-    text-shadow: 5px 0 10px #ffab40,
-    -3px 0 12px #ffab40;
+    text-shadow: 5px 0 10px #02f2f2,
+    -3px 0 12px #02f2f2;
 }
 
 .opt {
