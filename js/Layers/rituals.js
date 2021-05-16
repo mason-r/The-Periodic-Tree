@@ -112,7 +112,7 @@ function createRuneBuyable(id, title) {
 		},
 		cost(x) {
 			const amount = x || getBuyableAmount("rituals", this.id);
-			return new Decimal(1e10).times(new Decimal(10).pow(amount));
+			return new Decimal(1e9).times(new Decimal(10).pow(amount));
 		},
 		canAfford() {
 			return player[id].points.gte(this.cost());
