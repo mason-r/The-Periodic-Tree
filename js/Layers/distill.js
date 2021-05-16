@@ -52,7 +52,7 @@ Vue.component("instrument", {
 	`,
 	computed: {
 		completions() {
-			return softcap(player.distill[`${this.data}Completions`], new Decimal(1000), .25);
+			return softcap(player.distill[`${this.data}Completions`], new Decimal(1000), 1 / 3);
 		},
 		canAfford() {
 			return layers.distill.buyables[this.data].canAfford();
@@ -120,11 +120,11 @@ function updateInstrument(instrument, requiredLevel, diff) {
 function getEssentiaMult() {
 	let gain = new Decimal(1);
 	gain = gain.times(new Decimal(1.1).pow(getJobLevel("distill")));
-	gain = gain.times(softcap(player.distill.retortCompletions, new Decimal(1000), .25).div(100).add(1));
-	gain = gain.times(softcap(player.distill.alembicCompletions, new Decimal(1000), .25).div(100).add(1));
-	gain = gain.times(softcap(player.distill.crucibleCompletions, new Decimal(1000), .25).div(100).add(1));
-	gain = gain.times(softcap(player.distill.bainMarieCompletions, new Decimal(1000), .25).div(100).add(1));
-	gain = gain.times(softcap(player.distill.vapoursCompletions, new Decimal(1000), .25).div(100).add(1));
+	gain = gain.times(softcap(player.distill.retortCompletions, new Decimal(1000), 1 / 3).div(100).add(1));
+	gain = gain.times(softcap(player.distill.alembicCompletions, new Decimal(1000), 1 / 3).div(100).add(1));
+	gain = gain.times(softcap(player.distill.crucibleCompletions, new Decimal(1000), 1 / 3).div(100).add(1));
+	gain = gain.times(softcap(player.distill.bainMarieCompletions, new Decimal(1000), 1 / 3).div(100).add(1));
+	gain = gain.times(softcap(player.distill.vapoursCompletions, new Decimal(1000), 1 / 3).div(100).add(1));
 	gain = gain.times(layers.generators.clickables.distill.effect());
 	gain = gain.times(ritualEffect("gain"));
 	if (player.generators.distillActive && (player.tab === "generators" || player.generators.timeLoopActive)) {
