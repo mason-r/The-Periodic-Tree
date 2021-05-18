@@ -142,5 +142,9 @@
 				</div>
 			</div>
 		</perfect-scrollbar>
+
+		<div v-if="lastTenTicks.length === 10" class="tpsDisplay">
+			TPS: {{ format(Decimal.div(lastTenTicks.length, lastTenTicks.reduce((acc, curr) => acc + curr, 0))) }}
+		</div>
 	</div>
 </body>

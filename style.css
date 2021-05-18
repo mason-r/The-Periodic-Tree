@@ -1242,3 +1242,10 @@ b, h3 {
 .star:after {
 	transform: rotate(35deg);
 }
+
+.tpsDisplay {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    z-index: 10000000;
+}

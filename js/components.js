@@ -722,6 +722,7 @@ function loadVue() {
 			mouseY,
 			shiftDown,
 			ctrlDown,
+			lastTenTicks
 		},
 	});
 }

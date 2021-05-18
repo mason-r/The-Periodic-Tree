@@ -479,6 +479,7 @@ function hardReset(override = false) {
 }
 
 let ticking = false;
+let lastTenTicks = [];
 
 const interval = setInterval(function () {
 	if (player === undefined || tmp === undefined) {
@@ -524,6 +525,11 @@ const interval = setInterval(function () {
 	fixNaNs();
 	adjustPopupTime(trueDiff);
 	updateParticles(trueDiff);
+	lastTenTicks.push(trueDiff);
+	if (lastTenTicks.length > 10) {
+		lastTenTicks = lastTenTicks.slice(1);
+	}
+	Vue.set(app, "lastTenTicks", lastTenTicks);
 	ticking = false;
 }, 50);
 
