@@ -1,17 +1,18 @@
+// TODO fix deactivated not working until first render
 function hasUpgrade(layer, id) {
-	return ((player[layer].upgrades.includes(toNumber(id)) || player[layer].upgrades.includes(id.toString())) && !tmp[layer].deactivated)
+	return ((player[layer].upgrades.includes(toNumber(id)) || player[layer].upgrades.includes(id.toString())) && !tmp[layer]?.deactivated)
 }
 
 function hasMilestone(layer, id) {
-	return ((player[layer].milestones.includes(toNumber(id)) || player[layer].milestones.includes(id.toString())) && !tmp[layer].deactivated)
+	return ((player[layer].milestones.includes(toNumber(id)) || player[layer].milestones.includes(id.toString())) && !tmp[layer]?.deactivated)
 }
 
 function hasAchievement(layer, id) {
-	return ((player[layer].achievements.includes(toNumber(id)) || player[layer].achievements.includes(id.toString())) && !tmp[layer].deactivated)
+	return ((player[layer].achievements.includes(toNumber(id)) || player[layer].achievements.includes(id.toString())) && !tmp[layer]?.deactivated)
 }
 
 function hasChallenge(layer, id) {
-	return ((player[layer].challenges[id]) && !tmp[layer].deactivated)
+	return ((player[layer].challenges[id]) && !tmp[layer]?.deactivated)
 }
 
 function maxedChallenge(layer, id) {
