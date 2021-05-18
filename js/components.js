@@ -171,7 +171,9 @@ function loadVue() {
 				Reward: <span v-html="tmp[layer].challenges[data].rewardDescription"></span><br>
 				<span v-if="layers[layer].challenges[data].rewardDisplay!==undefined">Currently: <span v-html="(tmp[layer].challenges[data].rewardDisplay) ? (run(layers[layer].challenges[data].rewardDisplay, layers[layer].challenges[data])) : format(tmp[layer].challenges[data].rewardEffect)"></span></span>
 			</span>
-          </div>
+			<node-mark :layer='layer' :data='tmp[layer].challenges[data].marked' :offset="10"></node-mark></span>
+
+		</div>
 		`
 	});
 
@@ -346,6 +348,8 @@ function loadVue() {
 			v-on:click="buyBuyable(layer, data)" @mousedown="start" @mouseleave="stop" @mouseup="stop" @touchstart="start" @touchend="stop" @touchcancel="stop">
 				<span v-if= "tmp[layer].buyables[data].title"><h2 v-html="tmp[layer].buyables[data].title"></h2><br></span>
 				<span v-bind:style="{'white-space': 'pre-line'}" v-html="run(layers[layer].buyables[data].display, layers[layer].buyables[data])"></span>
+				<node-mark :layer='layer' :data='tmp[layer].buyables[data].marked'></node-mark>
+
 			</button>
 			<br v-if="(tmp[layer].buyables[data].sellOne !== undefined && !(tmp[layer].buyables[data].canSellOne !== undefined && tmp[layer].buyables[data].canSellOne == false)) || (tmp[layer].buyables[data].sellAll && !(tmp[layer].buyables[data].canSellAll !== undefined && tmp[layer].buyables[data].canSellAll == false))">
 			<sell-one :layer="layer" :data="data" v-bind:style="tmp[layer].componentStyles['sell-one']" v-if="(tmp[layer].buyables[data].sellOne)&& !(tmp[layer].buyables[data].canSellOne !== undefined && tmp[layer].buyables[data].canSellOne == false)"></sell-one>
@@ -408,17 +412,18 @@ function loadVue() {
 	Vue.component("clickable", {
 		props: ["layer", "data", "size"],
 		template: `
-          <button
+        <button
               v-if="tmp[layer].clickables && tmp[layer].clickables[data]!== undefined && tmp[layer].clickables[data].unlocked !== false"
               v-bind:class="{ upg: true, can: tmp[layer].clickables[data].canClick !== false, locked: tmp[layer].clickables[data].canClick === false, ...tmp[layer].clickables[data].class}"
               v-bind:style="[tmp[layer].clickables[data].canClick !== false ? {'background-color': tmp[layer].clickables[data].color || tmp[layer].color} : { 'background-color': tmp[layer].clickables[data].style?.backgroundColor }, size ? {'height': size, 'width': size} : {}, tmp[layer].clickables[data].style]"
               v-on="handlers">
           <span v-if="tmp[layer].clickables[data].title">
-			  <!--suppress HtmlUnknownTag -->
-			  <h2 v-html="tmp[layer].clickables[data].title"></h2><br>
-			</span>
+			  		<!--suppress HtmlUnknownTag -->
+			  		<h2 v-html="tmp[layer].clickables[data].title"></h2><br>
+					</span>
           <span v-bind:style="{'white-space': 'pre-line'}" v-html="run(layers[layer].clickables[data].display, layers[layer].clickables[data])"></span>
-          </button>
+          <node-mark :layer='layer' :data='tmp[layer].clickables[data].marked'></node-mark>
+		</button>
 		`,
 		data() {
 			const {layer, data} = this;
@@ -660,6 +665,7 @@ function loadVue() {
 	Vue.component('info-tab', systemComponents['info-tab'])
 	Vue.component('options-tab', systemComponents['options-tab'])
 	Vue.component('tooltip', systemComponents['tooltip'])
+	Vue.component('particle', systemComponents['particle'])
 
 
 	Vue.component("sticky", {
@@ -683,6 +689,7 @@ function loadVue() {
 			format,
 			formatWhole,
 			formatTime,
+			formatSmall,
 			focused,
 			getThemeName,
 			layerunlocked,
@@ -705,10 +712,16 @@ function loadVue() {
 			challengeStyle,
 			challengeButtonText,
 			constructBarStyle,
+			constructParticleStyle,
 			VERSION,
 			LAYERS,
 			hotkeys,
 			activePopups,
+			particles,
+			mouseX,
+			mouseY,
+			shiftDown,
+			ctrlDown,
 		},
 	});
 }

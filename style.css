@@ -126,14 +126,12 @@ h1, h2, h3, b, input {
 /*noinspection CssUnresolvedCustomProperty,CssUnusedSymbol*/
 .resetNotify {
     box-shadow: var(--hqProperty2a), 0 0 8px #ffffff;
-    z-index: 3
 }
 
 /*noinspection CssUnresolvedCustomProperty*/
 .treeNode.can:hover {
     transform: scale(1.15, 1.15);
     box-shadow: var(--hqProperty2a), 0 0 20px var(--points);
-    z-index: 4
 }
 
 /*noinspection CssUnresolvedCustomProperty,CssUnusedSymbol*/
@@ -141,7 +139,6 @@ h1, h2, h3, b, input {
     transform: scale(1.05, 1.05);
     border-color: rgba(0, 0, 0, 0.125);
     box-shadow: var(--hqProperty2a), 0 0 20px #ff0000;
-    z-index: 3
 }
 
 /*noinspection CssUnusedSymbol*/
@@ -212,7 +209,7 @@ h1, h2, h3, b, input {
     overflow: hidden;
     margin-left: -0.5px;
     transition-property: clip-path;
-    transition-duration: .25s;
+    transition-duration: .2s;
     transition-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -281,6 +278,7 @@ h1, h2, h3, b, input {
     border-radius: 5px;
     border: 2px solid rgba(0, 0, 0, 0.125);
     font-size: 10px;
+    position:relative;
 }
 
 .tile {
@@ -489,6 +487,7 @@ ul {
 /*noinspection CssUnusedSymbol*/
 .hChallenge {
     background-color: #bf8f8f;
+    position: relative;
     border: 4px solid rgba(0, 0, 0, 0.125);
     color: rgba(0, 0, 0, 0.5);
     width: 300px;
@@ -1206,7 +1205,8 @@ b, h3 {
 	border-bottom: 0.7em solid transparent;
 	border-left: 0.3em solid transparent;
 	font-size: 10px;
-	overflow:auto
+	overflow:auto;
+	pointer-events: none;
 }
 
 .star {
@@ -1222,6 +1222,8 @@ b, h3 {
 	border-bottom: 0.7em solid #ffcc00;
 	border-left: 0.3em solid transparent;
 	font-size: 10px;
+	pointer-events: none;
+
 }
 
 .star:before, .star:after {

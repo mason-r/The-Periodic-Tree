@@ -24,9 +24,11 @@
 	<script type="text/javascript" src="js/technical/displays.js"></script>
 	<script type="text/javascript" src="js/game.js"></script>
 	<script type="text/javascript" src="js/utils.js"></script>
+	<script type="text/javascript" src="js/utils/easyAccess.js"></script>
 	<script type="text/javascript" src="js/technical/systemComponents.js"></script>
 	<script type="text/javascript" src="js/components.js"></script>
 	<script type="text/javascript" src="js/technical/canvas.js"></script>
+	<script type="text/javascript" src="js/technical/particleSystem.js"></script>
 	<script type="text/javascript" src="js/utils/NumberFormatting.js"></script>
 	<script type="text/javascript" src="js/utils/options.js"></script>
 	<script type="text/javascript" src="js/utils/save.js"></script>
@@ -45,7 +47,7 @@
 
 </head>
 
-<body onload="load()">
+<body onload="load()" onmousemove="updateMouse(event)">
 	<div id="app">
 		<img :src="'https://thepaperpilot.tech/count/tag.svg?url=' + encodeURIComponent(window.location.href)" alt="Hits" style="display: none"/>
 		<canvas id="treeCanvas" class="canvas" v-if ="!(gameEnded && !player.keepGoing)"></canvas>
@@ -126,6 +128,11 @@
 					<h2 v-html="popup.message"></h2>
 				</div>
 			</transition-group>
+		</div>
+		<div class="particle-container">
+				<div v-for="particle,index in particles">
+					<particle :data="particle" :index="index" v-bind:key="'b' + particle.id"></particle>
+				</div>
 		</div>
 
 		<perfect-scrollbar v-if="player.navTab !== 'none' && player.tab !== 'none' && !(gameEnded && !player.keepGoing)" onscroll="resizeCanvas()" style="background-color:var(--background)" v-bind:class="{ fullWidth: player.navTab === 'none' || !tmp.other.splitScreen || !readData(layoutInfo.showTree), right: player.navTab !== 'none', fast: true, tab: true}">
