@@ -121,6 +121,8 @@ var systemComponents = {
         <br>
         Original idea by papyrus (on discord)
         <br>
+        <a href="https://plaza.dsolver.ca/m/ThePaperPilot">My plaza profile</a>
+        <br>
         Electricity beam modified from <a href="https://codepen.io/agrimsrud/pen/XBwyOz" target="_blank" class="link" v-bind:style = "{'font-size': '14px', 'display': 'inline'}">code by Anders Grimsrud</a> (under MIT license)
 		<br><br>
 		<div class="link" onclick="showTab('changelog-tab')">Changelog</div><br>
