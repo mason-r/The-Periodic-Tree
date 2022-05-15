@@ -1,8 +1,8 @@
 let modInfo = {
-	name: "The Periodic Tree",
+	name: "The Writing Tree",
 	id: "mymod",
-	author: "nobody",
-	pointsName: "points",
+	author: "Mason",
+	pointsName: "letters",
 	modFiles: ["layers.js", "tree.js"],
 
 	discordName: "",
@@ -43,6 +43,8 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	if (hasUpgrade("w", 11)) gain = gain.times(2)
+	if (hasUpgrade("w", 12)) gain = gain.times(upgradeEffect("w", 12))
 	return gain
 }
 
